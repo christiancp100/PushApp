@@ -1,0 +1,12 @@
+{
+  "name": "PushApp",
+  "version": "1.0.0",
+  "description": "Fitness App for Web Atelier Project",
+  "main": "app.js",
+  "repository": "https://github.com/christiancp100/PushApp.git",
+  "author": "christian <christiancp100@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
