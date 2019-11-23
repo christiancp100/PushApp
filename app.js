@@ -1,44 +1,49 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var adaro = require('adaro');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const dust = require('klei-dust');
+const methodOverride = require('method-override');
+const routers = require('./routes/routers');
+const EventEmitter = require('events');
+const mongoose = require('mongoose');
+const app = express();
 
-var indexRouter = require('./routes/root/router');
-var usersRouter = require('./routes/users/router');
-
-var app = express();
-
-// view engine setup
-app.engine('dust', adaro.dust());
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'dust');
-
+// Configure app
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routers
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// Override with POST having ?_method=DELETE or ?_method=PUT
+app.use(methodOverride('_method'));
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.text());
+app.use(bodyParser.urlencoded({extended: true}));
+
+// Initialize routers here
+app.use('/', routers.root);
+app.use('/test/fetch', routers.fetch_tests);
+app.use('/users', routers.users);
+
+// Catch 404 and forward to error handler
+// This should be configured after all 200 routes
+app.use(function (req, res, next) {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// Mongoose connection to MongoDB and Collection name declaration
+mongoose.connect('mongodb://localhost/PushApp');
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+// Socket.io Emitter
+const emitter = new EventEmitter()
+
+// Dust views rendering engine
+app.set('view engine', 'dust');
+app.set('views', __dirname + '/views');
+app.engine('dust', dust.dust);
 
 module.exports = app;
+module.exports = emitter;
