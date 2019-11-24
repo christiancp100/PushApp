@@ -3,6 +3,12 @@
  */
 'use strict';
 
+const fs = require('fs');
+
+const dirEntries = fs.readdirSync(__dirname);
+const base = __dirname + '/';
+const routers = {};
+
 try {
   dirEntries.forEach(function (dirEntry) {
     const stats = fs.statSync(base + dirEntry);
@@ -19,10 +25,9 @@ try {
     }
   });
 } catch (err) {
+  // We don't know what happened, export empty object
   console.log('Error while loading routers.');
   console.log(err.stack);
-  // We don't know what happened, export empty object
-  const routers = {'Error': 'Error while loading routers.'};
 } finally {
   module.exports = routers;
 }

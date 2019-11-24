@@ -8,8 +8,8 @@ var server = app.listen(app.get('port'), function () {
   debug('Express server listening on port ' + server.address().port);
 });
 
+// Socket.io server
 const io = require('socket.io')(server);
-
 io.on('connection', function (socket) {
   console.log('Client connected');
   socket.emit('message', {user: "Server", text: "Welcome to PushApp!"});
