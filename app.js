@@ -1,43 +1,47 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var adaro = require('adaro');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const methodOverride = require('method-override');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const emitter = require('./socketIoEmitter.js');
+const express = require('express');
+const dust = require('klei-dust');
+const logger = require('morgan');
+const path = require('path');
+const app = express();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// Models
+const users = require('./models/Users.js');
 
-var app = express();
+// Mongoose connection to MongoDB and Collection name declaration
+mongoose.connect('mongodb://localhost/PushApp');
 
-// view engine setup
-app.engine('dust', adaro.dust());
-app.set('views', path.join(__dirname, 'views'));
+// Dust views rendering engine
 app.set('view engine', 'dust');
+app.set('views', __dirname + '/views');
+app.engine('dust', dust.dust);
 
+// Configure app
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// Override with POST having ?_method=DELETE or ?_method=PUT
+app.use(methodOverride('_method'));
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.text());
+app.use(bodyParser.urlencoded({extended: true}));
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// Initialize routers here
+const routers = require('./routes/routers');
+app.use('/', routers.root);
+app.use('/users', routers.users);
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+// Catch 404 and forward to error handler
+// This should be configured after all 200 routes
+app.use(function (req, res, next) {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
 module.exports = app;
