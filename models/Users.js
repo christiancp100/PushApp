@@ -8,8 +8,24 @@ const UsersSchema = exports.UsersSchema = new Schema({
   photo: {type: String},
   birthday: {type: Date, required: true},
   sex: {type: String},
-  email: {type: String, required: true},
-  phone: {type: String}
+  height: {type: Number},
+  weight: {type: Number},
+  bmi: {type: Number},
+  unitSystem: {type: String},
+  contactInfo: {
+    email: {type: String, required: true},
+    phone: {type: String},
+    address1: {type: String},
+    address2: {type: String},
+    city: {type: String},
+    state: {type: String},
+    zipCode: {type: String},
+    country: {type: String}
+  },
+  currency: {type: String},
+  localization: {type: String},
+  creationDate: {type: Date},
+  accessDate: [{type: Date}]
 });
 
 mongoose.model('Users', UsersSchema);
