@@ -48,20 +48,21 @@ router.post('/new', function (req, res) {
         height: req.body.height,
         weight: req.body.weight,
         bmi: req.body.bmi,
-        unitSystem: req.body.unitSystem || 'metric',
+        unitSystem: req.body.unitSystem,
         contactInfo: {
           email: req.body.contactInfo.email,
-          phone: req.body.contactInfo.email,
-          address1: req.body.contactInfo.phone,
-          address2: req.body.contactInfo.phone,
-          city: req.body.contactInfo.phone,
-          state: req.body.contactInfo.phone,
-          zipCode: req.body.contactInfo.phone,
-          country: req.body.contactInfo.phone,
+          phone: req.body.contactInfo.phone,
+          address1: req.body.contactInfo.address1,
+          address2: req.body.contactInfo.address2,
+          city: req.body.contactInfo.city,
+          state: req.body.contactInfo.state,
+          zipCode: req.body.contactInfo.zipCode,
+          country: req.body.contactInfo.country,
         },
-        currency: req.body.localization,
-        localization: req.body.localization || "en-US",
-        creationDate: Date.now()
+        currency: req.body.currency,
+        localization: req.body.localization,
+        creationDate: Date.now(),
+        authenticationProvider: req.body.authenticationProvider
       });
 
       user.save().then((saved) => {
@@ -83,39 +84,7 @@ router.post('/new', function (req, res) {
   }
 });
 
-// // GET by ID
-// router.get('/:id', function (req, res) {
-//   if (mongoose.Types.ObjectId.isValid(req.params.id)) {
-//     if (req.accepts("json")) {
-//       Users.findById({_id: req.params.id})
-//         .then((user) => {
-//           console.log('Looking for user with ID: ' + req.params.id);
-//           if (user != null) {
-//             res = setResponse('json', 200, res, user);
-//           } else {
-//             //not found
-//             res = setResponse('error', 404, res, {Error: "Not found!"});
-//           }
-//           res.end();
-//         })
-//         .catch((err) => {
-//           res = setResponse('error', 500, res, err.message);
-//           res.end();
-//         });
-//     } else {
-//       //not acceptable
-//       res.status(406);
-//       res.json({Error: "Request not acceptable"});
-//       res.end();
-//     }
-//   } else {
-//     res = setResponse('error', 404, res, {Error: "Invalid ID!"});
-//     res.end();
-//   }
-// });
-
 // Search for and users
-
 router.get('/search', function (req, res) {
   const filter = getFilter(req);
   Users.find({})
@@ -168,7 +137,63 @@ router.get('/search', function (req, res) {
     });
 });
 
-// Creates filter
+// Edit an user
+router.put('/edit:id', function (req, res) {
+  if (req.accepts("json")) {
+    if (!'id' in req.body) ;
+    res.end();
+  } else {
+    console.log('Searching for favorite with ID: ' + req.params.id + '.');
+    Users.findById({_id: req.params.id})
+      .then((found) => {
+          if (found != null) {
+            // found.firstName = req.body.firstName;
+            // found.lastName = req.body.lastName;
+            found.description = req.body.description;
+            found.photo = req.body.photo;
+            found.birthday = req.body.birthday;
+            found.sex = req.body.sex;
+            found.height = req.body.height;
+            found.weight = req.body.weight;
+            found.bmi = req.body.bmi;
+            found.unitSystem = req.body.unitSystem;
+            found.contactInfo.email = req.body.contactInfo.email;
+            found.contactInfo.phone = req.body.contactInfo.phone;
+            found.contactInfo.address1 = req.body.contactInfo.address1;
+            found.contactInfo.address2 = req.body.contactInfo.address2;
+            found.contactInfo.city = req.body.contactInfo.city;
+            found.contactInfo.state = req.body.contactInfo.state;
+            found.contactInfo.zipCode = req.body.contactInfo.zipCode;
+            found.contactInfo.country = req.body.contactInfo.country;
+            found.currency = req.body.currency;
+            found.localization = req.body.localization;
+            // found.authenticationProvider = req.body.authenticationProvider;
+            return found.save()
+          }
+        },
+        (err) => {
+          res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
+        })
+      .then((saved) => {
+        console.log('Favorite with ID: ' + req.params.favoriteid + ' updated!');
+        if (req.accepts("text/html")) {
+          res = setResponse('html', 201, res);
+          res.redirect('/');
+        } else if (req.accepts("application/json")) {
+          res = setResponse('json', 201, res, saved);
+          res.end();
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        res.status(500);
+        res.end();
+      });
+  }
+});
+
+
+// Creates filter for searching users on the database
 function getFilter(req) {
   const filter = {};
   let request;
@@ -207,66 +232,7 @@ function getFilter(req) {
   }
 }
 
-// // Creates filter
-// function getFilter(req) {
-//   const filter = {};
-//
-//   // Filter by query parameters
-//   if (req.query !== undefined) {
-//     // Filter by user ID
-//     if (req.query.id !== undefined && mongoose.Types.ObjectId.isValid(req.query.id)) {
-//       filter._id = req.query.id;
-//     }
-//
-//     // Filter by user's last name
-//     if (req.query.lastName !== undefined) {
-//       filter.lastName = req.query.lastName;
-//     }
-//
-//     // Filter by user's first name
-//     if (req.query.firstName !== undefined) {
-//       filter.firstName = req.query.firstName;
-//     }
-//
-//     // Search by country
-//     if (req.query.country !== undefined) {
-//       filter.country = req.query.country;
-//     }
-//     // Search by sex
-//     if (req.query.sex !== undefined) {
-//       filter.sex = req.query.sex;
-//     }
-//   }
-//
-//   // Filter by body parameters
-//   else if (req.body !== undefined) {
-//     // Filter by user ID only
-//     if (req.body.id !== undefined && mongoose.Types.ObjectId.isValid(req.body.id)) {
-//       filter._id = req.body.id;
-//     }
-//
-//     // Filter by user's last name
-//     if (req.body.lastName !== undefined) {
-//       filter.lastName = req.body.lastName;
-//     }
-//
-//     // Filter by user's first name
-//     if (req.body.firstName !== undefined) {
-//       filter.firstName = req.body.firstName;
-//     }
-//
-//     // Search by country
-//     if (req.body.country !== undefined) {
-//       filter.country = req.body.country;
-//     }
-//     // Search by sex
-//     if (req.body.sex !== undefined) {
-//       filter.sex = req.body.sex;
-//     }
-//   }
-//   return filter;
-// }
-
+// Creates custom responses
 function setResponse(type, code, res, msg) {
   res.status(code);
   switch (type) {

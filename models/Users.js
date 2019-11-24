@@ -11,7 +11,7 @@ const UsersSchema = exports.UsersSchema = new Schema({
   height: {type: Number},
   weight: {type: Number},
   bmi: {type: Number},
-  unitSystem: {type: String},
+  unitSystem: {type: String, default: 'metric'},
   contactInfo: {
     email: {type: String, required: true},
     phone: {type: String},
@@ -23,9 +23,10 @@ const UsersSchema = exports.UsersSchema = new Schema({
     country: {type: String}
   },
   currency: {type: String},
-  localization: {type: String},
-  creationDate: {type: Date},
-  accessDate: [{type: Date}]
+  localization: {type: String, default: 'en-US'},
+  creationDate: {type: Date, default: Date.now()},
+  accessHistory: {type: [Date], default: []},
+  authenticationProvider: {type: String}
 });
 
 mongoose.model('Users', UsersSchema);
