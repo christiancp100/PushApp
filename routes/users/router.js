@@ -189,6 +189,7 @@ function getFilter(req) {
     request = req.query;
   }
 
+  
   if (request !== undefined) {
     // Filter by user ID
     if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
