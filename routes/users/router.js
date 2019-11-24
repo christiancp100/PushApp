@@ -115,35 +115,26 @@ router.post('/new', function (req, res) {
 // });
 
 // Search for and users
+
 router.get('/search', function (req, res) {
   const filter = getFilter(req);
   Users.find({})
     .then((users) => {
       let result = users.filter((o) => {
         if (filter._id) {
-          console.log("object:  " + o._id + " | " + filter._id);
-          return (filter._id == o._id);
-        }
-        if (filter._id && filter.firstName && filter.lastName) {
-          return (filter._id == o._id);
-        }
-        if (filter._id && !filter.firstName && !filter.lastName) {
-          return (filter._id == o._id && filter.firstName == o.firstName && filter.lastName == o.lastName);
-        }
-        if (filter.firstName && filter.lastName) {
-          return (filter.firstName == o.firstName && filter.lastName == o.lastName);
+          return (filter._id.toLowerCase() === o._id).toLowerCase();
         }
         if (filter.firstName) {
-          return (filter.firstName == o.firstName);
+          return (filter.firstName.toLowerCase() === o.firstName.toLowerCase());
         }
         if (filter.lastName) {
-          return (filter.lastName == o.lastName);
+          return (filter.lastName.toLowerCase() === o.lastName.toLowerCase());
         }
-        if (filter.sex && filter.sex) {
-          return (filter.sex == o.sex);
+        if (filter.sex) {
+          return (filter.sex.toLowerCase() === o.sex.toLowerCase());
         }
-        if (filter.country && filter.country) {
-          return (filter.country == o.contactInfo.country);
+        if (filter.country) {
+          return (filter.country.toLowerCase() === o.contactInfo.country.toLowerCase());
         } else {
           return false;
         }
@@ -187,7 +178,7 @@ function getFilter(req) {
   } else if (Object.keys(req.query).length > 0) {
     request = req.query;
   }
-  
+
   if (request !== undefined) {
     // Filter by user ID
     if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
