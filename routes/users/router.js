@@ -8,17 +8,26 @@ const Users = mongoose.model('Users');
 
 // GET all
 router.get('/', function (req, res) {
-  Users.find()
+  req.body.isDeleted = false;
+  const filter = getFilter(req);
+  Users.find({})
     .then((users) => {
+      let result = users.filter((o) => {
+        if (!filter.isDeleted) {
+          return (filter.isDeleted === o.isDeleted);
+        } else {
+          return false;
+        }
+      });
       if (req.accepts("text/html")) {
         // let usersModel = {
-        //   favorites: users,
+        //   users: users,
         //   title: "My Canvas"
         // };
-        // res.render("users", usersModel);
+        // res.render("result", usersModel);
         res.end();
       } else if (req.accepts("application/json")) {
-        res = setResponse('json', 200, res, users);
+        res = setResponse('json', 200, res, result);
       } else {
         res.status(400);
       }
@@ -35,7 +44,7 @@ router.post('/new', function (req, res) {
   if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
     console.log('Creating new users...')
     if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
-      res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, and phone number must be provided"});
+      res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex  must be provided"});
       res.end();
     } else {
       const user = new Users({
@@ -49,31 +58,30 @@ router.post('/new', function (req, res) {
         weight: req.body.weight,
         bmi: req.body.bmi,
         unitSystem: req.body.unitSystem,
-        contactInfo: {
-          email: req.body.contactInfo.email,
-          phone: req.body.contactInfo.phone,
-          address1: req.body.contactInfo.address1,
-          address2: req.body.contactInfo.address2,
-          city: req.body.contactInfo.city,
-          state: req.body.contactInfo.state,
-          zipCode: req.body.contactInfo.zipCode,
-          country: req.body.contactInfo.country,
-        },
+        email: req.body.email,
+        phone: req.body.phone,
+        address1: req.body.address1,
+        address2: req.body.address2,
+        city: req.body.city,
+        state: req.body.state,
+        zipCode: req.body.zipCode,
+        country: req.body.country,
         currency: req.body.currency,
         localization: req.body.localization,
         creationDate: Date.now(),
         authenticationProvider: req.body.authenticationProvider
       });
 
-      user.save().then((saved) => {
-        if (req.accepts("text/html")) {
-          res = setResponse('html', 201, res);
-          res.redirect('/');
-        } else if (req.accepts("application/json")) {
-          res = setResponse('json', 201, res, saved);
-        }
-        res.end();
-      })
+      user.save()
+        .then((saved) => {
+          if (req.accepts("text/html")) {
+            // res = setResponse('html', 201, res);
+            res.redirect('/');
+          } else if (req.accepts("application/json")) {
+            res = setResponse('json', 201, res, saved);
+          }
+          res.end();
+        })
         .catch((err) => {
           res.status(500).end();
         });
@@ -91,7 +99,7 @@ router.get('/search', function (req, res) {
     .then((users) => {
       let result = users.filter((o) => {
         if (filter._id) {
-          return (filter._id.toLowerCase() === o._id).toLowerCase();
+          return (filter._id.toLowerCase() === o._id.toLowerCase());
         }
         if (filter.firstName) {
           return (filter.firstName.toLowerCase() === o.firstName.toLowerCase());
@@ -103,7 +111,7 @@ router.get('/search', function (req, res) {
           return (filter.sex.toLowerCase() === o.sex.toLowerCase());
         }
         if (filter.country) {
-          return (filter.country.toLowerCase() === o.contactInfo.country.toLowerCase());
+          return (filter.country.toLowerCase() === o.country.toLowerCase());
         } else {
           return false;
         }
@@ -112,7 +120,6 @@ router.get('/search', function (req, res) {
       if (result.length > 0) {
         if (req.accepts("html")) {
           res.status(200);
-          //xx
           let myFav = [];
           // let usersModel = {
           //   favorites: users,
@@ -138,60 +145,96 @@ router.get('/search', function (req, res) {
 });
 
 // Edit an user
-router.put('/edit:id', function (req, res) {
+router.put('/edit/:id', function (req, res) {
   if (req.accepts("json")) {
-    if (!'id' in req.body) ;
-    res.end();
-  } else {
-    console.log('Searching for favorite with ID: ' + req.params.id + '.');
-    Users.findById({_id: req.params.id})
-      .then((found) => {
-          if (found != null) {
-            // found.firstName = req.body.firstName;
-            // found.lastName = req.body.lastName;
-            found.description = req.body.description;
-            found.photo = req.body.photo;
-            found.birthday = req.body.birthday;
-            found.sex = req.body.sex;
-            found.height = req.body.height;
-            found.weight = req.body.weight;
-            found.bmi = req.body.bmi;
-            found.unitSystem = req.body.unitSystem;
-            found.contactInfo.email = req.body.contactInfo.email;
-            found.contactInfo.phone = req.body.contactInfo.phone;
-            found.contactInfo.address1 = req.body.contactInfo.address1;
-            found.contactInfo.address2 = req.body.contactInfo.address2;
-            found.contactInfo.city = req.body.contactInfo.city;
-            found.contactInfo.state = req.body.contactInfo.state;
-            found.contactInfo.zipCode = req.body.contactInfo.zipCode;
-            found.contactInfo.country = req.body.contactInfo.country;
-            found.currency = req.body.currency;
-            found.localization = req.body.localization;
-            // found.authenticationProvider = req.body.authenticationProvider;
-            return found.save()
+    if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(400).end();
+    } else {
+      console.log('Searching for user with ID: ' + req.params.id + '.');
+      Users.findById({_id: req.params.id})
+        .then((found) => {
+            if (found != null) {
+              // found.firstName = req.body.firstName;
+              // found.lastName = req.body.lastName;
+              found.description = req.body.description;
+              found.photo = req.body.photo;
+              found.birthday = req.body.birthday;
+              found.sex = req.body.sex;
+              found.height = req.body.height;
+              found.weight = req.body.weight;
+              found.bmi = req.body.bmi;
+              found.unitSystem = req.body.unitSystem;
+              found.email = req.body.email;
+              found.phone = req.body.phone;
+              found.address1 = req.body.address1;
+              found.address2 = req.body.address2;
+              found.city = req.body.city;
+              found.state = req.body.state;
+              found.zipCode = req.body.zipCode;
+              found.country = req.body.country;
+              found.currency = req.body.currency;
+              found.localization = req.body.localization;
+              // found.authenticationProvider = req.body.authenticationProvider;
+              return found.save()
+            }
+          },
+          (err) => {
+            res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
+          })
+        .then((saved) => {
+          console.log('User with ID: ' + req.params.id + ' updated!');
+          if (req.accepts("text/html")) {
+            res = setResponse('html', 201, res);
+            res.redirect('/');
+          } else if (req.accepts("application/json")) {
+            res = setResponse('json', 201, res, saved);
+            res.end();
           }
-        },
-        (err) => {
-          res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
         })
-      .then((saved) => {
-        console.log('Favorite with ID: ' + req.params.favoriteid + ' updated!');
-        if (req.accepts("text/html")) {
-          res = setResponse('html', 201, res);
-          res.redirect('/');
-        } else if (req.accepts("application/json")) {
-          res = setResponse('json', 201, res, saved);
+        .catch((err) => {
+          console.log(err)
+          res.status(500);
           res.end();
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-        res.status(500);
-        res.end();
-      });
+        });
+    }
   }
 });
 
+// Soft delete an user
+router.delete('/delete/:id', function (req, res) {
+  if (req.accepts("json")) {
+    if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(400).end();
+    } else {
+      console.log('Searching for user with ID: ' + req.params.id + '.');
+      Users.findById({_id: req.params.id})
+        .then((found) => {
+            if (found != null) {
+              found.isDeleted = true;
+              return found.save()
+            }
+          },
+          (err) => {
+            res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
+          })
+        .then((saved) => {
+          console.log('User with ID: ' + req.params.id + ' was soft deleted!');
+          if (req.accepts("text/html")) {
+            res = setResponse('html', 201, res);
+            res.redirect('/');
+          } else if (req.accepts("application/json")) {
+            res = setResponse('json', 201, res, saved);
+            res.end();
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          res.status(500);
+          res.end();
+        });
+    }
+  }
+});
 
 // Creates filter for searching users on the database
 function getFilter(req) {
@@ -227,6 +270,10 @@ function getFilter(req) {
     // Search by sex
     if (request.sex !== undefined) {
       filter.sex = request.sex;
+    }
+    // Search non deleted
+    if (request.isDeleted !== undefined) {
+      filter.isDeleted = request.isDeleted;
     }
     return filter;
   }
