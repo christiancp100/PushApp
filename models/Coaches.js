@@ -41,21 +41,28 @@ const CoachesSchema = exports.CoachesSchema = new Schema({
     photo: {type: String},
     birthday: {type: String, required: true},
     sex: {type: String, required: true},
-    contactInfo: {
-        email: {type: String, required: true},
-        phone: {type: String},
-        address1: {type: String},
-        address2: {type: String},
-        city: {type: String, required: true},
-        state: {type: String, required: true},
-        zipCode: {type: String, required: true},
-        country: {type: String, required: true},
-        certificate: [Certificate]
-    },
+    // contactInfo: {
+    //     email: {type: String, required: true},
+    //     phone: {type: String},
+    //     address1: {type: String},
+    //     address2: {type: String},
+    //     city: {type: String, required: true},
+    //     state: {type: String, required: true},
+    //     zipCode: {type: String, required: true},
+    //     country: {type: String, required: true},
+    //     certificate: [Certificate]
+    // },
+    email: {type: String, required: true},
+    phone: {type: Number},
+    certificate: [Certificate],
+    city: {type: String, required: true},
+    state: {type: String, required: true},
+    zipCode: {type: String, required: true},
+    country: {type: String, required: true},
     offer: [Fee],
     rating: [Rating],
-    currency: {type: String},
     //to discuss
+    // currency: {type: String},
     // localization: {type: String},
     schedule: [Schedule]
 });

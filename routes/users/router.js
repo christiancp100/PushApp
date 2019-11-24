@@ -35,7 +35,7 @@ router.post('/', function (req, res) {
       res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, and phone number must be provided"});
       res.end();
     } else {
-      const user = new Users({
+      const coach = new Coaches({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,
@@ -46,7 +46,7 @@ router.post('/', function (req, res) {
         phone: req.body.phone
       });
 
-      user.save().then((saved) => {
+      coach.save().then((saved) => {
         if (req.accepts("text/html")) {
           res = setResponse('html', 201, res);
           res.redirect('/');
