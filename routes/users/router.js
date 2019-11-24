@@ -119,7 +119,6 @@ router.get('/search', function (req, res) {
   const filter = getFilter(req);
   Users.find({})
     .then((users) => {
-      console.log("filter: " + filter._id);
       let result = users.filter((o) => {
         if (filter._id) {
           console.log("object:  " + o._id + " | " + filter._id);
@@ -183,12 +182,11 @@ function getFilter(req) {
   const filter = {};
   let request;
 
-  if (req.body !== undefined) {
+  if (Object.keys(req.body).length > 0) {
     request = req.body;
-  } else if (req.query !== undefined) {
+  } else if (Object.keys(req.query).length > 0) {
     request = req.query;
   }
-
   
   if (request !== undefined) {
     // Filter by user ID
