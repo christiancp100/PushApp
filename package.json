@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "start": "DEBUG='push-app-server' bin/www",
+    "nodemon": "nodemon bin/www",
     "test": "npm run test-mocha",
     "test-mocha": "./node_modules/mocha/bin/mocha -R spec ./test/routes ./test/hypermedia",
     "dustc": "cd ./views; dustc *.dust partials/*.dust -o ../public/js/views.js"
