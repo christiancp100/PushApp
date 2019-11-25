@@ -8,7 +8,7 @@ const Coach = mongoose.model('Coach');
 
 // GET all coaches
 function getCoaches(req, callback) {
-    Coaches.find({})
+    Coach.find({})
       .then(function (err, found) {
         if (!err) {
           if (found.length != 0) {

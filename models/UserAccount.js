@@ -7,7 +7,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     description: {type: String},
     photo: {type: String},
     birthday: {type: Date, required: true},
-    sex: {type: String, required: true,
+    sex: {type: String, required: true},
     email: {type: String, required: true},
     phone: {type: String, required: true},
     address1: {type: String, required: true},
@@ -19,7 +19,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     currency: {type: String},
     localization: {type: String, default: 'en-US'},
     creationDate: {type: Date, default: Date.now()},
-    accessHistory: {type: [Date], default: () => []},
-})
+    accessHistory: {type: [Date], default: () => []}
+});
 
 mongoose.model('UserAccount', UserAccountSchema);
