@@ -4,13 +4,13 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Users = mongoose.model('Users');
+const User = mongoose.model('User');
 
 // GET all
 router.get('/', function (req, res) {
   req.body.isDeleted = false;
   const filter = getFilter(req);
-  Users.find({})
+  User.find({})
     .then((users) => {
       let result = users.filter((o) => {
         if (!filter.isDeleted) {
@@ -47,7 +47,7 @@ router.post('/new', function (req, res) {
       res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex must be provided"});
       res.end();
     } else {
-      const user = new Users({
+      const user = new User({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,
@@ -95,7 +95,7 @@ router.post('/new', function (req, res) {
 // Search for and users
 router.get('/search', function (req, res) {
   const filter = getFilter(req);
-  Users.find({})
+  User.find({})
     .then((users) => {
       let result = users.filter((o) => {
         if (filter._id) {
@@ -150,7 +150,7 @@ router.put('/edit/:id', function (req, res) {
       res.status(400).end();
     } else {
       console.log('Searching for user with ID: ' + req.params.id + '.');
-      Users.findById({_id: req.params.id})
+      User.findById({_id: req.params.id})
         .then((found) => {
             if (found != null) {
               // found.firstName = req.body.firstName;
@@ -206,7 +206,7 @@ router.delete('/delete/:id', function (req, res) {
       res.status(400).end();
     } else {
       console.log('Searching for user with ID: ' + req.params.id + '.');
-      Users.findById({_id: req.params.id})
+      User.findById({_id: req.params.id})
         .then((found) => {
             if (found != null) {
               found.isDeleted = true;

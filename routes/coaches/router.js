@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Coaches = mongoose.model('Coaches');
+const Coach = mongoose.model('Coach');
 
 // GET all coaches
 function getCoaches(req, callback) {
@@ -35,7 +35,7 @@ router.post('/', function (req, res) {
       res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, and phone number must be provided"});
       res.end();
     } else {
-      const coach = new Coaches({
+      const coach = new Coach({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,
