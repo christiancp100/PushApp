@@ -11,6 +11,7 @@ const app = express();
 // Models
 const users = require('./models/Users.js');
 const coaches = require('./models/Coaches.js');
+const access = require('./models/Access.js');
 
 // Mongoose connection to MongoDB and Collection name declaration
 mongoose.connect('mongodb://localhost/PushApp');
@@ -37,6 +38,7 @@ const routers = require('./routes/routers');
 app.use('/', routers.root);
 app.use('/users', routers.users);
 app.use('/coaches', routers.coaches);
+//app.use('/access', routers.access);
 
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes
