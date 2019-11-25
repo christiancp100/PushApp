@@ -79,8 +79,9 @@
     .footer-logo{
         width: 20rem;
         height: auto;
-        margin-left: 0;
+        margin: auto;
         transform: unset;
+        display: block;
     }
 
     .footer-nav  ul > li, .footer-nav a{
@@ -97,5 +98,4 @@
         left: 50%;
         transform: translateX(-50%);
     }
-
 }
