@@ -51,7 +51,7 @@ router.post('/new', function (req, res) {
       res.end();
     } else {
       const client = new Client({
-        access: new Access({username : req.body.username, password: req.body.password})
+        access: new Access({username : req.body.username, password: req.body.password}),
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,
