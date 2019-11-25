@@ -5,7 +5,6 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-{!TODO use pattern field inside the tag!}
 <form action="/new" method="post" enctype="application/x-www-form-urlencoded">
     <div>
         <label>First name:
@@ -114,7 +113,7 @@
     <div>
         <label>Password:
             <input title="The password should contain at least one capital letter, one number and be al least 6 character long"
-                   required pattern="((?=.*[a-z]) (?=.*[A-Z]) (?=.*[0-9]) (?=.{6,}))" type="password" name="password"/>
+                   required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])" type="password" name="password"/>
         </label>
     </div>
     <div>
