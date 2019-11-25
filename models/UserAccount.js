@@ -19,7 +19,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     currency: {type: String},
     localization: {type: String, default: 'en-US'},
     creationDate: {type: Date, default: Date.now()},
-    accessHistory: {type: [Date], default: () => []},
-})
+    accessHistory: {type: [Date], default: () => []}
+});
 
-mongoose.model('UserAccountSchema', UserAccountSchema);
+mongoose.model('UserAccount', UserAccountSchema);

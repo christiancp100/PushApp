@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Users = mongoose.model('Users');
+const Users = mongoose.model('User');
 const bcrypt = require('bcrypt');
 const Access = mongoose.model('Access');
 let validator = require('../../models/Access');
@@ -13,7 +13,7 @@ let validator = require('../../models/Access');
 router.get('/', function (req, res) {
   req.body.isDeleted = false;
   const filter = getFilter(req);
-  Users.find({})
+  User.find({})
     .then((users) => {
       let result = users.filter((o) => {
         if (!filter.isDeleted) {
@@ -100,7 +100,7 @@ router.post('/new', function (req, res) {
 // Search for and users
 router.get('/search', function (req, res) {
   const filter = getFilter(req);
-  Users.find({})
+  User.find({})
     .then((users) => {
       let result = users.filter((o) => {
         if (filter._id) {
@@ -155,7 +155,7 @@ router.put('/edit/:id', function (req, res) {
       res.status(400).end();
     } else {
       console.log('Searching for user with ID: ' + req.params.id + '.');
-      Users.findById({_id: req.params.id})
+      User.findById({_id: req.params.id})
         .then((found) => {
             if (found != null) {
               // found.firstName = req.body.firstName;
@@ -211,7 +211,7 @@ router.delete('/delete/:id', function (req, res) {
       res.status(400).end();
     } else {
       console.log('Searching for user with ID: ' + req.params.id + '.');
-      Users.findById({_id: req.params.id})
+      User.findById({_id: req.params.id})
         .then((found) => {
             if (found != null) {
               found.isDeleted = true;
