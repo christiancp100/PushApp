@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // Initialize routers here
 const routers = require('./routes/routers');
 app.use('/', routers.root);
-app.use('/users', routers.user);
+app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
 
 // Catch 404 and forward to error handler
