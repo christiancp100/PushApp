@@ -51,6 +51,7 @@ router.post('/new', function (req, res) {
       res.end();
     } else {
       const user = new Users({
+        access: new Access({username : req.body.username, password: req.body.password}),
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,

@@ -7,7 +7,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     description: {type: String},
     photo: {type: String},
     birthday: {type: Date, required: true},
-    sex: {type: String, required: true,
+    sex: {type: String, required: true},
     email: {type: String, required: true},
     phone: {type: String, required: true},
     address1: {type: String, required: true},
