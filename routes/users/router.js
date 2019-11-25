@@ -6,55 +6,82 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Users = mongoose.model('Users');
 
-// GET all users
-function getUsers(req, callback) {
+// GET all
+router.get('/', function (req, res) {
+  req.body.isDeleted = false;
+  const filter = getFilter(req);
   Users.find({})
-    .then(function (err, found) {
-      if (!err) {
-        if (found.length != 0) {
-          console.log('Users collection retrieved from database.');
-          callback(found);
+    .then((users) => {
+      let result = users.filter((o) => {
+        if (!filter.isDeleted) {
+          return (filter.isDeleted === o.isDeleted);
         } else {
-          console.log('Empty users collection retrieved from database.');
-          callback(found);
+          return false;
         }
+      });
+      if (req.accepts("text/html")) {
+        // let usersModel = {
+        //   users: users,
+        //   title: "My Canvas"
+        // };
+        // res.render("result", usersModel);
+        res.end();
+      } else if (req.accepts("application/json")) {
+        res = setResponse('json', 200, res, result);
       } else {
-        throw err;
+        res.status(400);
       }
+      res.end();
     })
     .catch((err) => {
-      console.log("Error:  " + err.message);
+      res.status(500);
+      res.end();
     });
-}
+});
 
 // Creates a new users
-router.post('/', function (req, res) {
-  if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
+router.post('/new', function (req, res) {
+  if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
     console.log('Creating new users...')
     if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
-      res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, and phone number must be provided"});
+      res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex must be provided"});
       res.end();
     } else {
-      const coach = new Coaches({
+      const user = new Users({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,
         photo: req.body.photo,
         birthday: req.body.birthday,
         sex: req.body.sex,
+        height: req.body.height,
+        weight: req.body.weight,
+        bmi: req.body.bmi,
+        unitSystem: req.body.unitSystem,
         email: req.body.email,
-        phone: req.body.phone
+        phone: req.body.phone,
+        address1: req.body.address1,
+        address2: req.body.address2,
+        city: req.body.city,
+        state: req.body.state,
+        zipCode: req.body.zipCode,
+        country: req.body.country,
+        currency: req.body.currency,
+        localization: req.body.localization,
+        creationDate: Date.now(),
+        authenticationProvider: req.body.authenticationProvider
       });
 
-      coach.save().then((saved) => {
-        if (req.accepts("text/html")) {
-          res = setResponse('html', 201, res);
-          res.redirect('/');
-        } else if (req.accepts("application/json")) {
-          res = setResponse('json', 201, res, saved);
-        }
-        res.end();
-      })
+      user.save()
+        .then((saved) => {
+          if (req.accepts("text/html")) {
+            // res = setResponse('html', 201, res);
+            res.redirect('/');
+          } else if (req.accepts("application/json")) {
+            res = setResponse('json', 201, res, saved);
+          }
+          res.end();
+        })
         .catch((err) => {
           res.status(500).end();
         });
@@ -69,18 +96,22 @@ router.post('/', function (req, res) {
 router.get('/search', function (req, res) {
   const filter = getFilter(req);
   Users.find({})
-    .then((favorites) => {
-      let result = favorites.filter((o) => {
-        if (filter._id && filter.name) {
-          return (filter.name == o.name && filter._id == o._id);
-        } else if (filter._id) {
-          return (filter._id == o._id);
-        } else if (filter.name) {
-          return (filter.name == o.name);
-        } else if (filter._id && filter.name) {
-          return (filter.bookmarked == o.bookmarked);
-        } else {
-          return false;
+    .then((users) => {
+      let result = users.filter((o) => {
+        if (filter._id) {
+          return (filter._id.toLowerCase() === o._id.toLowerCase());
+        }
+        if (filter.firstName) {
+          return (filter.firstName.toLowerCase() === o.firstName.toLowerCase());
+        }
+        if (filter.lastName) {
+          return (filter.lastName.toLowerCase() === o.lastName.toLowerCase());
+        }
+        if (filter.sex) {
+          return (filter.sex.toLowerCase() === o.sex.toLowerCase());
+        }
+        if (filter.country) {
+          return (filter.country.toLowerCase() === o.country.toLowerCase());
         }
       });
 
@@ -88,8 +119,14 @@ router.get('/search', function (req, res) {
         if (req.accepts("html")) {
           res.status(200);
           let myFav = [];
-          myFav.push(result[0]);
-          res.render("favorites", {favorites: myFav});
+          // let usersModel = {
+          //   favorites: users,
+          //   title: "My Canvas"
+          // };
+          // res.render("users", usersModel);
+
+          // myFav.push(result[0]);
+          // res.render("favorites", {favorites: myFav});
         } else if (req.accepts("json")) {
           res = setResponse('json', 200, res, result);
         }
@@ -103,36 +140,147 @@ router.get('/search', function (req, res) {
       res.status(500);
       res.end();
     });
+})
+;
+
+// Edit an user
+router.put('/edit/:id', function (req, res) {
+  if (req.accepts("json")) {
+    if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(400).end();
+    } else {
+      console.log('Searching for user with ID: ' + req.params.id + '.');
+      Users.findById({_id: req.params.id})
+        .then((found) => {
+            if (found != null) {
+              // found.firstName = req.body.firstName;
+              // found.lastName = req.body.lastName;
+              found.description = req.body.description;
+              found.photo = req.body.photo;
+              found.birthday = req.body.birthday;
+              found.sex = req.body.sex;
+              found.height = req.body.height;
+              found.weight = req.body.weight;
+              found.bmi = req.body.bmi;
+              found.unitSystem = req.body.unitSystem;
+              found.email = req.body.email;
+              found.phone = req.body.phone;
+              found.address1 = req.body.address1;
+              found.address2 = req.body.address2;
+              found.city = req.body.city;
+              found.state = req.body.state;
+              found.zipCode = req.body.zipCode;
+              found.country = req.body.country;
+              found.currency = req.body.currency;
+              found.localization = req.body.localization;
+              // found.authenticationProvider = req.body.authenticationProvider;
+              return found.save()
+            }
+          },
+          (err) => {
+            res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
+          })
+        .then((saved) => {
+          console.log('User with ID: ' + req.params.id + ' updated!');
+          if (req.accepts("text/html")) {
+            res = setResponse('html', 201, res);
+            res.redirect('/');
+          } else if (req.accepts("application/json")) {
+            res = setResponse('json', 201, res, saved);
+            res.end();
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          res.status(500);
+          res.end();
+        });
+    }
+  }
 });
 
-// Creates filter
+// Soft delete an user
+router.delete('/delete/:id', function (req, res) {
+  if (req.accepts("json")) {
+    if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(400).end();
+    } else {
+      console.log('Searching for user with ID: ' + req.params.id + '.');
+      Users.findById({_id: req.params.id})
+        .then((found) => {
+            if (found != null) {
+              found.isDeleted = true;
+              return found.save()
+            }
+          },
+          (err) => {
+            res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
+          })
+        .then((saved) => {
+          console.log('User with ID: ' + req.params.id + ' was soft deleted!');
+          if (req.accepts("text/html")) {
+            res = setResponse('html', 201, res);
+            res.redirect('/');
+          } else if (req.accepts("application/json")) {
+            res = setResponse('json', 201, res, saved);
+            res.end();
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          res.status(500);
+          res.end();
+        });
+    }
+  }
+});
+
+// Creates filter for searching users on the database
 function getFilter(req) {
   const filter = {};
-  // Search by users ID
-  if (req.query._id != undefined && !mongoose.Types.ObjectId.isValid(req.query._id && req.query.firstName === undefined && req.query.lastName === undefined)) {
-    filter._id = req.query._id;
-    // Search by users ID, first name and last name
-  } else if (req.query._id !== undefined && req.query.firstName !== undefined && req.query.lastName !== undefined) {
-    filter._id = req.query._id;
-    filter.name = req.query.firstName;
-    filter.name = req.query.lastName;
-    // Search by users ID and last name
-  } else if (req.query._id !== undefined && req.query.firstName === undefined && req.query.lastName !== undefined) {
-    filter._id = req.query._id;
-    filter.name = req.query.lastName;
-  } else {
-    console.log('You need a valid users ID!');
-    throw Error('You need a valid users ID!');
+  let request;
+
+  if (Object.keys(req.body).length > 0) {
+    request = req.body;
+  } else if (Object.keys(req.query).length > 0) {
+    request = req.query;
   }
-  // Search by sex
-  if (req.params.sex !== undefined || req.query.sex !== undefined) {
-    filter.sex = req.params.sex;
-  } else if (req.query.sex !== undefined) {
-    filter.sex = req.query.sex;
+
+  if (request !== undefined) {
+    // Filter by user ID
+    if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
+      filter._id = request.id;
+    }
+
+    // Filter by user's last name
+    if (request.lastName !== undefined) {
+      filter.lastName = request.lastName;
+    }
+
+    // Filter by user's first name
+    if (request.firstName !== undefined) {
+      filter.firstName = request.firstName;
+    }
+
+    // Search by country
+    if (request.country !== undefined) {
+      filter.country = request.country;
+    }
+    // Search by sex
+    if (request.sex !== undefined) {
+      filter.sex = request.sex;
+    }
+    // Search non deleted
+    if (request.isDeleted === undefined) {
+      filter.isDeleted = false;
+    } else {
+      filter.isDeleted = request.isDeleted;
+    }
+    return filter;
   }
-  return filter;
 }
 
+// Creates custom responses
 function setResponse(type, code, res, msg) {
   res.status(code);
   switch (type) {
