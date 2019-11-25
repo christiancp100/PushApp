@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Users = mongoose.model('User');
+const Client = mongoose.model('Client');
 const bcrypt = require('bcrypt');
 const Access = mongoose.model('Access');
 let validator = require('../../models/Access');
@@ -13,9 +13,9 @@ let validator = require('../../models/Access');
 router.get('/', function (req, res) {
   req.body.isDeleted = false;
   const filter = getFilter(req);
-  User.find({})
-    .then((users) => {
-      let result = users.filter((o) => {
+  Client.find({})
+    .then((clients) => {
+      let result = clients.filter((o) => {
         if (!filter.isDeleted) {
           return (filter.isDeleted === o.isDeleted);
         } else {
@@ -50,8 +50,8 @@ router.post('/new', function (req, res) {
       res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex must be provided"});
       res.end();
     } else {
-      const user = new Users({
-        access: new Access({username : req.body.username, password: req.body.password}),
+      const client = new Client({
+        access: new Access({username : req.body.username, password: req.body.password})
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,
@@ -76,8 +76,8 @@ router.post('/new', function (req, res) {
         authenticationProvider: req.body.authenticationProvider
       });
       const salt = bcrypt.genSalt(10);
-      user.access.password = bcrypt(user.access.password, salt);
-      user.save()
+      client.access.password = bcrypt(client.access.password, salt);
+      client.save()
         .then((saved) => {
           if (req.accepts("text/html")) {
             // res = setResponse('html', 201, res);
@@ -100,9 +100,9 @@ router.post('/new', function (req, res) {
 // Search for and users
 router.get('/search', function (req, res) {
   const filter = getFilter(req);
-  User.find({})
-    .then((users) => {
-      let result = users.filter((o) => {
+  Client.find({})
+    .then((clients) => {
+      let result = clients.filter((o) => {
         if (filter._id) {
           return (filter._id.toLowerCase() === o._id.toLowerCase());
         }
@@ -155,7 +155,7 @@ router.put('/edit/:id', function (req, res) {
       res.status(400).end();
     } else {
       console.log('Searching for user with ID: ' + req.params.id + '.');
-      User.findById({_id: req.params.id})
+      Client.findById({_id: req.params.id})
         .then((found) => {
             if (found != null) {
               // found.firstName = req.body.firstName;
@@ -211,7 +211,7 @@ router.delete('/delete/:id', function (req, res) {
       res.status(400).end();
     } else {
       console.log('Searching for user with ID: ' + req.params.id + '.');
-      User.findById({_id: req.params.id})
+      Client.findById({_id: req.params.id})
         .then((found) => {
             if (found != null) {
               found.isDeleted = true;
