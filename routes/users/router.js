@@ -44,7 +44,7 @@ router.post('/new', function (req, res) {
   if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
     console.log('Creating new users...')
     if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
-      res = setResponse('json', 400, res, { Error: "First name, last name, birthday, and sex  must be provided" });
+      res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex  must be provided"});
       res.end();
     } else {
       const coach = new Coaches({
@@ -87,7 +87,7 @@ router.post('/new', function (req, res) {
         });
     }
   } else {
-    res = setResponse('json', 400, res, { Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed." });
+    res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
     res.end();
   }
 });
@@ -112,8 +112,6 @@ router.get('/search', function (req, res) {
         }
         if (filter.country) {
           return (filter.country.toLowerCase() === o.country.toLowerCase());
-        } else {
-          return false;
         }
       });
 
@@ -142,7 +140,8 @@ router.get('/search', function (req, res) {
       res.status(500);
       res.end();
     });
-});
+})
+;
 
 // Edit an user
 router.put('/edit/:id', function (req, res) {
@@ -151,35 +150,35 @@ router.put('/edit/:id', function (req, res) {
       res.status(400).end();
     } else {
       console.log('Searching for user with ID: ' + req.params.id + '.');
-      Users.findById({ _id: req.params.id })
+      Users.findById({_id: req.params.id})
         .then((found) => {
-          if (found != null) {
-            // found.firstName = req.body.firstName;
-            // found.lastName = req.body.lastName;
-            found.description = req.body.description;
-            found.photo = req.body.photo;
-            found.birthday = req.body.birthday;
-            found.sex = req.body.sex;
-            found.height = req.body.height;
-            found.weight = req.body.weight;
-            found.bmi = req.body.bmi;
-            found.unitSystem = req.body.unitSystem;
-            found.email = req.body.email;
-            found.phone = req.body.phone;
-            found.address1 = req.body.address1;
-            found.address2 = req.body.address2;
-            found.city = req.body.city;
-            found.state = req.body.state;
-            found.zipCode = req.body.zipCode;
-            found.country = req.body.country;
-            found.currency = req.body.currency;
-            found.localization = req.body.localization;
-            // found.authenticationProvider = req.body.authenticationProvider;
-            return found.save()
-          }
-        },
+            if (found != null) {
+              // found.firstName = req.body.firstName;
+              // found.lastName = req.body.lastName;
+              found.description = req.body.description;
+              found.photo = req.body.photo;
+              found.birthday = req.body.birthday;
+              found.sex = req.body.sex;
+              found.height = req.body.height;
+              found.weight = req.body.weight;
+              found.bmi = req.body.bmi;
+              found.unitSystem = req.body.unitSystem;
+              found.email = req.body.email;
+              found.phone = req.body.phone;
+              found.address1 = req.body.address1;
+              found.address2 = req.body.address2;
+              found.city = req.body.city;
+              found.state = req.body.state;
+              found.zipCode = req.body.zipCode;
+              found.country = req.body.country;
+              found.currency = req.body.currency;
+              found.localization = req.body.localization;
+              // found.authenticationProvider = req.body.authenticationProvider;
+              return found.save()
+            }
+          },
           (err) => {
-            res = setResponse('error', 404, res, { Error: 'Favorite not found!' });
+            res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
           })
         .then((saved) => {
           console.log('User with ID: ' + req.params.id + ' updated!');
@@ -207,15 +206,15 @@ router.delete('/delete/:id', function (req, res) {
       res.status(400).end();
     } else {
       console.log('Searching for user with ID: ' + req.params.id + '.');
-      Users.findById({ _id: req.params.id })
+      Users.findById({_id: req.params.id})
         .then((found) => {
-          if (found != null) {
-            found.isDeleted = true;
-            return found.save()
-          }
-        },
+            if (found != null) {
+              found.isDeleted = true;
+              return found.save()
+            }
+          },
           (err) => {
-            res = setResponse('error', 404, res, { Error: 'Favorite not found!' });
+            res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
           })
         .then((saved) => {
           console.log('User with ID: ' + req.params.id + ' was soft deleted!');
@@ -272,7 +271,9 @@ function getFilter(req) {
       filter.sex = request.sex;
     }
     // Search non deleted
-    if (request.isDeleted !== undefined) {
+    if (request.isDeleted === undefined) {
+      filter.isDeleted = false;
+    } else {
       filter.isDeleted = request.isDeleted;
     }
     return filter;
