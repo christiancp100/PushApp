@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 const Schema = mongoose.Schema;
 
 const Access = exports.Access = new Schema({
@@ -14,7 +14,7 @@ const Access = exports.Access = new Schema({
         maxlength: 256
     }
 });
-
+//todo a validator scheme
 function validateAccess(access) {
     const obj = {
         username : Joi.string().min(5).max(50).required(),

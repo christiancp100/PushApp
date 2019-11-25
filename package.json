@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "start": "DEBUG='push-app-server' bin/www",
+    "nodemon": "nodemon bin/www",
     "test": "npm run test-mocha",
     "test-mocha": "./node_modules/mocha/bin/mocha -R spec ./test/routes ./test/hypermedia",
     "dustc": "cd ./views; dustc *.dust partials/*.dust -o ../public/js/views.js"
@@ -20,7 +21,9 @@
     "Gyms"
   ],
   "dependencies": {
+    "@hapi/joi": "^16.1.8",
     "adaro": "^1.0.4",
+    "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "debug": "^4.1.1",
@@ -41,6 +44,7 @@
     "supertest": "^4.0.2"
   },
   "devDependencies": {
+    "joi": "^14.3.1",
     "mocha": "^4.0.1",
     "nyc": "^14.1.1",
     "should": "^13.1.3"
