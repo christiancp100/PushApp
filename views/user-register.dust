@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{title}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<form action="/register" method="post">
+    <div>
+        <label>First name:
+            <input type="text" name="firstName"/>
+        </label>
+    </div>
+    <div>
+        <label>Last name:
+            <input type="text" name="lastname"/>
+        </label>
+    </div>
+    <div>
+        <label>Description:
+            <input type="text" name="description"/>
+        </label>
+    </div>
+    <div>
+        <label>Choose yor photo:
+            <input type="file" name="image"/>
+        </label>
+    </div>
+    <div>
+        <label>birthday:
+            <input type="date" name="birthday"/>
+        </label>
+    </div>
+    <div>
+        <label>Sex:<br>
+            <input type="radio" name="gender" value="male"> Male<br>
+            <input type="radio" name="gender" value="female"> Female<br>
+            <input type="radio" name="gender" value="other"> Other
+        </label>
+    </div>
+    <div>
+        <label>Email:
+            <input type="email" name="email"/>
+        </label>
+    </div>
+    <div>
+        <label>Username:
+            <input type="text" name="username"/>
+        </label>
+    </div>
+    <div>
+        <label>Password:
+            <input type="password" name="password"/>
+        </label>
+    </div>
+    <div>
+        <input type="submit" value="Register"/>
+    </div>
+</form>
+</body>
+</html>
