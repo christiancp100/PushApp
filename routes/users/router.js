@@ -50,11 +50,6 @@ router.post('/new', function (req, res) {
       res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex  must be provided"});
       res.end();
     } else {
-      let accessed;
-
-      validator.validate(new Access({username : req.body.username, password: req.body.password}))
-          .catch((err) => new Error("Password or username are incorrect"))
-          .then((value) => accessed = value);
       const coach = new Coaches({
         access: accessed,
         firstName: req.body.firstName,
