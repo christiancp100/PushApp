@@ -44,10 +44,10 @@ router.post('/new', function (req, res) {
   if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
     console.log('Creating new users...')
     if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
-      res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex  must be provided"});
+      res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex must be provided"});
       res.end();
     } else {
-      const coach = new Coaches({
+      const user = new Users({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,
