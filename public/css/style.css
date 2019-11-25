@@ -1,8 +1,21 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+html {
+  box-sizing: border-box;
 }
 
-a {
-  color: #00B7FF;
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+  font-size: 10px;
+  font-family: "Poppins", "Lato", Arial, Helvetica, sans-serif;
+}
+
+a{
+  text-decoration: none;
+}
+
+@media only screen and (max-width: 875px) {
+  body{
+    width: 100vw;
+  }
 }
