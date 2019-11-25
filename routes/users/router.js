@@ -46,14 +46,11 @@ router.get('/', function (req, res) {
 router.post('/new', function (req, res) {
   if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
     console.log('Creating new users...');
-    //TODO a validator for every field
     if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
       res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex  must be provided"});
       res.end();
     } else {
       let accessed;
-
-      //todo change design to new documentation
 
       validator.validate(new Access({username : req.body.username, password: req.body.password}))
           .catch((err) => new Error("Password or username are incorrect"))
