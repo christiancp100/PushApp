@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Access = mongoose.model('Access');
+const access = require('./Access.js');
 
 const UsersSchema = exports.UsersSchema = new Schema({
-  access : Access,
+  access : access.Access,
   firstName: {type: String, required: true},
   lastName: {type: String, required: true},
   description: {type: String},
