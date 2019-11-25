@@ -6,7 +6,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Coach = require('../../models/Coach');
 
-// GET all coaches
+// GET all coach
 function getCoaches(req, callback) {
     Coach.find({})
         .then(function (err, found) {
@@ -15,7 +15,7 @@ function getCoaches(req, callback) {
                     console.log('Coaches collection retrieved from database.');
                     callback(found);
                 } else {
-                    console.log('Empty coaches collection retrieved from database.');
+                    console.log('Empty coach collection retrieved from database.');
                     callback(found);
                 }
             } else {
@@ -30,7 +30,7 @@ function getCoaches(req, callback) {
 // Create a new coach
 router.post('/', function (req, res) {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
-        console.log('Creating new coaches...');
+        console.log('Creating new coach...');
         if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
             res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, and phone number must be provided"});
             res.end();
@@ -73,29 +73,29 @@ router.post('/', function (req, res) {
 // Create search filter
 function getFilter(req) {
     const filter = {};
-    // Search by coaches ID
+    // Search by coach ID
     if (req.query._id != undefined && !mongoose.Types.ObjectId.isValid(req.query._id && req.query.firstName === undefined && req.query.lastName === undefined)) {
         filter._id = req.query._id;
-        // Search by coaches ID, first name and last name
+        // Search by coach ID, first name and last name
     } else if (req.query._id !== undefined && req.query.firstName !== undefined && req.query.lastName !== undefined) {
         filter._id = req.query._id;
         filter.name = req.query.firstName;
         filter.name = req.query.lastName;
-        // Search by coaches ID and last name
+        // Search by coach ID and last name
     } else if (req.query._id !== undefined && req.query.firstName === undefined && req.query.lastName !== undefined) {
         filter._id = req.query._id;
         filter.name = req.query.lastName;
     } else {
-        console.log('You need a valid coaches ID!');
-        throw Error('You need a valid coaches ID!');
+        console.log('You need a valid coach ID!');
+        throw Error('You need a valid coach ID!');
     }
-    // Search by coaches sex
+    // Search by coach sex
     if (req.params.sex !== undefined || req.query.sex !== undefined) {
         filter.sex = req.params.sex;
     } else if (req.query.sex !== undefined) {
         filter.sex = req.query.sex;
     }
-    // Search by coaches city
+    // Search by coach city
     if (req.params.city !== undefined || req.query.city !== undefined) {
         filter.city = req.params.city;
     } else if (req.query.city !== undefined) {
@@ -105,7 +105,7 @@ function getFilter(req) {
     return filter;
 }
 
-// Search for coaches
+// Search for coach
 router.get('/search', function (req, res) {
 
 });
