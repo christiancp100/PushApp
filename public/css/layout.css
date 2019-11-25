@@ -11,7 +11,7 @@
 
 
 .btn:hover{
-    padding: 1.2rem 4rem;   
+    padding: 1.2rem 4rem;
 }
 
 /*.btn:hover::after{
@@ -70,7 +70,7 @@
 }
 
 .card:hover{
-  background: linear-gradient(to right, #16bffd, #cb3066); 
+  background: linear-gradient(to right, #16bffd, #cb3066);
 }
 
 .card:hover img{
@@ -172,7 +172,7 @@
 
 .card-image-bg:hover p, .card-image-bg:hover .social-networks img{
     opacity: 1;
-} 
+}
 
 
 .mb-1{
@@ -250,8 +250,9 @@
     }
 
     .thumbnail-square{
-        float: none;
-
+        float: unset;
+        margin: auto;
+        display: block;
     }
 
     .card-image-bg h2{
