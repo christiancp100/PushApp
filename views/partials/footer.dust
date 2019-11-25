@@ -4,9 +4,9 @@
                 <div class="col-lg-4 col-xs-6">
                     <ul class="footer-menu">
                         <li><a class="footer-list-element" href="#">Home</a></li>
-                        <li><a class="footer-list-element" href="#">Coaches</a></li>
-                        <li><a class="footer-list-element" href="#">Users</a></li>
-                        <li><a class="footer-list-element" href="#about">About</a></li>
+                        <li><a class="footer-list-element" href="#">Our Coaches</a></li>
+                        <li><a class="footer-list-element" href="#about">About us</a></li>
+                        <li><a class="footer-list-element" href="#">Sign up</a></li>
                     </ul>
                 </div>
 
