@@ -8,6 +8,10 @@ const logger = require('morgan');
 const path = require('path');
 const app = express();
 
+// Models
+const client = require('./models/Client.js');
+const coach = require('./models/Coach.js');
+
 // Mongoose connection to MongoDB and Collection name declaration
 mongoose.connect('mongodb://localhost/PushApp');
 
@@ -37,9 +41,9 @@ app.use('/coaches', routers.coach);
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes
 app.use(function (req, res, next) {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    const err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 module.exports = app;
