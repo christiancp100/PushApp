@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Schedule = require('Schedule.js');
+const Schedule = require('./Schedule');
 const Schema = mongoose.Schema;
 
 const ClientSchema = exports.ClientSchema = new Schema({

@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Coach = mongoose.model('Coach');
+const Coach = require('../../models/Coach');
 
 // GET all coaches
 function getCoaches(req, callback) {
