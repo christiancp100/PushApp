@@ -22,4 +22,4 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     accessHistory: {type: [Date], default: () => []},
 })
 
-mongoose.model('UserAccountSchema', UserAccountSchema);
+mongoose.model('UserAccount', UserAccountSchema);

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 require('./UserAccount');
-const UserAccount = mongoose.model('UserAccountSchema');
+const UserAccount = mongoose.model('UserAccount');
 
 // const Certificate = new Certificate({
 //   file: {}
@@ -37,7 +37,7 @@ const UserAccount = mongoose.model('UserAccountSchema');
 //   trainingSession: {type: [TrainingSession], default: () => []},
 // });
 
-const CoachesSchema = exports.CoachesSchema = new Schema({
+const CoachSchema = exports.CoachSchema = new Schema({
   userAccount: {type: UserAccount, required: true},
   certificates: {type: [Certificate], default: () => []},
   offers: {type: [Fee], default: () => []},
@@ -45,4 +45,4 @@ const CoachesSchema = exports.CoachesSchema = new Schema({
   schedule: {type: [Schedule], default: () => []}
 });
 
-mongoose.model('Coaches', CoachesSchema);
+mongoose.model('Coach', CoachSchema);

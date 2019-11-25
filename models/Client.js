@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const UsersSchema = exports.UsersSchema = new Schema({
+const ClientSchema = exports.ClientSchema = new Schema({
   firstName: {type: String, required: true},
   lastName: {type: String, required: true},
   description: {type: String},
@@ -30,7 +30,7 @@ const UsersSchema = exports.UsersSchema = new Schema({
 });
 
 //// Nested model
-// const UsersSchema = exports.UsersSchema = new Schema({
+// const ClientSchema = exports.ClientSchema = new Schema({
 //   firstName: {type: String, required: true},
 //   lastName: {type: String, required: true},
 //   description: {type: String},
@@ -58,4 +58,4 @@ const UsersSchema = exports.UsersSchema = new Schema({
 //   authenticationProvider: {type: String}
 // });
 
-mongoose.model('Users', UsersSchema);
+mongoose.model('Client', ClientSchema);

@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const Coaches = mongoose.model('Coaches');
 
 // GET all coaches
-function getUsers(req, callback) {
+function getCoaches(req, callback) {
     Coaches.find({})
       .then(function (err, found) {
         if (!err) {
@@ -27,15 +27,15 @@ function getUsers(req, callback) {
       });
   }
 
-// Create a new users
+// Create a new coaches
 router.post('/', function (req, res) {
   if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
-    console.log('Creating new coaches...')
+    console.log('Creating new coaches...');
     if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
       res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, and phone number must be provided"});
       res.end();
     } else {
-      const user = new Users({
+      const coach = new Coaches({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         description: req.body.description,
@@ -51,7 +51,7 @@ router.post('/', function (req, res) {
         country: req.body.country,
       });
   
-      user.save().then((saved) => {
+      coach.save().then((saved) => {
         if (req.accepts("text/html")) {
           res = setResponse('html', 201, res);
           res.redirect('/');
@@ -86,8 +86,8 @@ function getFilter(req) {
     filter._id = req.query._id;
     filter.name = req.query.lastName;
   } else {
-    console.log('You need a valid users ID!');
-    throw Error('You need a valid users ID!');
+    console.log('You need a valid coaches ID!');
+    throw Error('You need a valid coaches ID!');
   }
   // Search by coaches sex
   if (req.params.sex !== undefined || req.query.sex !== undefined) {
