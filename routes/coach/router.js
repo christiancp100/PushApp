@@ -4,14 +4,15 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Coach = require('../../models/Coach');
+require('../../models/Coach');
+let Coach = mongoose.model('Coach');
 
 // GET all coach
 function getCoaches(req, callback) {
     Coach.find({})
         .then(function (err, found) {
             if (!err) {
-                if (found.length != 0) {
+                if (found.length !== 0) {
                     console.log('Coaches collection retrieved from database.');
                     callback(found);
                 } else {
@@ -79,9 +80,27 @@ router.post('/', function (req, res) {
     }
 });
 
+// const newCoach = new Coach({
+//     userAccount: {
+//         firstName: 'Alfa',
+//         lastName: 'Beta',
+//         description: 'gamma',
+//         birthday: '19.07.1999',
+//         sex: 'male',
+//         email: 'jacopo.caratti@usi.ch',
+//         phone: '0799610450',
+//         address1: 'Via Nizzola 4',
+//         city: 'Bellinzona',
+//         state: 'Ticino',
+//         country: 'Switzerland',
+//     },
+// });
+// newCoach.save().then((saved) => {(console.log(saved + ' just saved in the database'))});
+
 // Creates filter for searching coaches on the database
 function getFilter(req) {
-    const filter = {};
+    let filter = {};
+    const userAccount = {};
     let request;
 
     if (Object.keys(req.body).length > 0) {
@@ -94,68 +113,85 @@ function getFilter(req) {
         //Filter based on:
         // ID
         if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
-            filter._id = request.id;
+            filter = {'_id':request.id};
         }
 
         // First name
         if (request.firstName !== undefined) {
-            filter.firstName = request.firstName;
+            filter = {'userAccount.firstName':request.firstName};
         }
 
         // Last name
         if (request.lastName !== undefined) {
-            filter.lastName = request.lastName;
+            filter = {'userAccount.lastName':request.lastName};
+
         }
 
         // Birthday
         if (request.birthday !== undefined) {
-            filter.birthday = request.birthday;
+            filter = {'userAccount.birthday':request.birthday};
         }
 
         // Sex
         if (request.sex !== undefined) {
-            filter.sex = request.sex;
+            filter = {'userAccount.sex':request.sex};
+
         }
 
         // City
         if (request.city !== undefined) {
-            filter.city = request.city;
+            filter = {'userAccount.city':request.city};
+
         }
 
         // State
         if (request.state !== undefined) {
-            filter.state = request.state;
+            filter = {'userAccount.state':request.state};
+
         }
 
         // Country
         if (request.country !== undefined) {
-            filter.country = request.country;
+            filter = {'userAccount.country':request.country};
         }
 
         // Certificates
         if (request.certificates !== undefined) {
-            filter.certificates = request.certificates;
+            filter = {'certificates':request.certificates};
         }
 
         // Services
         if (request.services !== undefined) {
-            filter.services = request.services;
+            filter = {'services':request.services};
         }
 
-        // Search non deleted
-        if (request.isDeleted === undefined) {
-            filter.isDeleted = false;
-        } else {
-            filter.isDeleted = request.isDeleted;
-        }
+        // filter.userAccount = userAccount;
         return filter;
     }
 }
 
 // Search for coach
 router.get('/search', function (req, res) {
-
+    const filter = getFilter(req);
+    Coach.find(filter)
+        .then((coaches) => {
+            if (coaches.length > 0) {
+                if (req.accepts('html')) {
+                    // res.render("coaches", coaches);
+                    console.log("coaches has been found!");
+                } else if (req.accepts('json')) {
+                    res = setResponse('json', 200, res, result);
+                }
+                res.end();
+            } else {
+                res = setResponse('error', 404, res, result);
+                res.end();
+            }})
+        .catch((err) => {
+            res.status(500).end();
+        });
 });
+
 
 // Edit a coach
 router.put('/edit/:id', function (req, res) {
