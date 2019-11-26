@@ -4,9 +4,15 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const UserAccount = require('../../models/UserAccount');
-const Client = mongoose.model('Client');
-const Credentials = mongoose.model('Credentials');
+
+require('../../models/UserAccount.js');
+require('../../models/Credential.js');
+require('../../models/Client.js');
+
+let Client = mongoose.model('Client');
+let UserAccount = mongoose.model('UserAccount');
+let Credentials = mongoose.model('Credentials');
+
 const bcrypt = require('bcrypt');
 
 // GET all
@@ -50,42 +56,42 @@ router.post('/new', function (req, res) {
             res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
         } else {
-
-            let client = new Client({
-                height: req.body.height,
-                weight: req.body.weight,
-                bmi: req.body.bmi,
-                unitSystem: req.body.unitSystem,
-            });
-
             let credentials = new Credentials({
-                username: req.body.username,
-                password: bcrypt(req.body.password, bcrypt.genSalt(10))
+                username: req.body.userAccount.credentials.username,
+                password: req.body.userAccount.credentials.password
             });
 
             let userAccount = new UserAccount({
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                description: req.body.description,
-                photo: req.body.photo,
-                birthday: req.body.birthday,
-                sex: req.body.sex,
-                email: req.body.email,
-                phone: req.body.phone,
-                address1: req.body.address1,
-                address2: req.body.address2,
-                city: req.body.city,
-                state: req.body.state,
-                zipCode: req.body.zipCode,
-                country: req.body.country,
-                currency: req.body.currency,
-                localization: req.body.localization,
+                firstName: req.body.userAccount.firstName,
+                lastName: req.body.userAccount.lastName,
+                description: req.body.userAccount.description,
+                photo: req.body.userAccount.photo,
+                birthday: req.body.userAccount.birthday,
+                sex: req.body.userAccount.sex,
+                email: req.body.userAccount.email,
+                phone: req.body.userAccount.phone,
+                address1: req.body.userAccount.address1,
+                address2: req.body.userAccount.address2,
+                city: req.body.userAccount.city,
+                state: req.body.userAccount.state,
+                zipCode: req.body.userAccount.zipCode,
+                country: req.body.userAccount.country,
+                currency: req.body.userAccount.currency,
+                localization: req.body.userAccount.localization,
                 creationDate: Date.now(),
-                info: client,
                 credentials: credentials
             });
 
-            userAccount.save()
+            let client = new Client({
+                userAccount: userAccount,
+                height: req.body.height,
+                weight: req.body.weight,
+                bmi: req.body.bmi,
+                unitSystem: req.body.unitSystem
+            });
+
+
+            client.save()
                 .then((saved) => {
                     if (req.accepts("text/html")) {
                         // res = setResponse('html', 201, res);
