@@ -99,7 +99,7 @@ router.post('/', function (req, res) {
 
 // Creates filter for searching coaches on the database
 function getFilter(req) {
-    const filter = {};
+    let filter = {};
     const userAccount = {};
     let request;
 
@@ -113,58 +113,59 @@ function getFilter(req) {
         //Filter based on:
         // ID
         if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
-            filter._id = request.id;
+            filter = {'_id':request.id};
         }
 
         // First name
         if (request.firstName !== undefined) {
-            userAccount.firstName = request.firstName;
-            // console.log('IM HERE');
-            // console.log('request.firstName ' + request.firstName);
-            // console.log('filter.userAccount.firstName ' + filter.userAccount.firstName);
+            filter = {'userAccount.firstName':request.firstName};
         }
 
         // Last name
         if (request.lastName !== undefined) {
-            userAccount.lastName = request.lastName;
+            filter = {'userAccount.lastName':request.lastName};
+
         }
 
         // Birthday
         if (request.birthday !== undefined) {
-            userAccount.birthday = request.birthday;
+            filter = {'userAccount.birthday':request.birthday};
         }
 
         // Sex
         if (request.sex !== undefined) {
-            userAccount.sex = request.sex;
+            filter = {'userAccount.sex':request.sex};
+
         }
 
         // City
         if (request.city !== undefined) {
-            userAccount.city = request.city;
+            filter = {'userAccount.city':request.city};
+
         }
 
         // State
         if (request.state !== undefined) {
-            userAccount.state = request.state;
+            filter = {'userAccount.state':request.state};
+
         }
 
         // Country
         if (request.country !== undefined) {
-            userAccount.country = request.country;
+            filter = {'userAccount.country':request.country};
         }
 
         // Certificates
         if (request.certificates !== undefined) {
-            filter.certificates = request.certificates;
+            filter = {'certificates':request.certificates};
         }
 
         // Services
         if (request.services !== undefined) {
-            filter.services = request.services;
+            filter = {'services':request.services};
         }
 
-        filter.userAccount = userAccount;
+        // filter.userAccount = userAccount;
         return filter;
     }
 }
@@ -172,31 +173,21 @@ function getFilter(req) {
 // Search for coach
 router.get('/search', function (req, res) {
     const filter = getFilter(req);
-    console.log('Filtro ' + filter.userAccount.firstName);
-
     Coach.find(filter)
         .then((coaches) => {
-            console.log('AAAAA ' + coaches.length);
-            console.log('Inside1');
             if (coaches.length > 0) {
-                console.log('Inside2');
                 if (req.accepts('html')) {
-                    console.log('Inside3');
                     // res.render("coaches", coaches);
                     console.log("coaches has been found!");
                 } else if (req.accepts('json')) {
-                    console.log('Inside4');
                     res = setResponse('json', 200, res, result);
                 }
-                console.log('Inside5');
                 res.end();
             } else {
-                console.log('Inside6');
                 res = setResponse('error', 404, res, result);
                 res.end();
             }})
         .catch((err) => {
-            console.log('Inside7');
             res.status(500).end();
         });
 });
