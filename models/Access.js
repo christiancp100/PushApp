@@ -5,13 +5,10 @@ const Schema = mongoose.Schema;
 const Access = exports.Access = new Schema({
     username: {type: String,
         required: true,
-        minlength: 5,
-        maxlength: 50},
+    },
     password : {
         type: String,
         required: true,
-        minlength: 5,
-        maxlength: 256
     }
 });
 
@@ -24,4 +21,3 @@ function validateAccess(access) {
 }
 
 mongoose.model('Access', Access);
-exports.validate = validateAccess;

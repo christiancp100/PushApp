@@ -4,10 +4,12 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Client = require('../../models/Client');
+require('../../models/Client');
+const Client = mongoose.model('Client');
 const bcrypt = require('bcrypt');
-const Access = require('../../models/Access');
-let validator = require('../../models/Access');
+require('../../models/Access');
+const Access = mongoose.model('Access');
+const jwt = require('jsonwebtoken');
 
 // GET all
 router.get('/', function (req, res) {
@@ -50,8 +52,10 @@ router.post('/new', function (req, res) {
             res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex must be provided"});
             res.end();
         } else {
+            console.log(req.body);
+            const accessed = new Access({username: req.body.username, password: req.body.password});
             const client = new Client({
-                access: new Access({username: req.body.username, password: req.body.password}),
+                access: accessed,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 description: req.body.description,
@@ -305,5 +309,21 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
+
+router.post('/auth', function (req, res) {
+    //todo check the request
+    let client = Client.findOne({'access.username' : req.body.access.username});
+    if (!client){
+        return res.status(400).send('Incorrect email or password.');
+    }
+
+    const validPassword =  bcrypt.compare(req.body.access.password, client.access.password);
+    if (!validPassword) {
+        return res.status(400).send('Incorrect email or password.');
+    }
+    return res.send(true);
+    /*const token = jwt.sign({ _id: client._id }, 'PrivateKey');
+    res.send(token);*/
+})
 
 module.exports = router;

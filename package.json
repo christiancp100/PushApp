@@ -33,6 +33,7 @@
     "express-formidable": "^1.2.0",
     "http-errors": "^1.7.3",
     "install": "^0.13.0",
+    "jsonwebtoken": "^8.5.1",
     "klei-dust": "^1.0.0",
     "loadash": "^1.0.0",
     "method-override": "^3.0.0",
