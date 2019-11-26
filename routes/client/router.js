@@ -1,6 +1,7 @@
 /** @module root/router */
 'use strict';
 
+const config = require('config');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
@@ -86,7 +87,7 @@ router.post('/new', function (req, res) {
                 .then((saved) => {
                     if (req.accepts("text/html")) {
                         // res = setResponse('html', 201, res);
-                        res.redirect('/');
+                        res.redirect('/auth');//goto login page
                     } else if (req.accepts("application/json")) {
                         res = setResponse('json', 201, res, saved);
                     }
@@ -311,32 +312,23 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-router.post('/auth', function (req, res) {
+router.post('/auth', async (req, res) => {
     //todo check the request
 
-    Client.findOne({})//'access.username' : req.body.username
-        .catch(err => new Error(err))
-        .then(client => {
-            console.log(client);
-            if (!client){
-                return res.status(400).send('Incorrect username.');
-            } else {
-                return bcrypt.compare(req.body.password, client.access.password);
-            }
-        })
-        .catch(err => new Error(err))
-        .then(validPassword => {
-            if (!validPassword) {
-                return res.status(400).send('Incorrect email or password.');
-            } else {
-                return res.send(true);
-            }
-        })
-        .catch(err => new Error(err))
+    let client = await Client.findOne({'access.username' : req.body.username});
+    console.log(client);
+    if (!client){
+        return res.status(400).send('Incorrect username.');
+    }
+    const validPassword = await bcrypt.compare(req.body.password, client.access.password);
 
 
-    /*const token = jwt.sign({ _id: client._id }, 'PrivateKey');
-    res.send(token);*/
+    if (!validPassword) {
+        return res.status(400).send('Incorrect email or password.');
+    }
+
+    const token = jwt.sign({ _id: client._id }, config.get('PrivateKey'));//send what is needed??
+    return res.header('x-auth-token', token).res.send(client); //todo store on the client side
 })
 
 module.exports = router;
