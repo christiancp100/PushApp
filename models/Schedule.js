@@ -8,7 +8,7 @@ const ScheduleSchema = exports.ScheduleSchema = new Schema({
     creationDate: {type: Date, required: true},
     finalDate: {type: Number, required: true},
     duration: {type: Number, required: true},
-    routines: {type: [Routine], require: true},
+    routines: {type: [Schema.Types.ObjectId], ref: 'Routine', require: true},
 });
 
 mongoose.model('Schedule', ScheduleSchema);

@@ -69,7 +69,7 @@ router.post('/', async (req, res) => {
                 localization: req.body.localization,
                 creationDate: Date.now(),
                 _credentials: credet._id
-                })
+                });
 
                 let userSaved = await user.save();
 
@@ -77,7 +77,7 @@ router.post('/', async (req, res) => {
                     _userAccount: userSaved._id,
                     // certificates: ,
                     // service: ,
-                })
+                });
                 let coachSaved = await coach.save();
 
                     if (req.accepts("text/html")) {
