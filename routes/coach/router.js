@@ -4,14 +4,15 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Coach = require('../../models/Coach');
+require('../../models/Coach');
+let Coach = mongoose.model('Coach');
 
 // GET all coach
 function getCoaches(req, callback) {
     Coach.find({})
         .then(function (err, found) {
             if (!err) {
-                if (found.length != 0) {
+                if (found.length !== 0) {
                     console.log('Coaches collection retrieved from database.');
                     callback(found);
                 } else {
@@ -79,9 +80,27 @@ router.post('/', function (req, res) {
     }
 });
 
+// const newCoach = new Coach({
+//     userAccount: {
+//         firstName: 'Alfa',
+//         lastName: 'Beta',
+//         description: 'gamma',
+//         birthday: '19.07.1999',
+//         sex: 'male',
+//         email: 'jacopo.caratti@usi.ch',
+//         phone: '0799610450',
+//         address1: 'Via Nizzola 4',
+//         city: 'Bellinzona',
+//         state: 'Ticino',
+//         country: 'Switzerland',
+//     },
+// });
+// newCoach.save().then((saved) => {(console.log(saved + ' just saved in the database'))});
+
 // Creates filter for searching coaches on the database
 function getFilter(req) {
     const filter = {};
+    const userAccount = {};
     let request;
 
     if (Object.keys(req.body).length > 0) {
@@ -99,37 +118,40 @@ function getFilter(req) {
 
         // First name
         if (request.firstName !== undefined) {
-            filter.firstName = request.firstName;
+            userAccount.firstName = request.firstName;
+            // console.log('IM HERE');
+            // console.log('request.firstName ' + request.firstName);
+            // console.log('filter.userAccount.firstName ' + filter.userAccount.firstName);
         }
 
         // Last name
         if (request.lastName !== undefined) {
-            filter.lastName = request.lastName;
+            userAccount.lastName = request.lastName;
         }
 
         // Birthday
         if (request.birthday !== undefined) {
-            filter.birthday = request.birthday;
+            userAccount.birthday = request.birthday;
         }
 
         // Sex
         if (request.sex !== undefined) {
-            filter.sex = request.sex;
+            userAccount.sex = request.sex;
         }
 
         // City
         if (request.city !== undefined) {
-            filter.city = request.city;
+            userAccount.city = request.city;
         }
 
         // State
         if (request.state !== undefined) {
-            filter.state = request.state;
+            userAccount.state = request.state;
         }
 
         // Country
         if (request.country !== undefined) {
-            filter.country = request.country;
+            userAccount.country = request.country;
         }
 
         // Certificates
@@ -142,20 +164,43 @@ function getFilter(req) {
             filter.services = request.services;
         }
 
-        // Search non deleted
-        if (request.isDeleted === undefined) {
-            filter.isDeleted = false;
-        } else {
-            filter.isDeleted = request.isDeleted;
-        }
+        filter.userAccount = userAccount;
         return filter;
     }
 }
 
 // Search for coach
 router.get('/search', function (req, res) {
+    const filter = getFilter(req);
+    console.log('Filtro ' + filter.userAccount.firstName);
 
+    Coach.find(filter)
+        .then((coaches) => {
+            console.log('AAAAA ' + coaches.length);
+            console.log('Inside1');
+            if (coaches.length > 0) {
+                console.log('Inside2');
+                if (req.accepts('html')) {
+                    console.log('Inside3');
+                    // res.render("coaches", coaches);
+                    console.log("coaches has been found!");
+                } else if (req.accepts('json')) {
+                    console.log('Inside4');
+                    res = setResponse('json', 200, res, result);
+                }
+                console.log('Inside5');
+                res.end();
+            } else {
+                console.log('Inside6');
+                res = setResponse('error', 404, res, result);
+                res.end();
+            }})
+        .catch((err) => {
+            console.log('Inside7');
+            res.status(500).end();
+        });
 });
+
 
 // Edit a coach
 router.put('/edit/:id', function (req, res) {
