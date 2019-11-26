@@ -4,10 +4,10 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Client = require('../../models/Client');
+const UserAccount = require('../../models/UserAccount');
+const Client = mongoose.model('Client');
+const Credentials = mongoose.model('Credentials');
 const bcrypt = require('bcrypt');
-const Access = require('../../models/Access');
-let validator = require('../../models/Access');
 
 // GET all
 router.get('/', function (req, res) {
@@ -46,22 +46,30 @@ router.get('/', function (req, res) {
 router.post('/new', function (req, res) {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
         console.log('Creating new users...');
-        if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
-            res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex must be provided"});
+        if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined && 'email' in req.body === undefined && 'address1' in req.body === undefined && 'city' in req.body === undefined && 'state' in req.body === undefined && 'zipCode' in req.body === undefined && 'country' in req.body === undefined && 'currency' in req.body === undefined && 'username' in req.body === undefined && 'password' in req.body === undefined) {
+            res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
         } else {
-            const client = new Client({
-                access: new Access({username: req.body.username, password: req.body.password}),
+
+            let client = new Client({
+                height: req.body.height,
+                weight: req.body.weight,
+                bmi: req.body.bmi,
+                unitSystem: req.body.unitSystem,
+            });
+
+            let credentials = new Credentials({
+                username: req.body.username,
+                password: bcrypt(req.body.password, bcrypt.genSalt(10))
+            });
+
+            let userAccount = new UserAccount({
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 description: req.body.description,
                 photo: req.body.photo,
                 birthday: req.body.birthday,
                 sex: req.body.sex,
-                height: req.body.height,
-                weight: req.body.weight,
-                bmi: req.body.bmi,
-                unitSystem: req.body.unitSystem,
                 email: req.body.email,
                 phone: req.body.phone,
                 address1: req.body.address1,
@@ -73,11 +81,11 @@ router.post('/new', function (req, res) {
                 currency: req.body.currency,
                 localization: req.body.localization,
                 creationDate: Date.now(),
-                authenticationProvider: req.body.authenticationProvider
+                info: client,
+                credentials: credentials
             });
-            const salt = bcrypt.genSalt(10);
-            client.access.password = bcrypt(client.access.password, salt);
-            client.save()
+
+            userAccount.save()
                 .then((saved) => {
                     if (req.accepts("text/html")) {
                         // res = setResponse('html', 201, res);

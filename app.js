@@ -11,6 +11,7 @@ const app = express();
 // Models
 const client = require('./models/Client.js');
 const coach = require('./models/Coach.js');
+const credential = require('./models/Access.js');
 
 // Mongoose connection to MongoDB and Collection name declaration
 mongoose.connect('mongodb://localhost/PushApp');
