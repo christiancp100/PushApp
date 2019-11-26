@@ -4,10 +4,16 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Client = require('../../models/Client');
+
+require('../../models/UserAccount.js');
+require('../../models/Credential.js');
+require('../../models/Client.js');
+
+let Client = mongoose.model('Client');
+let UserAccount = mongoose.model('UserAccount');
+let Credentials = mongoose.model('Credentials');
+
 const bcrypt = require('bcrypt');
-const Access = require('../../models/Access');
-let validator = require('../../models/Access');
 
 // GET all
 router.get('/', function (req, res) {
@@ -46,37 +52,45 @@ router.get('/', function (req, res) {
 router.post('/new', function (req, res) {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
         console.log('Creating new users...');
-        if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined) {
-            res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex must be provided"});
+        if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined && 'email' in req.body === undefined && 'address1' in req.body === undefined && 'city' in req.body === undefined && 'state' in req.body === undefined && 'zipCode' in req.body === undefined && 'country' in req.body === undefined && 'currency' in req.body === undefined && 'username' in req.body === undefined && 'password' in req.body === undefined) {
+            res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
         } else {
-            const client = new Client({
-                access: new Access({username: req.body.username, password: req.body.password}),
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                description: req.body.description,
-                photo: req.body.photo,
-                birthday: req.body.birthday,
-                sex: req.body.sex,
+            let credentials = new Credentials({
+                username: req.body.userAccount.credentials.username,
+                password: req.body.userAccount.credentials.password
+            });
+
+            let userAccount = new UserAccount({
+                firstName: req.body.userAccount.firstName,
+                lastName: req.body.userAccount.lastName,
+                description: req.body.userAccount.description,
+                photo: req.body.userAccount.photo,
+                birthday: req.body.userAccount.birthday,
+                sex: req.body.userAccount.sex,
+                email: req.body.userAccount.email,
+                phone: req.body.userAccount.phone,
+                address1: req.body.userAccount.address1,
+                address2: req.body.userAccount.address2,
+                city: req.body.userAccount.city,
+                state: req.body.userAccount.state,
+                zipCode: req.body.userAccount.zipCode,
+                country: req.body.userAccount.country,
+                currency: req.body.userAccount.currency,
+                localization: req.body.userAccount.localization,
+                creationDate: Date.now(),
+                credentials: credentials
+            });
+
+            let client = new Client({
+                userAccount: userAccount,
                 height: req.body.height,
                 weight: req.body.weight,
                 bmi: req.body.bmi,
-                unitSystem: req.body.unitSystem,
-                email: req.body.email,
-                phone: req.body.phone,
-                address1: req.body.address1,
-                address2: req.body.address2,
-                city: req.body.city,
-                state: req.body.state,
-                zipCode: req.body.zipCode,
-                country: req.body.country,
-                currency: req.body.currency,
-                localization: req.body.localization,
-                creationDate: Date.now(),
-                authenticationProvider: req.body.authenticationProvider
+                unitSystem: req.body.unitSystem
             });
-            const salt = bcrypt.genSalt(10);
-            client.access.password = bcrypt(client.access.password, salt);
+
+
             client.save()
                 .then((saved) => {
                     if (req.accepts("text/html")) {
