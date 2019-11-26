@@ -7,9 +7,9 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
-require('../../models/UserAccount.js');
-require('../../models/Credential.js');
-require('../../models/Client.js');
+require('../../models/UserAccount');
+require('../../models/Credential');
+require('../../models/Client');
 
 let Client = mongoose.model('Client');
 let UserAccount = mongoose.model('UserAccount');
@@ -54,7 +54,11 @@ router.get('/', function (req, res) {
 router.post('/new', async function (req, res) {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
         console.log('Creating new users...');
-        if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined && 'email' in req.body === undefined && 'address1' in req.body === undefined && 'city' in req.body === undefined && 'state' in req.body === undefined && 'zipCode' in req.body === undefined && 'country' in req.body === undefined && 'currency' in req.body === undefined && 'username' in req.body === undefined && 'password' in req.body === undefined) {
+        let userAccount = req.body.userAccount;
+        let client = req.body.client;
+        let credentials = req.body.userAccount;
+
+        if (userAccount.firstName === undefined && userAccount.lastName === undefined && userAccount.birthday === undefined && userAccount.sex === undefined && userAccount.email === undefined && userAccount.address1 === undefined && userAccount.city === undefined && userAccount.state === undefined && userAccount.zipCode === undefined && userAccount.country === undefined && userAccount.currency === undefined && credentials.username === undefined && credentials.password === undefined) {
             res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
         } else {
@@ -62,41 +66,41 @@ router.post('/new', async function (req, res) {
                 let hashedPassword = await bcrypt.hash(req.body.credentials.password, bcrypt.genSalt(100));
 
                 let credentials = new Credentials({
-                    username: req.body.credentials.username,
+                    username: credentials.username,
                     password: hashedPassword
                 });
 
                 let credentialsId = await credentials.save()._id;
 
                 let userAccount = new UserAccount({
-                    firstName: req.body.userAccount.firstName,
-                    lastName: req.body.userAccount.lastName,
-                    description: req.body.userAccount.description,
-                    photo: req.body.userAccount.photo,
-                    birthday: req.body.userAccount.birthday,
-                    sex: req.body.userAccount.sex,
-                    email: req.body.userAccount.email,
-                    phone: req.body.userAccount.phone,
-                    address1: req.body.userAccount.address1,
-                    address2: req.body.userAccount.address2,
-                    city: req.body.userAccount.city,
-                    state: req.body.userAccount.state,
-                    zipCode: req.body.userAccount.zipCode,
-                    country: req.body.userAccount.country,
-                    currency: req.body.userAccount.currency,
-                    localization: req.body.userAccount.localization,
+                    firstName: userAccount.firstName,
+                    lastName: userAccount.lastName,
+                    description: userAccount.description,
+                    photo: userAccount.photo,
+                    birthday: userAccount.birthday,
+                    sex: userAccount.sex,
+                    email: userAccount.email,
+                    phone: userAccount.phone,
+                    address1: userAccount.address1,
+                    address2: userAccount.address2,
+                    city: userAccount.city,
+                    state: userAccount.state,
+                    zipCode: userAccount.zipCode,
+                    country: userAccount.country,
+                    currency: userAccount.currency,
+                    localization: userAccount.localization,
                     creationDate: Date.now(),
                     credentials: credentialsId
                 });
 
                 let userAccountId = await userAccount.save()._id;
 
-                let client = new Client({
+                let client = new client({
                     userAccount: userAccountId,
-                    height: req.body.client.height,
-                    weight: req.body.client.weight,
-                    bmi: req.body.client.height / req.body.client.weight,
-                    unitSystem: req.body.client.unitSystem
+                    height: client.height,
+                    weight: client.weight,
+                    bmi: client.height / client.weight,
+                    unitSystem: client.unitSystem
                 });
 
                 let saved = await client.save();
