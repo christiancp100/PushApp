@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
-const UserAccount = require('./UserAccount');
-const Schedule = require('./Schedule');
+require('./UserAccount');
+require('./Schedule');
 const Schema = mongoose.Schema;
 
 const ClientSchema = exports.ClientSchema = new Schema({
-    userAccount: {type: UserAccount, required: true},
+    userAccount: {type: Schema.Types.ObjectId, ref: 'UserAccount', required: true},
     height: {type: Number},
     weight: {type: Number},
     bmi: {type: Number},
     unitSystem: {type: String, default: 'metric'},
-    schedule: {type: Schedule}
+    schedule: {type: Schema.Types.ObjectId, ref: 'Schedule', required: true}
 });
 
 mongoose.model('Client', ClientSchema);
