@@ -1,11 +1,11 @@
 /** @module root/router */
 'use strict';
 
-const config = require('config');
+//const config = require('config');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+//const jwt = require('jsonwebtoken');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
@@ -375,8 +375,9 @@ router.post('/auth', async (req, res) => {
         return res.status(400).send('Incorrect email or password.');
     }
 
-    const token = jwt.sign({ _id: client._id }, config.get('PrivateKey'));//send what is needed??
-    return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+    //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
+    //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+    res.end();
 })
 
 module.exports = router;
