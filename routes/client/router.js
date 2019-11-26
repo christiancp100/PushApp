@@ -1,9 +1,11 @@
 /** @module root/router */
 'use strict';
 
+const config = require('config');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
@@ -56,9 +58,58 @@ router.post('/new', function (req, res) {
             res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
         } else {
-            let credentials = new Credentials({
+          bcrypt.genSalt(10)
+              .then(salt =>  bcrypt.hash(req.body.userAccount.credentials.password, salt))
+              .catch(err => new Error(err))
+              .then(code => {
+                var credentials = new Credentials({
+                    username: req.body.userAccount.credentials.username,
+                    password: code
+                });
+                let userAccount = new UserAccount({
+                    firstName: req.body.userAccount.firstName,
+                    lastName: req.body.userAccount.lastName,
+                    description: req.body.userAccount.description,
+                    photo: req.body.userAccount.photo,
+                    birthday: req.body.userAccount.birthday,
+                    sex: req.body.userAccount.sex,
+                    email: req.body.userAccount.email,
+                    phone: req.body.userAccount.phone,
+                    address1: req.body.userAccount.address1,
+                    address2: req.body.userAccount.address2,
+                    city: req.body.userAccount.city,
+                    state: req.body.userAccount.state,
+                    zipCode: req.body.userAccount.zipCode,
+                    country: req.body.userAccount.country,
+                    currency: req.body.userAccount.currency,
+                    localization: req.body.userAccount.localization,
+                    creationDate: Date.now(),
+                    credentials: credentials
+                });
+                let client = new Client({
+                    userAccount: userAccount,
+                    height: req.body.height,
+                    weight: req.body.weight,
+                    bmi: req.body.bmi,
+                    unitSystem: req.body.unitSystem
+                });
+                return client.save();
+              })
+              .then((saved) => {
+                  if (req.accepts("text/html")) {
+                      // res = setResponse('html', 201, res);
+                      res.redirect('/auth');//goto login page
+                  } else if (req.accepts("application/json")) {
+                      res = setResponse('json', 201, res, saved);
+                  }
+                  res.end();
+              })
+              .catch((err) => {
+                  res.status(500).end();
+              });
+            /*let credentials = new Credentials({
                 username: req.body.userAccount.credentials.username,
-                password: req.body.userAccount.credentials.password
+                password: hashedPassword
             });
 
             let userAccount = new UserAccount({
@@ -88,22 +139,11 @@ router.post('/new', function (req, res) {
                 weight: req.body.weight,
                 bmi: req.body.bmi,
                 unitSystem: req.body.unitSystem
-            });
+            });*/
 
 
-            client.save()
-                .then((saved) => {
-                    if (req.accepts("text/html")) {
-                        // res = setResponse('html', 201, res);
-                        res.redirect('/');
-                    } else if (req.accepts("application/json")) {
-                        res = setResponse('json', 201, res, saved);
-                    }
-                    res.end();
-                })
-                .catch((err) => {
-                    res.status(500).end();
-                });
+
+
         }
     } else {
         res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
@@ -319,5 +359,24 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
+
+router.post('/auth', async (req, res) => {
+    //todo check the request
+
+    let client = await Client.findOne({'access.username' : req.body.username});
+    console.log(client);
+    if (!client){
+        return res.status(400).send('Incorrect username.');
+    }
+    const validPassword = await bcrypt.compare(req.body.password, client.access.password);
+
+
+    if (!validPassword) {
+        return res.status(400).send('Incorrect email or password.');
+    }
+
+    const token = jwt.sign({ _id: client._id }, config.get('PrivateKey'));//send what is needed??
+    return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+})
 
 module.exports = router;
