@@ -20,11 +20,6 @@ router.get('/', function (req, res) {
         }
       });
       if (req.accepts("text/html")) {
-        // let usersModel = {
-        //   users: users,
-        //   title: "My Canvas"
-        // };
-        // res.render("result", usersModel);
         res.end();
       } else if (req.accepts("application/json")) {
         res = setResponse('json', 200, res, result);
