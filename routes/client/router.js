@@ -1,11 +1,11 @@
 /** @module root/router */
 'use strict';
 
-const config = require('config');
+//const config = require('config');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+//const jwt = require('jsonwebtoken');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
