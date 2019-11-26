@@ -52,36 +52,37 @@ router.post('/new', function (req, res) {
             res = setResponse('json', 400, res, {Error: "First name, last name, birthday, and sex must be provided"});
             res.end();
         } else {
-            console.log(req.body);
-            const accessed = new Access({username: req.body.username, password: req.body.password});
-            const client = new Client({
-                access: accessed,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                description: req.body.description,
-                photo: req.body.photo,
-                birthday: req.body.birthday,
-                sex: req.body.sex,
-                height: req.body.height,
-                weight: req.body.weight,
-                bmi: req.body.bmi,
-                unitSystem: req.body.unitSystem,
-                email: req.body.email,
-                phone: req.body.phone,
-                address1: req.body.address1,
-                address2: req.body.address2,
-                city: req.body.city,
-                state: req.body.state,
-                zipCode: req.body.zipCode,
-                country: req.body.country,
-                currency: req.body.currency,
-                localization: req.body.localization,
-                creationDate: Date.now(),
-                authenticationProvider: req.body.authenticationProvider
-            });
-            const salt = bcrypt.genSalt(10);
-            client.access.password = bcrypt(client.access.password, salt);
-            client.save()
+            bcrypt.genSalt(10)
+                .catch(err => new Error(err))
+                .then(salt =>  bcrypt.hash(req.body.password, salt))
+                .catch(err => new Error(err))
+                .then(code => {
+                     return new Client({
+                        access: new Access({username: req.body.username, password: code}),
+                        firstName: req.body.firstName,
+                        lastName: req.body.lastName,
+                        description: req.body.description,
+                        photo: req.body.photo,
+                        birthday: req.body.birthday,
+                        sex: req.body.sex,
+                        height: req.body.height,
+                        weight: req.body.weight,
+                        bmi: req.body.bmi,
+                        unitSystem: req.body.unitSystem,
+                        email: req.body.email,
+                        phone: req.body.phone,
+                        address1: req.body.address1,
+                        address2: req.body.address2,
+                        city: req.body.city,
+                        state: req.body.state,
+                        zipCode: req.body.zipCode,
+                        country: req.body.country,
+                        currency: req.body.currency,
+                        localization: req.body.localization,
+                        creationDate: Date.now(),
+                        authenticationProvider: req.body.authenticationProvider
+                    }).save()
+                })
                 .then((saved) => {
                     if (req.accepts("text/html")) {
                         // res = setResponse('html', 201, res);
@@ -312,16 +313,28 @@ function setResponse(type, code, res, msg) {
 
 router.post('/auth', function (req, res) {
     //todo check the request
-    let client = Client.findOne({'access.username' : req.body.access.username});
-    if (!client){
-        return res.status(400).send('Incorrect email or password.');
-    }
 
-    const validPassword =  bcrypt.compare(req.body.access.password, client.access.password);
-    if (!validPassword) {
-        return res.status(400).send('Incorrect email or password.');
-    }
-    return res.send(true);
+    Client.findOne({})//'access.username' : req.body.username
+        .catch(err => new Error(err))
+        .then(client => {
+            console.log(client);
+            if (!client){
+                return res.status(400).send('Incorrect username.');
+            } else {
+                return bcrypt.compare(req.body.password, client.access.password);
+            }
+        })
+        .catch(err => new Error(err))
+        .then(validPassword => {
+            if (!validPassword) {
+                return res.status(400).send('Incorrect email or password.');
+            } else {
+                return res.send(true);
+            }
+        })
+        .catch(err => new Error(err))
+
+
     /*const token = jwt.sign({ _id: client._id }, 'PrivateKey');
     res.send(token);*/
 })
