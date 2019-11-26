@@ -4,98 +4,96 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-require('../../models/Coach');
+
+require('../../models/UserAccount.js');
+require('../../models/Credential.js');
+require('../../models/Coach.js');
+
+let UserAccount = mongoose.model('UserAccount');
 let Coach = mongoose.model('Coach');
+let Credentials = mongoose.model('Credentials');
 
 // GET all coach
-function getCoaches(req, callback) {
+function getCoaches(req, res) {
     Coach.find({})
-        .then(function (err, found) {
-            if (!err) {
-                if (found.length !== 0) {
-                    console.log('Coaches collection retrieved from database.');
-                    callback(found);
-                } else {
-                    console.log('Empty coaches collection retrieved from database.');
-                    callback(found);
-                }
+        .then((clients) => {
+            if (req.accepts('text/html')) {
+                res.end();
+            } else if (req.accepts('application/json')){
+                res = setResponse('json', 200, res, result);
             } else {
-                throw err;
+                res.status(400);
             }
+            res.end();
         })
         .catch((err) => {
-            console.log("Error: " + err.message);
+            res.status(500);
+            res.end();
         });
 }
 
 // Create a new coach
-router.post('/', function (req, res) {
+router.post('/', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
         console.log('Creating new coach...');
-        if ('firstName' in req.body.userAccount === undefined || 'lastName' in req.body.userAccount === undefined || 'birthday' in req.body.userAccount === undefined ||
+        if (req.body.firstName === "undefined" && req.body.lastName === "undefined" /*|| 'birthday' in req.body.userAccount === undefined ||
             'sex' in req.body.userAccount === undefined || 'email' in req.body.userAccount === undefined || 'phone' in req.body.userAccount === undefined ||
             'address1' in req.body.userAccount === undefined || 'city' in req.body.userAccount === undefined || 'state' in req.body.userAccount === undefined ||
-            'zipCode' in req.body.userAccount === undefined || 'country' in req.body.userAccount === undefined) {
+            'zipCode' in req.body.userAccount === undefined || 'country' in req.body.userAccount === undefined*/) {
             res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, email address, phone number, at least one address, city, state, zip code and country must be provided"});
             res.end();
         } else {
-            const coach = new Coach({
-                userAccount: {
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    description: req.body.description,
-                    photo: req.body.photo,
-                    birthday: req.body.birthday,
-                    sex: req.body.sex,
-                    email: req.body.email,
-                    phone: req.body.phone,
-                    address1: req.body.address1,
-                    address2: req.body.address2,
-                    city: req.body.city,
-                    state: req.body.state,
-                    country: req.body.country,
-                    currency: req.body.currency,
-                    localization: req.body.localization,
-                },
-                certificates: req.body.certificates,
-                services: req.body.services,
+            let credentials = new Credentials({
+                username: req.body.username,
+                password: req.body.password
             });
+            let credet = await credentials.save();
 
-            coach.save().then((saved) => {
-                if (req.accepts("text/html")) {
-                    res = setResponse('html', 201, res);
-                    res.redirect('/');
-                } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 201, res, saved);
-                }
-                res.end();
-            })
-                .catch((err) => {
-                    res.status(500).end();
+            console.log("password " + credet._id);
+            let user = new UserAccount({
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                description: req.body.description,
+                photo: req.body.photo,
+                birthday: req.body.birthday,
+                sex: req.body.sex,
+                email: req.body.email,
+                phone: req.body.phone,
+                address1: req.body.address1,
+                address2: req.body.address2,
+                city: req.body.city,
+                state: req.body.state,
+                zipCode: req.body.zipCode,
+                country: req.body.country,
+                currency: req.body.currency,
+                localization: req.body.localization,
+                creationDate: Date.now(),
+                _credentials: credet._id
                 });
+
+                let userSaved = await user.save();
+
+                let coach = new Coach({
+                    _userAccount: userSaved._id,
+                    // certificates: ,
+                    // service: ,
+                });
+                let coachSaved = await coach.save();
+
+                    if (req.accepts("text/html")) {
+                        res = setResponse('html', 201, res);
+                        res.redirect('/');
+                    } else if (req.accepts("application/json")) {
+                        res = setResponse('json', 201, res, coachSaved);
+                    }
+                    res.end(coachSaved);
+
         }
     } else {
         res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
         res.end();
     }
 });
-
-// const newCoach = new Coach({
-//     userAccount: {
-//         firstName: 'Alfa',
-//         lastName: 'Beta',
-//         description: 'gamma',
-//         birthday: '19.07.1999',
-//         sex: 'male',
-//         email: 'jacopo.caratti@usi.ch',
-//         phone: '0799610450',
-//         address1: 'Via Nizzola 4',
-//         city: 'Bellinzona',
-//         state: 'Ticino',
-//         country: 'Switzerland',
-//     },
-// });
-// newCoach.save().then((saved) => {(console.log(saved + ' just saved in the database'))});
 
 // Creates filter for searching coaches on the database
 function getFilter(req) {
@@ -115,56 +113,42 @@ function getFilter(req) {
         if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
             filter = {'_id':request.id};
         }
-
         // First name
         if (request.firstName !== undefined) {
             filter = {'userAccount.firstName':request.firstName};
         }
-
         // Last name
         if (request.lastName !== undefined) {
             filter = {'userAccount.lastName':request.lastName};
-
         }
-
         // Birthday
         if (request.birthday !== undefined) {
             filter = {'userAccount.birthday':request.birthday};
         }
-
         // Sex
         if (request.sex !== undefined) {
             filter = {'userAccount.sex':request.sex};
-
         }
-
         // City
         if (request.city !== undefined) {
             filter = {'userAccount.city':request.city};
-
         }
-
         // State
         if (request.state !== undefined) {
             filter = {'userAccount.state':request.state};
-
         }
-
         // Country
         if (request.country !== undefined) {
             filter = {'userAccount.country':request.country};
         }
-
         // Certificates
         if (request.certificates !== undefined) {
             filter = {'certificates':request.certificates};
         }
-
         // Services
         if (request.services !== undefined) {
             filter = {'services':request.services};
         }
-
         // filter.userAccount = userAccount;
         return filter;
     }
@@ -175,9 +159,42 @@ router.get('/search', function (req, res) {
     const filter = getFilter(req);
     Coach.find(filter)
         .then((coaches) => {
+            let result = coaches.filter((o) => {
+                if (filter._id) {
+                    return (filter._id.toLowerCase() === o._id.toLowerCase());
+                }
+                if (filter.firstName) {
+                    return (filter.firstName.toLowerCase() === o.firstName.toLowerCase());
+                }
+                if (filter.lastName) {
+                    return (filter.lastName.toLowerCase() === o.lastName.toLowerCase());
+                }
+                if (filter.birthday) {
+                    return (filter.birthday.toLowerCase() === o.birthday.toLowerCase());
+                }
+                if (filter.sex) {
+                    return (filter.sex.toLowerCase() === o.sex.toLowerCase());
+                }
+                if (filter.city) {
+                    return (filter.city.toLowerCase() === o.city.toLowerCase());
+                }
+                if (filter.state) {
+                    return (filter.state.toLowerCase() === o.state.toLowerCase());
+                }
+                if (filter.country) {
+                    return (filter.country.toLowerCase() === o.country.toLowerCase());
+                }
+                if (filter.certificates) {
+                    return (filter.certificates.toLowerCase() === o.certificates.toLowerCase());
+                }
+                if (filter.services) {
+                    return (filter.services.toLowerCase() === o.services.toLowerCase());
+                }
+            });
             if (coaches.length > 0) {
                 if (req.accepts('html')) {
                     // res.render("coaches", coaches);
+                    res.status(200);
                     console.log("coaches has been found!");
                 } else if (req.accepts('json')) {
                     res = setResponse('json', 200, res, result);
@@ -215,11 +232,12 @@ router.put('/edit/:id', function (req, res) {
                             found.userAccount.address2 = req.body.address2;
                             found.userAccount.city = req.body.city;
                             found.userAccount.state = req.body.state;
+                            found.userAccount.zipCode = req.body.zipCode;
                             found.userAccount.country = req.body.country;
                             found.userAccount.currency = req.body.currency;
                             found.userAccount.localization = req.body.localization;
-                            found.userAccount.certificates = req.body.certificates;
-                            found.userAccount.services = req.body.services;
+                            // found.userAccount.certificates = req.body.certificates;
+                            // found.userAccount.services = req.body.services;
                             return found.save()
                         }
                     },

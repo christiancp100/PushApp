@@ -1,36 +1,36 @@
 <nav role="navigation">
-            <div id="menuToggle">
-                <input type="checkbox" />
+    <div id="menuToggle">
+        <input type="checkbox" />
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <ul id="menu">
-                    <a href="#">
-                        <li>Home</li>
-                    </a>
-                    <a href="#">
-                        <li>Our Coaches</li>
-                    </a>
-                    <a href="#">
-                        <li>About us</li>
-                    </a>
-                    <a href="#">
-                        <li>Login</li>
-                    </a>
-                    <a href="#" target="_blank">
-                        <li>Sign up now!</li>
-                    </a>
-                </ul>
-            </div>
-        </nav>
-        <nav class="nav">
-            <img src="img/logoPushAppWhite.svg" alt="">
-            <ul>
-                <li><a class="list-element" href="#">Home</a></li>
-                <li><a class="list-element" href="#">Our Coaches</a></li>
-                <li><a class="list-element" href="#about">About us</a></li>
-                <li><a class="list-element" href="#">Login</a></li>
-                <li><a class="btn btn--gradient" href="#">Sign up now!</a></li>
-            </ul>
-        </nav>
+        <span></span>
+        <span></span>
+        <span></span>
+        <ul id="menu">
+            <a href="#">
+                <li>Home</li>
+            </a>
+            <a href="#">
+                <li>Our Coaches</li>
+            </a>
+            <a href="#">
+                <li>About us</li>
+            </a>
+            <a href="#">
+                <li>Login</li>
+            </a>
+            <a href="#" target="_blank">
+                <li>Sign up now!</li>
+            </a>
+        </ul>
+    </div>
+</nav>
+<nav class="nav">
+    <img src="img/logoPushAppWhite.svg" alt="">
+    <ul>
+        <li><a class="list-element" href="#">Home</a></li>
+        <li><a class="list-element" href="#">Our Coaches</a></li>
+        <li><a class="list-element" href="#about">About us</a></li>
+        <li><a class="list-element" href="#">Login</a></li>
+        <li><a class="btn btn--gradient" href="#">Sign up now!</a></li>
+    </ul>
+</nav>

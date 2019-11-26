@@ -6,10 +6,9 @@ const Rating = require('./Rating');
 const Service = require('./Service');
 
 const CoachSchema = exports.CoachSchema = new Schema({
-    userAccount: {type: UserAccount, required: true},
-    certificates: {type: [Certificate], default: () => []},
-    ratings: {type: [Rating], default: () => []},
-    services: {type: [Service], default: () => []},
+    _userAccount: {type: Schema.Types.ObjectId, ref: 'UserAccount', required: true},
+    ratings: {type: [Schema.Types.ObjectId], ref: 'Rating', default: () => []},
+    services: {type: [Schema.Types.ObjectId], ref: 'Service', default: () => []},
 });
 
 mongoose.model('Coach', CoachSchema);

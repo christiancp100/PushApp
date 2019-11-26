@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const Credential = require('./Credential');
+const Credentials = require('./Credential');
 
 const UserAccountSchema = exports.UserAccountSchema = new Schema({
     firstName: {type: String, required: true},
@@ -11,7 +11,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     birthday: {type: Date, required: true},
     sex: {type: String, required: true},
     email: {type: String, required: true},
-    phone: {type: String},
+    phone: {type: String, required: true},
     address1: {type: String, required: true},
     address2: {type: String},
     city: {type: String, required: true},
@@ -22,7 +22,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     localization: {type: String, default: 'en-US'},
     creationDate: {type: Date, default: Date.now()},
     accessHistory: {type: [Date], default: () => []},
-    credentials: {type: Credential, required: true}
+    _credentials: {type: Schema.Types.ObjectId, ref: 'Credentials', required: true}
 });
 
 mongoose.model('UserAccount', UserAccountSchema);
