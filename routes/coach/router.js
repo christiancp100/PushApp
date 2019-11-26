@@ -4,27 +4,31 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-require('../../models/Coach');
+
+require('../../models/UserAccount.js');
+require('../../models/Credential.js');
+require('../../models/Coach.js');
+
+let UserAccount = mongoose.model('UserAccount');
 let Coach = mongoose.model('Coach');
+let Credentials = mongoose.model('Credentials');
 
 // GET all coach
-function getCoaches(req, callback) {
+function getCoaches(req, res) {
     Coach.find({})
-        .then(function (err, found) {
-            if (!err) {
-                if (found.length !== 0) {
-                    console.log('Coaches collection retrieved from database.');
-                    callback(found);
-                } else {
-                    console.log('Empty coaches collection retrieved from database.');
-                    callback(found);
-                }
+        .then((clients) => {
+            if (req.accepts('text/html')) {
+                res.end();
+            } else if (req.accepts('application/json')){
+                res = setResponse('json', 200, res, result);
             } else {
-                throw err;
+                res.status(400);
             }
+            res.end();
         })
         .catch((err) => {
-            console.log("Error: " + err.message);
+            res.status(500);
+            res.end();
         });
 }
 
@@ -39,26 +43,36 @@ router.post('/', function (req, res) {
             res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, email address, phone number, at least one address, city, state, zip code and country must be provided"});
             res.end();
         } else {
-            const coach = new Coach({
-                userAccount: {
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    description: req.body.description,
-                    photo: req.body.photo,
-                    birthday: req.body.birthday,
-                    sex: req.body.sex,
-                    email: req.body.email,
-                    phone: req.body.phone,
-                    address1: req.body.address1,
-                    address2: req.body.address2,
-                    city: req.body.city,
-                    state: req.body.state,
-                    country: req.body.country,
-                    currency: req.body.currency,
-                    localization: req.body.localization,
-                },
-                certificates: req.body.certificates,
-                services: req.body.services,
+            let credentials = new Credentials({
+                username: req.body.userAccount.credentials.username,
+                password: req.body.userAccount.credentials.password
+            });
+
+            let userAccount = new UserAccount({
+                firstName: req.body.userAccount.firstName,
+                lastName: req.body.userAccount.lastName,
+                description: req.body.userAccount.description,
+                photo: req.body.userAccount.photo,
+                birthday: req.body.userAccount.birthday,
+                sex: req.body.userAccount.sex,
+                email: req.body.userAccount.email,
+                phone: req.body.userAccount.phone,
+                address1: req.body.userAccount.address1,
+                address2: req.body.userAccount.address2,
+                city: req.body.userAccount.city,
+                state: req.body.userAccount.state,
+                zipCode: req.body.userAccount.zipCode,
+                country: req.body.userAccount.country,
+                currency: req.body.userAccount.currency,
+                localization: req.body.userAccount.localization,
+                creationDate: Date.now(),
+                credentials: credentials
+            });
+
+            let coach = new Coach({
+                userAccount: userAccount,
+                // certificates: ,
+                // service: ,
             });
 
             coach.save().then((saved) => {
@@ -115,56 +129,42 @@ function getFilter(req) {
         if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
             filter = {'_id':request.id};
         }
-
         // First name
         if (request.firstName !== undefined) {
             filter = {'userAccount.firstName':request.firstName};
         }
-
         // Last name
         if (request.lastName !== undefined) {
             filter = {'userAccount.lastName':request.lastName};
-
         }
-
         // Birthday
         if (request.birthday !== undefined) {
             filter = {'userAccount.birthday':request.birthday};
         }
-
         // Sex
         if (request.sex !== undefined) {
             filter = {'userAccount.sex':request.sex};
-
         }
-
         // City
         if (request.city !== undefined) {
             filter = {'userAccount.city':request.city};
-
         }
-
         // State
         if (request.state !== undefined) {
             filter = {'userAccount.state':request.state};
-
         }
-
         // Country
         if (request.country !== undefined) {
             filter = {'userAccount.country':request.country};
         }
-
         // Certificates
         if (request.certificates !== undefined) {
             filter = {'certificates':request.certificates};
         }
-
         // Services
         if (request.services !== undefined) {
             filter = {'services':request.services};
         }
-
         // filter.userAccount = userAccount;
         return filter;
     }
@@ -175,9 +175,42 @@ router.get('/search', function (req, res) {
     const filter = getFilter(req);
     Coach.find(filter)
         .then((coaches) => {
+            let result = coaches.filter((o) => {
+                if (filter._id) {
+                    return (filter._id.toLowerCase() === o._id.toLowerCase());
+                }
+                if (filter.firstName) {
+                    return (filter.firstName.toLowerCase() === o.firstName.toLowerCase());
+                }
+                if (filter.lastName) {
+                    return (filter.lastName.toLowerCase() === o.lastName.toLowerCase());
+                }
+                if (filter.birthday) {
+                    return (filter.birthday.toLowerCase() === o.birthday.toLowerCase());
+                }
+                if (filter.sex) {
+                    return (filter.sex.toLowerCase() === o.sex.toLowerCase());
+                }
+                if (filter.city) {
+                    return (filter.city.toLowerCase() === o.city.toLowerCase());
+                }
+                if (filter.state) {
+                    return (filter.state.toLowerCase() === o.state.toLowerCase());
+                }
+                if (filter.country) {
+                    return (filter.country.toLowerCase() === o.country.toLowerCase());
+                }
+                if (filter.certificates) {
+                    return (filter.certificates.toLowerCase() === o.certificates.toLowerCase());
+                }
+                if (filter.services) {
+                    return (filter.services.toLowerCase() === o.services.toLowerCase());
+                }
+            });
             if (coaches.length > 0) {
                 if (req.accepts('html')) {
                     // res.render("coaches", coaches);
+                    res.status(200);
                     console.log("coaches has been found!");
                 } else if (req.accepts('json')) {
                     res = setResponse('json', 200, res, result);
