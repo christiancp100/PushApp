@@ -1,12 +1,34 @@
-<form action="/register/4/{{user.typeOfUser}}" method="POST">
-
+<form>
     <input name="name" type="text" placeholder="Name">
-    <input name="last-name" type="text" placeholder="Last Name">
-    <input name="address-1" type="text" placeholder="Address 1">
-    <input name="email" type="hidden" value="{{user.email}}">
-    <button type="submit">Create Account</button>
+    <input name="last-name" type="text" placeholder="Last Name"><br><br>
+    <input name="address-1" type="text" placeholder="Address 1"><br><br>
+    <input name="address-2" type="text" placeholder="Address 2"><br><br>
+    <input name="email" type="email" placeholder="mario.rossi@xxx.com">
+
+    <br><br>
+    {>"partials/nations"/}
+    <br><br>
+
+    <label for="photo">Set a profile pic:</label>
+    <input type="file" name="photo">
+
+    <br><br>
+
+    <label for="bday">Birthday: </label>
+    <input type="date" name="bday">
+    <br><br>
+    <label for="sex">Sex: </label><br>
+    <select id="sex" name="sex" class="form-control">
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Other">Other</option>
+    </select>
+    <button onclick="takeFields(event)">Create Account</button>
 </form>
 
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/fetch.js"></script>
+<script src="/js/register.js"></script>
+
+<!--action="/register/4/{{user.typeOfUser}}"-->
