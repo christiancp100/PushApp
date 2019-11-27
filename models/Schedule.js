@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 const Routine = require('./Routine');
 
 const ScheduleSchema = exports.ScheduleSchema = new Schema({
-    ownerID: {type: mongoose.Schema.Types.ObjectId},
-    clientID: {type: mongoose.Schema.Types.ObjectId},
+    _coachId: {type: mongoose.Schema.Types.ObjectId, ref: 'UserAccount', required: true},
+    _clientId: {type: mongoose.Schema.Types.ObjectId, ref: 'UserAccount', required: true},
     creationDate: {type: Date, required: true},
     finalDate: {type: Number, required: true},
     duration: {type: Number, required: true},
