@@ -54,49 +54,49 @@ router.get('/', function (req, res) {
 router.post('/new', async function (req, res) {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
         console.log('Creating new users...');
-        let userAccount = req.body.userAccount;
-        let client = req.body.client;
-        let credentials = req.body.userAccount;
+        var userAccount = req.body.userAccount;
+        var client = req.body.client;
+        var credentials = req.body.credentials;
 
         if (userAccount.firstName === undefined && userAccount.lastName === undefined && userAccount.birthday === undefined && userAccount.sex === undefined && userAccount.email === undefined && userAccount.address1 === undefined && userAccount.city === undefined && userAccount.state === undefined && userAccount.zipCode === undefined && userAccount.country === undefined && userAccount.currency === undefined && credentials.username === undefined && credentials.password === undefined) {
             res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
         } else {
             try {
-                let hashedPassword = await bcrypt.hash(req.body.credentials.password, bcrypt.genSalt(100));
+                let hashedPassword = await bcrypt.hash(req.body.credentials.password, await bcrypt.genSalt(10));
 
                 let credentials = new Credentials({
-                    username: credentials.username,
+                    username: req.body.credentials.username,
                     password: hashedPassword
                 });
 
-                let credentialsId = await credentials.save()._id;
+                let savedCredentials = await credentials.save();
 
                 let userAccount = new UserAccount({
-                    firstName: userAccount.firstName,
-                    lastName: userAccount.lastName,
-                    description: userAccount.description,
-                    photo: userAccount.photo,
-                    birthday: userAccount.birthday,
-                    sex: userAccount.sex,
-                    email: userAccount.email,
-                    phone: userAccount.phone,
-                    address1: userAccount.address1,
-                    address2: userAccount.address2,
-                    city: userAccount.city,
-                    state: userAccount.state,
-                    zipCode: userAccount.zipCode,
-                    country: userAccount.country,
-                    currency: userAccount.currency,
-                    localization: userAccount.localization,
+                    firstName: req.body.userAccount.firstName,
+                    lastName: req.body.userAccount.lastName,
+                    description: req.body.userAccount.description,
+                    photo: req.body.userAccount.photo,
+                    birthday: req.body.userAccount.birthday,
+                    sex: req.body.userAccount.sex,
+                    email: req.body.userAccount.email,
+                    phone: req.body.userAccount.phone,
+                    address1: req.body.userAccount.address1,
+                    address2: req.body.userAccount.address2,
+                    city: req.body.userAccount.city,
+                    state: req.body.userAccount.state,
+                    zipCode: req.body.userAccount.zipCode,
+                    country: req.body.userAccount.country,
+                    currency: req.body.userAccount.currency,
+                    localization: req.body.userAccount.localization,
                     creationDate: Date.now(),
-                    credentials: credentialsId
+                    credentials: savedCredentials._id
                 });
 
-                let userAccountId = await userAccount.save()._id;
+                let savedUserAccount_id = await req.body.userAccount.save();
 
                 let client = new client({
-                    userAccount: userAccountId,
+                    userAccount: savedUserAccount_id,
                     height: client.height,
                     weight: client.weight,
                     bmi: client.height / client.weight,
