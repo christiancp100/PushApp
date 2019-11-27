@@ -1,21 +1,18 @@
 /** @module root/router */
 'use strict';
 
-const config = require('config');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-
-require('../../models/UserAccount');
-require('../../models/Credential');
-require('../../models/Client');
-
-let Client = mongoose.model('Client');
-let UserAccount = mongoose.model('UserAccount');
-let Credentials = mongoose.model('Credentials');
-
 const bcrypt = require('bcrypt');
+
+require('../../models/UserAccount.js');
+require('../../models/Credential.js');
+require('../../models/Client.js');
+
+let UserAccount = mongoose.model('UserAccount');
+let Client = mongoose.model('Client');
+let Credentials = mongoose.model('Credentials');
 
 // GET all
 router.get('/', function (req, res) {
@@ -100,13 +97,13 @@ router.post('/new', async function (req, res) {
                     localization: req.body.userAccount.localization,
                     accountType: req.body.userAccount.accountType,
                     creationDate: Date.now(),
-                    credentials: savedCredentials._id
+                    _credentials: savedCredentials._id
                 });
 
-                let savedUserAccount_id = await userAccount.save();
+                let savedUserAccount = await userAccount.save();
 
-                let client = new client({
-                    userAccount: savedUserAccount_id,
+                let client = new Client({
+                    _userAccount: savedUserAccount._id,
                     height: req.body.client.height,
                     weight: req.body.client.weight,
                     bmi: req.body.client.height / req.body.client.weight,
