@@ -14,7 +14,7 @@
     <input name="address-2" type="text" placeholder="Address 2" required><br><br><!-- 4-->
     <input type="email" name="email" required> <!-- 5-->
 
-    {>"partials/nations"/} <!--0-->
+{!    {>"partials/nations"/} <!--0-->!}
     <br><br>
 
     <label for="photo">Set a profile pic:</label>
@@ -60,7 +60,7 @@
             <option value="SWE">kr</option>
         </select><br><br>
     
-    <button type="submit" onclick="coachRegistration(event)">Create Account</button>
+    <input type="submit" value="Create Account">
 </form>
 
 

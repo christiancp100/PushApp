@@ -2,12 +2,13 @@
 <html>
 <head>
     <title>{title}</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+{!    <link rel='stylesheet' href='/stylesheets/style.css' />!}
 </head>
+
 <body>
-    {>"partials/nav"/}
+{!    {>"partials/nav"/}!}
 <h2>Register new Client</h2>
-<form onsubmit="return mySubmit();" action="clients/new"  method="post" enctype="application/x-www-form-urlencoded">
+<form onsubmit="return mySubmit(event);" action="clients/new"  method="post" enctype="application/x-www-form-urlencoded">
     {!{>"partials/register"/}!}
     <div>
         <label>Username:
@@ -26,4 +27,7 @@
     </div>
 </form>
 </body>
+<script src="/js/Coach-help.js"></script>
+{!<script src="/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>!}
 </html>

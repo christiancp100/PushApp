@@ -408,19 +408,25 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-router.get('/username', function (req, res) {
+router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json"){
         console.log(req.body);
-        Credentials.findOne({username : req.body.username})
-            .then(found => {if (!found){
-                res.end(true);
+        let found = await Credentials.findOne({username : req.body.username})
+            if (!found){
+                console.log("TRUE");
+                res.send(true);
                 } else {
-                res.end(false);
-             }})
-            .catch(err => new Error(err))
+                console.log("FALSE");
+                res.send(false);
+            }
     } else {
         res.status(500).end("ERROR")
     }
+})
+
+router.get('/uss', function (req, res) {
+    res.type("text/html");
+    res.render('user-register', {});
 })
 
 module.exports = router;

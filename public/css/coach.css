@@ -6,7 +6,7 @@
 
 .nav {
     flex: 0 0 17vw;
-    background-color: darkgray;
+    background-color: red;
     float: left;
     margin-right: 20px;
     border: 2px solid black;
