@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
 require('../../models/Coach.js');
@@ -16,7 +17,7 @@ let Credentials = mongoose.model('Credentials');
 // GET all coach
 function getCoaches(req, res) {
     Coach.find({})
-        .then((clients) => {
+        .then((coaches) => {
             if (req.accepts('text/html')) {
                 res.end();
             } else if (req.accepts('application/json')){
@@ -71,23 +72,19 @@ router.post('/', async (req, res) => {
                 creationDate: Date.now(),
                 _credentials: credentialRef._id
             });
-
             let userAccountRef = await user.save();
-
             let coach = new Coach({
-                    _userAccount: userAccountRef._id,
-                    // service:
-                });
-                let coachSaved = await coach.save();
-
-                    if (req.accepts("text/html")) {
-                        res = setResponse('html', 201, res);
-                        res.redirect('/');
-                    } else if (req.accepts("application/json")) {
-                        res = setResponse('json', 201, res, coachSaved);
-                    }
-                    res.end(coachSaved);
-
+                _userAccount: userAccountRef._id,
+                // service:
+            });
+            let coachSaved = await coach.save();
+            if (req.accepts("text/html")) {
+                res = setResponse('html', 201, res);
+                res.redirect('/');
+            } else if (req.accepts("application/json")) {
+                res = setResponse('json', 201, res, coachSaved);
+            }
+            res.end(coachSaved);
         }
     } else {
         res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
@@ -98,9 +95,7 @@ router.post('/', async (req, res) => {
 // Creates filter for searching coaches on the database
 function getFilter(req) {
     let filter = {};
-    const userAccount = {};
     let request;
-
     if (Object.keys(req.body).length > 0) {
         request = req.body;
     } else if (Object.keys(req.query).length > 0) {
@@ -109,12 +104,13 @@ function getFilter(req) {
 
     if (request !== undefined) {
         //Filter based on:
-        // ID
+        // ID-
         if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
             filter = {'_id':request.id};
         }
         // First name
         if (request.firstName !== undefined) {
+            filter = {data: 'userAccount', field: lastName};
             filter = {'userAccount.firstName':request.firstName};
         }
         // Last name
@@ -211,77 +207,146 @@ router.get('/search', function (req, res) {
 
 
 // Edit a coach
-router.put('/edit/:id', function (req, res) {
+router.put('/edit/:id', async (req, res) => {
     if (req.accepts("json")) {
         if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res.status(400).end();
         } else {
             console.log('Searching for coach with ID: ' + req.params.id + '.');
-            Coach.findById({_id: req.params.id})
-                .then((found) => {
+            let currentCoach = await Coach.findById(req.params.id);
+            if (currentCoach === undefined) {
+                res = setResponse('error', 404, res, {Error: 'Coach not found!'});
+                res.end();
+            }
+            let userAccountRef = currentCoach._userAccount;
+            if (req.body.firstName || req.body.lastName || req.body.description || req.body.photo || req.body.birthday || req.body.sex || req.body.email || req.body.phone ||
+                req.body.address1 || req.body.address2 || req.body.city || req.body.state || req.body.zipCode || req.body.country || req.body.currency || req.body.localization) {
+                UserAccount.findById(userAccountRef)
+                    .then((found) => {
                         if (found != null) {
-                            found.userAccount.firstName = req.body.firstName;
-                            found.userAccount.lastName = req.body.lastName;
-                            found.userAccount.description = req.body.description;
-                            found.userAccount.photo = req.body.photo;
-                            found.userAccount.birthday = req.body.birthday;
-                            found.userAccount.sex = req.body.sex;
-                            found.userAccount.email = req.body.email;
-                            found.userAccount.phone = req.body.phone;
-                            found.userAccount.address1 = req.body.address1;
-                            found.userAccount.address2 = req.body.address2;
-                            found.userAccount.city = req.body.city;
-                            found.userAccount.state = req.body.state;
-                            found.userAccount.zipCode = req.body.zipCode;
-                            found.userAccount.country = req.body.country;
-                            found.userAccount.currency = req.body.currency;
-                            found.userAccount.localization = req.body.localization;
-                            // found.userAccount.certificates = req.body.certificates;
-                            // found.userAccount.services = req.body.services;
+                            if (req.body.firstName) {
+                                found.firstName = req.body.firstName;
+                            } else if (req.body.lastName) {
+                                found.lastName = req.body.lastName;
+                            } else if (req.body.description) {
+                                found.description = req.body.description
+                            } else if (req.body.photo) {
+                                found.photo = req.body.photo
+                            } else if (req.body.birthday) {
+                                found.brithday = req.body.birthday
+                            } else if (req.body.sex) {
+                                found.sex = req.body.sex
+                            } else if (req.body.email) {
+                                found.email = req.body.email
+                            } else if (req.body.phone) {
+                                found.phone = req.body.phone
+                            } else if (req.body.address1) {
+                                found.address1 = req.body.address1;
+                            } else if (req.body.address1) {
+                                found.address2 = req.body.address2;
+                            } else if (req.body.city) {
+                                found.city = req.body.city;
+                            } else if (req.body.state) {
+                                found.state = req.body.state;
+                            } else if (req.body.zipCode) {
+                                found.zipCode = req.body.zipCode;
+                            } else if (req.body.country) {
+                                found.country = req.body.country;
+                            } else if (req.body.currency) {
+                                found.currency = req.body.currency;
+                            } else if (req.body.localization) {
+                                found.localization = req.body.localization;
+                            }
                             return found.save()
+                                .then((updated) => {
+                                    console.log('Coach with ID: ' + req.params.id + ' updated!');
+                                    if (req.accepts("text/html")) {
+                                        res = setResponse('html', 201, res);
+                                        res.redirect('/');
+                                    } else if (req.accepts("application/json")) {
+                                        res = setResponse('json', 201, res, saved);
+                                        res.end();
+                                    }
+                                })
+                                .catch((err) => {
+                                    res.status(500).end();
+                                });
                         }
-                    },
-                    (err) => {
-                        res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
                     })
-                .then((saved) => {
-                    console.log('Coach with ID: ' + req.params.id + ' updated!');
-                    if (req.accepts("text/html")) {
-                        res = setResponse('html', 201, res);
-                        res.redirect('/');
-                    } else if (req.accepts("application/json")) {
-                        res = setResponse('json', 201, res, saved);
+                    .catch((err) => {
+                        res = setResponse('error', 404, res, {Error: 'userAccount related to this coach not found!'});
                         res.end();
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                    res.status(500);
-                    res.end();
-                });
+                    })
+            } else if (req.body.username || req.body.password) {
+                let currentUserAccount = await UserAccount.findById(userAccountRef);
+                let credentialRef = currentUserAccount._credentials;
+                Credentials.findById(credentialRef)
+                    .then((found) => {
+                        if (found != null) {
+                            if (req.body.username) {
+                                found.username = req.body.username;
+                            } else if (req.body.password) {
+                                found.password = req.body.password;
+                            }
+                        }
+                        return found.save()
+                            .then((updated) => {
+                                console.log('Coach with ID: ' + req.params.id + ' updated!');
+                                if (req.accepts("text/html")) {
+                                    res = setResponse('html', 201, res);
+                                    res.redirect('/');
+                                } else if (req.accepts("application/json")) {
+                                    res = setResponse('json', 201, res, saved);
+                                    res.end();
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                res.status(500).end();
+                            });
+                    })
+                    .catch((err) => {
+                        res = setResponse('error', 404, res, {Error: 'Coach not found!'});
+                        res.end();
+                    })
+            } else {
+                res = setResponse('error', 404, res, {Error: 'userAccount related to this coach not found!'});
+                res.end();
+            }
         }
     }
 });
 
 // Soft delete a coach
-router.delete('/delete/:id', function (req, res) {
+// The delete won't remove all the data of an userAccount, simply, it replaces the critical data with default value.
+router.delete('/delete/:id', async (req, res) => {
     if (req.accepts("json")) {
         if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res.status(400).end();
         } else {
             console.log('Searching for user with ID: ' + req.params.id + '.');
-            Coach.findById({_id: req.params.id})
+            let currentCoach = await Coach.findById(req.params.id);
+            if (currentCoach === undefined) {
+                res = setResponse('error', 404, res, {Error: 'Coach not found!'});
+                res.end();
+            }
+            let userAccountRef = currentCoach._userAccount;
+            UserAccount.findById(userAccountRef)
                 .then((found) => {
                         if (found != null) {
-                            found.isDeleted = true;
-                            return found.save()
+                            found.firstName = 'anonymous';
+                            found.lastName = 'anonymous';
+                            found.description = '';
+                            found.photo = '';
+                            found.email = 'deletedAccount@gmail.com';
+                            found.phone = '0796666666';
+                            found.address1 = 'Somewhere else';
+                            found.address2 = '';
                         }
-                    },
-                    (err) => {
-                        res = setResponse('error', 404, res, {Error: 'Coach not found!'});
+                        return found.save()
                     })
                 .then((saved) => {
-                    console.log('Coach with ID: ' + req.params.id + ' was soft deleted!');
+                    console.log('Coach with ID: ' + req.params.id + ' was softly deleted!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
                         res.redirect('/');
@@ -291,10 +356,9 @@ router.delete('/delete/:id', function (req, res) {
                     }
                 })
                 .catch((err) => {
-                    console.log(err);
-                    res.status(500);
+                    res = setResponse('error', 500, res, {Error: 'Internal server error'});
                     res.end();
-                });
+                })
         }
     }
 });
@@ -339,5 +403,19 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
+
+router.get('/username', async (req, res) => {
+    if (req.get('Content-Type') === "application/json"){
+        console.log(req.body);
+        let found = await Credentials.findOne({username : req.body.username});
+        if (!found){
+            res.end(true);
+        } else {
+            res.end(false);
+        }
+    } else {
+        res.status(500).end("ERROR")
+    }
+})
 
 module.exports = router;

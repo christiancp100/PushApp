@@ -13,7 +13,7 @@
     </div>
     <div>
         <label>Password:
-            <input type="password" name="password"/>
+            <input required type="password" name="password"/>
         </label>
     </div>
     <div>
