@@ -51,7 +51,7 @@ router.post('/new', async (req, res) => {
                 birthday: req.body.birthday,
                 sex: req.body.sex,
                 email: req.body.email,
-                phone: req.body.phonec,
+                phone: req.body.phone,
                 address1: req.body.address1,
                 address2: req.body.address2,
                 city: req.body.city,
@@ -67,7 +67,7 @@ router.post('/new', async (req, res) => {
             let savedUser = await user.save();
             if (req.accepts("text/html")) {
                 res = setResponse('html', 201, res);
-                res.redirect('/');
+                res.end();
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 201, res, savedUser);
             }

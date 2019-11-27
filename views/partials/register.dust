@@ -5,7 +5,7 @@
 </div>
 <div>
     <label>Last name:
-        <input required pattern="[a-zA-Z][a-z]+$" type="text" value="{lastName}" name="lastname"/>
+        <input required pattern="[a-zA-Z][a-z]+$" type="text" value="{lastName}" name="lastName"/>
     </label>
 </div>
 <div>
@@ -26,27 +26,9 @@
 </div>
 <div>
     <label>Sex:<br>
-        <input type="radio" name="gender" value="male" required> Male<br>
-        <input type="radio" name="gender" value="female"> Female<br>
-        <input type="radio" name="gender" value="other"> Other
-    </label>
-</div>
-<div>
-    <label>height (in cm):
-        {?height}<input pattern="[0-2][0-9]{2}" value="{height}" type="text" name="height"/>
-        {:else}<input pattern="[0-2][0-9]{2}" type="text" name="height"/>{/height}
-    </label>
-</div>
-<div>
-    <label>weight (in kg):
-    {?weight}<input pattern="[0-9]{3}" value="{weight}" type="text" name="weight"/>
-    {:else} <input pattern="[0-9]{3}" type="text" name="weight"/>{/weight}
-    </label>
-</div>
-<div>
-    <label>bmi:
-       {?bmi}<input value="{bmi}" type="text" name="bmi"/>
-       {:else}<input type="text" name="bmi"/>{/bmi}
+        <input type="radio" name="sex" value="male" required> Male<br>
+        <input type="radio" name="sex" value="female"> Female<br>
+        <input type="radio" name="sex" value="other"> Other
     </label>
 </div>
 <div>
@@ -54,6 +36,11 @@
         <input type="radio" name="unitSystem" value="metric"> Metric<br>
         <input type="radio" name="unitSystem" value="other"> other<br>
         <input type="radio" name="unitSystem" value="other"> Other
+    </label>
+</div>
+<div>
+    <label>Phone:
+        <input required value="{phone}" type="text" name="phone"/>
     </label>
 </div>
 <div>
