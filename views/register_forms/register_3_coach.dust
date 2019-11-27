@@ -3,7 +3,7 @@
 <body>
 <form method="POST" action="/coaches" enctype="application/x-www-form-urlencoded">
 
-    <input required name="name" type="text" placeholder="Name" ><!-- 0-->
+    <input required name="name" type="text" placeholder="Name" required><!-- 0-->
 
     <input name="last-name" type="text" placeholder="Last Name" required><br><br><!--1-->
 
@@ -11,14 +11,14 @@
 
     <input name="address-1" type="text" placeholder="Address 1" required> <br><br><!-- 3-->
 
-    <input name="address-2" type="text" placeholder="Address 2" required><br><br><!-- 4-->
+    <input name="address-2" type="text" placeholder="Address 2" ><br><br><!-- 4-->
     <input type="email" name="email" required> <!-- 5-->
 
     {>"partials/nations"/} <!--0-->
     <br><br>
 
     <label for="photo">Set a profile pic:</label>
-    <input type="file" name="photo" required>    <!-- 6-->
+    <input type="file" name="photo" >    <!-- 6-->
 
     <br><br>
 
@@ -39,14 +39,14 @@
     <label for="phone">Phone Number: </label>
     <input type="tel" name="phone" placeholder="3884464115" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required><br><br><!-- 9-->
 
-    <label for="state">State: </label>
+    <label for="state">City: </label>
     <input type="text" name="city" placeholder="Lugano" required><br><br><!-- 10-->
 
     <label for="zipcode">zipCode: </label>
     <input type="text" name="zipCode" placeholder="6900" pattern="^\s*?\d{5}(?:[-\s]\d{4})?\s*?$" required><br><br> <!-- 11-->
 
     <label for="state">State: </label>
-    <input type="text" name="State" placeholder="Canton Ticino" required><br><br><!--12-->
+    <input type="text" name="State" placeholder="Canton Ticino" ><br><br><!--12-->
 
     <label for="currency">Currency: </label>
         <select id="currency" name="currency" required><!-- 2-->
