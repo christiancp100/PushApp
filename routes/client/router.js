@@ -59,41 +59,14 @@ router.post('/new', function (req, res) {
             res.end();
         } else {
           bcrypt.genSalt(10)
-              .then(salt =>  bcrypt.hash(req.body.userAccount.credentials.password, salt))
+              .then(salt =>  bcrypt.hash(req.body.password, salt))
               .catch(err => new Error(err))
               .then(code => {
-                var credentials = new Credentials({
+                let credentials = new Credentials({
                     username: req.body.userAccount.credentials.username,
                     password: code
                 });
-                let userAccount = new UserAccount({
-                    firstName: req.body.userAccount.firstName,
-                    lastName: req.body.userAccount.lastName,
-                    description: req.body.userAccount.description,
-                    photo: req.body.userAccount.photo,
-                    birthday: req.body.userAccount.birthday,
-                    sex: req.body.userAccount.sex,
-                    email: req.body.userAccount.email,
-                    phone: req.body.userAccount.phone,
-                    address1: req.body.userAccount.address1,
-                    address2: req.body.userAccount.address2,
-                    city: req.body.userAccount.city,
-                    state: req.body.userAccount.state,
-                    zipCode: req.body.userAccount.zipCode,
-                    country: req.body.userAccount.country,
-                    currency: req.body.userAccount.currency,
-                    localization: req.body.userAccount.localization,
-                    creationDate: Date.now(),
-                    credentials: credentials
-                });
-                let client = new Client({
-                    userAccount: userAccount,
-                    height: req.body.height,
-                    weight: req.body.weight,
-                    bmi: req.body.bmi,
-                    unitSystem: req.body.unitSystem
-                });
-                return client.save();
+                return credentials.save();
               })
               .then((saved) => {
                   if (req.accepts("text/html")) {
@@ -102,47 +75,11 @@ router.post('/new', function (req, res) {
                   } else if (req.accepts("application/json")) {
                       res = setResponse('json', 201, res, saved);
                   }
-                  res.end();
+                  res.end(saved);
               })
               .catch((err) => {
-                  res.status(500).end();
+                  res.status(500).end("ERR");
               });
-            /*let credentials = new Credentials({
-                username: req.body.userAccount.credentials.username,
-                password: hashedPassword
-            });
-
-            let userAccount = new UserAccount({
-                firstName: req.body.userAccount.firstName,
-                lastName: req.body.userAccount.lastName,
-                description: req.body.userAccount.description,
-                photo: req.body.userAccount.photo,
-                birthday: req.body.userAccount.birthday,
-                sex: req.body.userAccount.sex,
-                email: req.body.userAccount.email,
-                phone: req.body.userAccount.phone,
-                address1: req.body.userAccount.address1,
-                address2: req.body.userAccount.address2,
-                city: req.body.userAccount.city,
-                state: req.body.userAccount.state,
-                zipCode: req.body.userAccount.zipCode,
-                country: req.body.userAccount.country,
-                currency: req.body.userAccount.currency,
-                localization: req.body.userAccount.localization,
-                creationDate: Date.now(),
-                credentials: credentials
-            });
-
-            let client = new Client({
-                userAccount: userAccount,
-                height: req.body.height,
-                weight: req.body.weight,
-                bmi: req.body.bmi,
-                unitSystem: req.body.unitSystem
-            });*/
-
-
-
 
         }
     } else {
@@ -361,23 +298,28 @@ function setResponse(type, code, res, msg) {
 }
 
 router.post('/auth', async (req, res) => {
-    //todo check the request
+    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
-    let client = await Client.findOne({'access.username' : req.body.username});
-    console.log(client);
-    if (!client){
-        return res.status(400).send('Incorrect username.');
-    }
-    const validPassword = await bcrypt.compare(req.body.password, client.access.password);
+        let client = await Client.findOne({'access.username': req.body.username});
+        console.log(client);
+        if (!client) {
+            return res.status(400).send('Incorrect username.');
+        }
+        const validPassword = await bcrypt.compare(req.body.password, client.access.password);
 
 
-    if (!validPassword) {
-        return res.status(400).send('Incorrect email or password.');
+        if (!validPassword) {
+            return res.status(400).send('Incorrect email or password.');
+        }
+        //encode the _id of user object in the mongo
+        const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));
+        return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
 
     //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
     //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
     res.end();
 })
+
 
 module.exports = router;

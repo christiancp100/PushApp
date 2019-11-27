@@ -404,4 +404,18 @@ function setResponse(type, code, res, msg) {
     }
 }
 
+router.get('/username', async (req, res) => {
+    if (req.get('Content-Type') === "application/json"){
+        console.log(req.body);
+        let found = await Credentials.findOne({username : req.body.username});
+        if (!found){
+            res.end(true);
+        } else {
+            res.end(false);
+        }
+    } else {
+        res.status(500).end("ERROR")
+    }
+})
+
 module.exports = router;
