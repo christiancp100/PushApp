@@ -18,7 +18,7 @@
             <a href="#">
                 <li>Login</li>
             </a>
-            <a href="#" target="_blank">
+            <a href="/register" target="_blank">
                 <li>Sign up now!</li>
             </a>
         </ul>
@@ -31,6 +31,6 @@
         <li><a class="list-element" href="#">Our Coaches</a></li>
         <li><a class="list-element" href="#about">About us</a></li>
         <li><a class="list-element" href="#">Login</a></li>
-        <li><a class="btn btn--gradient" href="#">Sign up now!</a></li>
+        <li><a class="btn btn--gradient" href="/register">Sign up now!</a></li>
     </ul>
 </nav>
