@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coach</title>
+    <link rel='stylesheet' href='./../public/css/coach.css' />
+</head>
+<body>
+
+<div id="center">
+    <div class="nav">
+        <ul>
+            <li>All users</li>
+            <li>Routines</li>
+            <li>Schedule</li>
+        </ul>
+
+    </div>
+    <main>
+
+    </main>
+
+
+</div>
+
+</body>
+</html>

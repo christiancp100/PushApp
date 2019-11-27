@@ -1,0 +1,31 @@
+<table class="highlight centered ">
+    <thead>
+        <tr>
+            <th data-field="exercise">Exercise</th>
+            <th data-field="repetitions">Repetitions</th>
+            <th data-field="sets">Nr. of Sets</th>
+            <th data-field="weight">Weight</th>
+            <th data-field="comments">Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Bench Press</td>
+            <td>10</td>
+            <td>3</td>
+            <td>20kg</td>
+            <td>Technique!</td>
+        </tr>
+        <tr>
+            <td>Row</td>
+            <td>12</td>
+            <td>5</td>
+            <td>50kg</td>
+            <td>Back position!</td>
+        </tr>
+        {>"dashboard_partials/schedule_table_row"/}
+        {?coach}
+        {>"dashboard_partials/schedule_table_input_row"/}
+        {/coach}
+    </tbody>
+</table>

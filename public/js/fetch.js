@@ -87,7 +87,6 @@ function getNext(event) {
     reg2.appendChild(newInput);
 }
 
-
 function registerUser(event) {
     console.log("funziona!!!");
     event.preventDefault();

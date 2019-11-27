@@ -160,6 +160,11 @@ router.get('/search', function (req, res) {
         })
 });
 
+router.get('/setting', function (req, res) {
+    //todo render setting with info from database
+    //todo check headers
+})
+
 // Edit a coach
 // It works only with all the required information provided
 router.put('/edit/:id', async (req, res) => {
@@ -300,18 +305,25 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-router.get('/username', async (req, res) => {
+router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json"){
         console.log(req.body);
-        let found = await Credentials.findOne({username : req.body.username});
-        if (!found){
-            res.end(true);
-        } else {
-            res.end(false);
-        }
+        let found = await Credentials.findOne({username : req.body.username})
+            if (!found){
+                console.log("TRUE");
+                res.send(true);
+                } else {
+                console.log("FALSE");
+                res.send(false);
+            }
     } else {
         res.status(500).end("ERROR")
     }
 });
+
+router.get('/uss', function (req, res) {
+    res.type("text/html");
+    res.render('user-register', {});
+})
 
 module.exports = router;
