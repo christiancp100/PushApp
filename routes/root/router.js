@@ -49,11 +49,10 @@ router.post('/register-coach', function (req, res, next){
     console.log(body.email, body.password, body.typeofuser);
 
     res.status(200);
-    res.end();
 });
 
 router.get('/login', (req, res) => {
-
+  res.render("dashboard_coach.dust", {});
 });
 
 /** router for /root */
