@@ -13,6 +13,18 @@ router.get('/', function (req, res, next) {
   }
 });
 
+router.get('/test', function (req, res) {
+    let date = new Date();
+    //max date is maximum date to be registered (today)
+    let neededDate = "" + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+    let obj = {
+        firstName : 'maxim',
+        maxDate : neededDate,
+        weight : null
+    }
+    res.render('user-register', obj);
+
+})
 
 router.get('/register', (req, res, next) => {
   //TODO if the user is logged in, redirect to the admin panel
@@ -37,11 +49,10 @@ router.post('/register-coach', function (req, res, next){
     console.log(body.email, body.password, body.typeofuser);
 
     res.status(200);
-    res.end();
 });
 
 router.get('/login', (req, res) => {
-
+  res.render("dashboard_coach.dust", {});
 });
 
 /** router for /root */

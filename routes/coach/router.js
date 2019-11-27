@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-
+const bcrypt = require('bcrypt');
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
 require('../../models/Coach.js');
@@ -36,20 +36,21 @@ function getCoaches(req, res) {
 router.post('/', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
         console.log('Creating new coach...');
-        if (req.body.firstName === "undefined" && req.body.lastName === "undefined" /*|| 'birthday' in req.body.userAccount === undefined ||
-            'sex' in req.body.userAccount === undefined || 'email' in req.body.userAccount === undefined || 'phone' in req.body.userAccount === undefined ||
-            'address1' in req.body.userAccount === undefined || 'city' in req.body.userAccount === undefined || 'state' in req.body.userAccount === undefined ||
-            'zipCode' in req.body.userAccount === undefined || 'country' in req.body.userAccount === undefined*/) {
+        if (req.body.firstName === "undefined" && req.body.lastName === "undefined" && req.body.lastName === "undefined" && req.body.lastName === "undefined" &&
+            req.body.lastName === "undefined" && req.body.lastName === "undefined" && req.body.lastName === "undefined" && req.body.lastName === "undefined" &&
+            req.body.lastName === "undefined" && req.body.lastName === "undefined" && req.body.lastName === "undefined" && req.body.lastName === "undefined" &&
+            req.body.username === "undefined" && req.body.password === "undefined"){
             res = setResponse('json', 400, res, {Error: "First name, last name, birthday, sex, email address, phone number, at least one address, city, state, zip code and country must be provided"});
             res.end();
         } else {
+            let salt = await bcrypt.genSalt(10);
+            let code = await bcrypt.hash(req.body.password, salt);
             let credentials = new Credentials({
                 username: req.body.username,
-                password: req.body.password
+                password: code
             });
-            let credet = await credentials.save();
+            let credentialRef = await credentials.save();
 
-            console.log("password " + credet._id);
             let user = new UserAccount({
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
@@ -68,15 +69,14 @@ router.post('/', async (req, res) => {
                 currency: req.body.currency,
                 localization: req.body.localization,
                 creationDate: Date.now(),
-                _credentials: credet._id
-                });
+                _credentials: credentialRef._id
+            });
 
-                let userSaved = await user.save();
+            let userAccountRef = await user.save();
 
-                let coach = new Coach({
-                    _userAccount: userSaved._id,
-                    // certificates: ,
-                    // service: ,
+            let coach = new Coach({
+                    _userAccount: userAccountRef._id,
+                    // service:
                 });
                 let coachSaved = await coach.save();
 
@@ -299,6 +299,26 @@ router.delete('/delete/:id', function (req, res) {
     }
 });
 
+router.post('/auth', async (req, res) => {
+    //todo check the request
+
+    let client = await Credentials.findOne({username : req.body.username});
+    console.log(client);
+    if (!client){
+        return res.status(400).send('Incorrect username.');
+    }
+    const validPassword = await bcrypt.compare(req.body.password, client.password);
+
+
+    if (!validPassword) {
+        return res.status(400).send('Incorrect email or password.');
+    }
+
+    //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
+    //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+    res.end("DONE");
+})
+
 // Customized response
 function setResponse(type, code, res, msg) {
     res.status(code);
@@ -319,5 +339,19 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
+
+router.get('/username', async (req, res) => {
+    if (req.get('Content-Type') === "application/json"){
+        console.log(req.body);
+        let found = await Credentials.findOne({username : req.body.username});
+        if (!found){
+            res.end(true);
+        } else {
+            res.end(false);
+        }
+    } else {
+        res.status(500).end("ERROR")
+    }
+})
 
 module.exports = router;
