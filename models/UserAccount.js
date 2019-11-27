@@ -20,6 +20,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     country: {type: String, required: true},
     currency: {type: String, required: true},
     localization: {type: String, default: 'en-US'},
+    accountType: {type: String, required: true},
     creationDate: {type: Date, default: Date.now()},
     accessHistory: {type: [Date], default: () => []},
     _credentials: {type: Schema.Types.ObjectId, ref: 'Credentials', required: true}
