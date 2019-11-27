@@ -38,36 +38,7 @@
 
     <div class="col l12 m6 s12" style="position: absolute; left: 344px; top: 107px;">
         <div class="card">
-            <table class="highlight centered ">
-                <thead>
-                <tr>
-                    <th data-field="exercise">Exercise</th>
-                    <th data-field="repetitions">Repetitions</th>
-                    <th data-field="sets">Nr. of Sets</th>
-                    <th data-field="weight">Weight</th>
-                    <th data-field="comments">Comments</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Bench Press</td>
-                    <td>10</td>
-                    <td>3</td>
-                    <td>20kg</td>
-                    <td>Technique!</td>
-                </tr>
-                <tr>
-                    <td>Row</td>
-                    <td>12</td>
-                    <td>5</td>
-                    <td>50kg</td>
-                    <td>Back position!</td>
-                </tr>
-                {>"dashboard_partials/schedule_table_row"/}
-                {>"dashboard_partials/schedule_table_input_row"/}
-
-                </tbody>
-            </table>
+            {>"dashboard_partials/schedule_table"/}
         </div>
         <div class="row center">
             <a class="btn-floating btn-large waves-effect waves-light black">
