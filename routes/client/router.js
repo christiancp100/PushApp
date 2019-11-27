@@ -65,14 +65,14 @@ router.post('/new', async function (req, res) {
             try {
                 let hashedPassword = await bcrypt.hash(req.body.credentials.password, await bcrypt.genSalt(10));
 
-                let credentials = new Credentials({
+                let newCredentials = new Credentials({
                     username: req.body.credentials.username,
                     password: hashedPassword
                 });
 
-                let savedCredentials = await credentials.save();
+                let savedCredentials = await newCredentials.save();
 
-                let userAccount = new UserAccount({
+                let newUserAccount = new UserAccount({
                     firstName: req.body.userAccount.firstName,
                     lastName: req.body.userAccount.lastName,
                     description: req.body.userAccount.description,
@@ -93,9 +93,9 @@ router.post('/new', async function (req, res) {
                     credentials: savedCredentials._id
                 });
 
-                let savedUserAccount_id = await req.body.userAccount.save();
+                let savedUserAccount_id = await newUserAccount.save();
 
-                let client = new client({
+                let newClient = new client({
                     userAccount: savedUserAccount_id,
                     height: client.height,
                     weight: client.weight,
@@ -103,7 +103,7 @@ router.post('/new', async function (req, res) {
                     unitSystem: client.unitSystem
                 });
 
-                let saved = await client.save();
+                let saved = await newClient.save();
 
                 if (req.accepts("text/html")) {
                     res.redirect('/auth');
