@@ -315,6 +315,10 @@ router.post('/auth', async (req, res) => {
         const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));
         return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
+
+    //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
+    //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+    res.end();
 })
 
 
