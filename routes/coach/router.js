@@ -19,7 +19,7 @@ function getCoaches(req, res) {
         .then((clients) => {
             if (req.accepts('text/html')) {
                 res.end();
-            } else if (req.accepts('application/json')){
+            } else if (req.accepts('application/json')) {
                 res = setResponse('json', 200, res, result);
             } else {
                 res.status(400);
@@ -67,26 +67,27 @@ router.post('/', async (req, res) => {
                 country: req.body.country,
                 currency: req.body.currency,
                 localization: req.body.localization,
+                accountType: 'client',
                 creationDate: Date.now(),
                 _credentials: credet._id
-                })
+            })
 
-                let userSaved = await user.save();
+            let userSaved = await user.save();
 
-                let coach = new Coach({
-                    _userAccount: userSaved._id,
-                    // certificates: ,
-                    // service: ,
-                })
-                let coachSaved = await coach.save();
+            let coach = new Coach({
+                _userAccount: userSaved._id,
+                // certificates: ,
+                // service: ,
+            })
+            let coachSaved = await coach.save();
 
-                    if (req.accepts("text/html")) {
-                        res = setResponse('html', 201, res);
-                        res.redirect('/');
-                    } else if (req.accepts("application/json")) {
-                        res = setResponse('json', 201, res, coachSaved);
-                    }
-                    res.end(coachSaved);
+            if (req.accepts("text/html")) {
+                res = setResponse('html', 201, res);
+                res.redirect('/');
+            } else if (req.accepts("application/json")) {
+                res = setResponse('json', 201, res, coachSaved);
+            }
+            res.end(coachSaved);
 
         }
     } else {
@@ -111,43 +112,43 @@ function getFilter(req) {
         //Filter based on:
         // ID
         if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
-            filter = {'_id':request.id};
+            filter = {'_id': request.id};
         }
         // First name
         if (request.firstName !== undefined) {
-            filter = {'userAccount.firstName':request.firstName};
+            filter = {'userAccount.firstName': request.firstName};
         }
         // Last name
         if (request.lastName !== undefined) {
-            filter = {'userAccount.lastName':request.lastName};
+            filter = {'userAccount.lastName': request.lastName};
         }
         // Birthday
         if (request.birthday !== undefined) {
-            filter = {'userAccount.birthday':request.birthday};
+            filter = {'userAccount.birthday': request.birthday};
         }
         // Sex
         if (request.sex !== undefined) {
-            filter = {'userAccount.sex':request.sex};
+            filter = {'userAccount.sex': request.sex};
         }
         // City
         if (request.city !== undefined) {
-            filter = {'userAccount.city':request.city};
+            filter = {'userAccount.city': request.city};
         }
         // State
         if (request.state !== undefined) {
-            filter = {'userAccount.state':request.state};
+            filter = {'userAccount.state': request.state};
         }
         // Country
         if (request.country !== undefined) {
-            filter = {'userAccount.country':request.country};
+            filter = {'userAccount.country': request.country};
         }
         // Certificates
         if (request.certificates !== undefined) {
-            filter = {'certificates':request.certificates};
+            filter = {'certificates': request.certificates};
         }
         // Services
         if (request.services !== undefined) {
-            filter = {'services':request.services};
+            filter = {'services': request.services};
         }
         // filter.userAccount = userAccount;
         return filter;
@@ -203,7 +204,8 @@ router.get('/search', function (req, res) {
             } else {
                 res = setResponse('error', 404, res, result);
                 res.end();
-            }})
+            }
+        })
         .catch((err) => {
             res.status(500).end();
         });

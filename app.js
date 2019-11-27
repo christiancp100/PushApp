@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 
 // Models
-require('./models/Client.js');
+require('./models/ClientInfo.js');
 require('./models/Coach.js');
 require('./models/Credential.js');
 

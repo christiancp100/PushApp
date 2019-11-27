@@ -8,17 +8,17 @@ const bcrypt = require('bcrypt');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
-require('../../models/Client.js');
+require('../../models/ClientInfo.js');
 
 let UserAccount = mongoose.model('UserAccount');
-let Client = mongoose.model('Client');
+let ClientInfo = mongoose.model('ClientInfo');
 let Credentials = mongoose.model('Credentials');
 
 // GET all
 router.get('/', function (req, res) {
     req.body.isDeleted = false;
     const filter = getFilter(req);
-    Client.find({})
+    ClientInfo.find({})
         .then((clients) => {
             let result = clients.filter((o) => {
                 if (!filter.isDeleted) {
@@ -95,30 +95,31 @@ router.post('/new', async function (req, res) {
                     country: req.body.userAccount.country,
                     currency: req.body.userAccount.currency,
                     localization: req.body.userAccount.localization,
-                    accountType: req.body.userAccount.accountType,
+                    accountType: 'client',
                     creationDate: Date.now(),
                     _credentials: savedCredentials._id
                 });
 
                 let savedUserAccount = await userAccount.save();
 
-                let client = new Client({
+                let clientInfo = new ClientInfo({
                     _userAccount: savedUserAccount._id,
-                    height: req.body.client.height,
-                    weight: req.body.client.weight,
-                    bmi: req.body.client.height / req.body.client.weight,
-                    unitSystem: req.body.client.unitSystem
+                    height: req.body.clientInfo.height,
+                    weight: req.body.clientInfo.weight,
+                    unitSystem: req.body.clientInfo.unitSystem
                 });
 
-                let saved = await client.save();
+                let savedClientInfo = await clientInfo.save();
 
                 if (req.accepts("text/html")) {
                     res.redirect('/auth');
                 } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 201, res, saved);
+                    savedUserAccount._credentials = 'private';
+                    res = setResponse('json', 201, res, {userAccount: savedUserAccount, clientInfo: savedClientInfo});
                 }
                 res.end();
-            } catch (err) {
+            } catch
+                (err) {
                 console.log(err);
                 res.status(500).end();
             }
@@ -127,12 +128,13 @@ router.post('/new', async function (req, res) {
         res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
         res.end();
     }
-});
+})
+;
 
 // Search for and users
 router.get('/search', function (req, res) {
     const filter = getFilter(req);
-    Client.find({})
+    ClientInfo.find({})
         .then((clients) => {
             let result = clients.filter((o) => {
                 if (filter._id) {
@@ -187,18 +189,17 @@ router.put('/edit/:id', function (req, res) {
             res.status(400).end();
         } else {
             console.log('Searching for user with ID: ' + req.params.id + '.');
-            Client.findById({_id: req.params.id})
+            ClientInfo.findById({_id: req.params.id})
                 .then((found) => {
                         if (found != null) {
-                            // found.firstName = req.body.firstName;
-                            // found.lastName = req.body.lastName;
+                            found.firstName = req.body.firstName;
+                            found.lastName = req.body.lastName;
                             found.description = req.body.description;
                             found.photo = req.body.photo;
                             found.birthday = req.body.birthday;
                             found.sex = req.body.sex;
                             found.height = req.body.height;
                             found.weight = req.body.weight;
-                            found.bmi = req.body.bmi;
                             found.unitSystem = req.body.unitSystem;
                             found.email = req.body.email;
                             found.phone = req.body.phone;
@@ -210,7 +211,6 @@ router.put('/edit/:id', function (req, res) {
                             found.country = req.body.country;
                             found.currency = req.body.currency;
                             found.localization = req.body.localization;
-                            // found.authenticationProvider = req.body.authenticationProvider;
                             return found.save()
                         }
                     },
@@ -243,7 +243,7 @@ router.delete('/delete/:id', function (req, res) {
             res.status(400).end();
         } else {
             console.log('Searching for user with ID: ' + req.params.id + '.');
-            Client.findById({_id: req.params.id})
+            ClientInfo.findById({_id: req.params.id})
                 .then((found) => {
                         if (found != null) {
                             found.isDeleted = true;
@@ -341,12 +341,12 @@ function setResponse(type, code, res, msg) {
 router.post('/auth', async (req, res) => {
     //todo check the request
 
-    let client = await Client.findOne({'access.username': req.body.username});
-    console.log(client);
-    if (!client) {
+    let clientInfo = await ClientInfo.findOne({'access.username': req.body.username});
+    console.log(clientInfo);
+    if (!clientInfo) {
         return res.status(400).send('Incorrect username.');
     }
-    const validPassword = await bcrypt.compare(req.body.password, client.access.password);
+    const validPassword = await bcrypt.compare(req.body.password, clientInfo.access.password);
 
 
     if (!validPassword) {

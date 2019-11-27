@@ -3,7 +3,7 @@ require('./UserAccount');
 require('./Schedule');
 const Schema = mongoose.Schema;
 
-const ClientSchema = exports.ClientSchema = new Schema({
+const ClientInfoSchema = exports.ClientSchema = new Schema({
     _userAccount: {type: Schema.Types.ObjectId, ref: 'UserAccount', required: true},
     height: {type: Number},
     weight: {type: Number},
@@ -12,4 +12,4 @@ const ClientSchema = exports.ClientSchema = new Schema({
     schedule: {type: Schema.Types.ObjectId, ref: 'Schedule'}
 });
 
-mongoose.model('Client', ClientSchema);
+mongoose.model('ClientInfo', ClientInfoSchema);
