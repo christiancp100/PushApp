@@ -16,17 +16,17 @@
 </div>
 <div>
     <label>Choose yor photo:
-        <input type="file" name="image"/>
+        <input accept="image/*" type="file" name="image"/>
     </label>
 </div>
 <div>
-    <label>birthday:
+    <label>Birthday:
         <input required value="{bday}" min="1900-01-01" max="{maxDate}" type="date" name="birthday"/>
     </label>
 </div>
 <div>
     <label>Sex:<br>
-        <input type="radio" name="gender" value="male"> Male<br>
+        <input type="radio" name="gender" value="male" required> Male<br>
         <input type="radio" name="gender" value="female"> Female<br>
         <input type="radio" name="gender" value="other"> Other
     </label>
@@ -45,7 +45,8 @@
 </div>
 <div>
     <label>bmi:
-        <input type="text" name="bmi"/>
+       {?bmi}<input value="{bmi}" type="text" name="bmi"/>
+       {:else}<input type="text" name="bmi"/>{/bmi}
     </label>
 </div>
 <div>
@@ -62,7 +63,7 @@
 </div>
 <div>
     <label>address2:
-        <input type="text" value="{address1}" name="address2"/>
+        <input type="text" value="{address2}" name="address2"/>
     </label>
 </div>
 <div>

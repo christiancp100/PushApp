@@ -205,6 +205,10 @@ router.get('/search', function (req, res) {
         });
 });
 
+router.get('/setting', function (req, res) {
+    //todo render setting with info from database
+    //todo check headers
+})
 
 // Edit a coach
 router.put('/edit/:id', async (req, res) => {
@@ -404,15 +408,16 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-router.get('/username', async (req, res) => {
+router.get('/username', function (req, res) {
     if (req.get('Content-Type') === "application/json"){
         console.log(req.body);
-        let found = await Credentials.findOne({username : req.body.username});
-        if (!found){
-            res.end(true);
-        } else {
-            res.end(false);
-        }
+        Credentials.findOne({username : req.body.username})
+            .then(found => {if (!found){
+                res.end(true);
+                } else {
+                res.end(false);
+             }})
+            .catch(err => new Error(err))
     } else {
         res.status(500).end("ERROR")
     }
