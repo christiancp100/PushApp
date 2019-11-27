@@ -85,99 +85,66 @@ router.post('/new', async (req, res) => {
 // Creates filter for searching coaches on the database
 function getFilter(req) {
     let filter = {};
+    filter.accountType = 'coach';
     let request;
     if (Object.keys(req.body).length > 0) {
         request = req.body;
     } else if (Object.keys(req.query).length > 0) {
         request = req.query;
     }
-
     if (request !== undefined) {
         //Filter based on:
-        // ID-
+        // ID
         if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
-            filter = {'_id':request.id};
+            filter._id = request.id;
         }
         // First name
         if (request.firstName !== undefined) {
-            filter = {data: 'userAccount', field: lastName};
-            filter = {'userAccount.firstName':request.firstName};
+            filter.firstName = request.firstName;
         }
         // Last name
         if (request.lastName !== undefined) {
-            filter = {'userAccount.lastName':request.lastName};
+            filter.lastName = request.lastName;
         }
         // Birthday
         if (request.birthday !== undefined) {
-            filter = {'userAccount.birthday':request.birthday};
+            filter.birthday = request.birthday;
         }
         // Sex
         if (request.sex !== undefined) {
-            filter = {'userAccount.sex':request.sex};
+            filter.sex = request.sex;
         }
         // City
         if (request.city !== undefined) {
-            filter = {'userAccount.city':request.city};
+            filter.city = request.city;
         }
         // State
         if (request.state !== undefined) {
-            filter = {'userAccount.state':request.state};
+            filter.state = request.state;
         }
         // Country
         if (request.country !== undefined) {
-            filter = {'userAccount.country':request.country};
+            filter.country = request.country;
         }
         // Services
         if (request.services !== undefined) {
-            filter = {'services':request.services};
+            filter.services = request.services;
         }
-        // filter.userAccount = userAccount;
         return filter;
     }
 }
 
 // Search for coach
 router.get('/search', function (req, res) {
-    const filter = getFilter(req);
+    let filter = getFilter(req);
+    console.log(filter);
     UserAccount.find(filter)
         .then((coaches) => {
-            let result = coaches.filter((o) => {
-                if (filter._id) {
-                    return (filter._id.toLowerCase() === o._id.toLowerCase());
-                }
-                if (filter.firstName) {
-                    return (filter.firstName.toLowerCase() === o.firstName.toLowerCase());
-                }
-                if (filter.lastName) {
-                    return (filter.lastName.toLowerCase() === o.lastName.toLowerCase());
-                }
-                if (filter.birthday) {
-                    return (filter.birthday.toLowerCase() === o.birthday.toLowerCase());
-                }
-                if (filter.sex) {
-                    return (filter.sex.toLowerCase() === o.sex.toLowerCase());
-                }
-                if (filter.city) {
-                    return (filter.city.toLowerCase() === o.city.toLowerCase());
-                }
-                if (filter.state) {
-                    return (filter.state.toLowerCase() === o.state.toLowerCase());
-                }
-                if (filter.country) {
-                    return (filter.country.toLowerCase() === o.country.toLowerCase());
-                }
-                if (filter.certificates) {
-                    return (filter.certificates.toLowerCase() === o.certificates.toLowerCase());
-                }
-                if (filter.services) {
-                    return (filter.services.toLowerCase() === o.services.toLowerCase());
-                }
-            });
             if (coaches.length > 0) {
+                console.log("coaches has been found!");
+                console.log(coaches);
                 if (req.accepts('html')) {
-                    // res.render("coaches", coaches);
                     res.status(200);
-                    console.log("coaches has been found!");
                 } else if (req.accepts('json')) {
                     res = setResponse('json', 200, res, result);
                 }
@@ -185,10 +152,12 @@ router.get('/search', function (req, res) {
             } else {
                 res = setResponse('error', 404, res, result);
                 res.end();
-            }})
+            }
+        })
         .catch((err) => {
-            res.status(500).end();
-        });
+            res = setResponse(err, 500, res, coaches);
+            res.end();
+        })
 });
 
 router.get('/setting', function (req, res) {
