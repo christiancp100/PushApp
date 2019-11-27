@@ -54,25 +54,34 @@ router.get('/', function (req, res) {
 router.post('/new', async function (req, res) {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
         console.log('Creating new users...');
-        var userAccount = req.body.userAccount;
-        var client = req.body.client;
-        var credentials = req.body.credentials;
 
-        if (userAccount.firstName === undefined && userAccount.lastName === undefined && userAccount.birthday === undefined && userAccount.sex === undefined && userAccount.email === undefined && userAccount.address1 === undefined && userAccount.city === undefined && userAccount.state === undefined && userAccount.zipCode === undefined && userAccount.country === undefined && userAccount.currency === undefined && credentials.username === undefined && credentials.password === undefined) {
+        if (req.body.userAccount.firstName === undefined &&
+            req.body.userAccount.lastName === undefined &&
+            req.body.userAccount.birthday === undefined &&
+            req.body.userAccount.sex === undefined &&
+            req.body.userAccount.email === undefined &&
+            req.body.userAccount.address1 === undefined &&
+            req.body.userAccount.city === undefined &&
+            req.body.userAccount.state === undefined &&
+            req.body.userAccount.zipCode === undefined &&
+            req.body.userAccount.country === undefined &&
+            req.body.userAccount.currency === undefined &&
+            req.body.credentials.username === undefined &&
+            req.body.credentials.password === undefined) {
             res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
         } else {
             try {
                 let hashedPassword = await bcrypt.hash(req.body.credentials.password, await bcrypt.genSalt(10));
 
-                let newCredentials = new Credentials({
+                let credentials = new Credentials({
                     username: req.body.credentials.username,
                     password: hashedPassword
                 });
 
-                let savedCredentials = await newCredentials.save();
+                let savedCredentials = await credentials.save();
 
-                let newUserAccount = new UserAccount({
+                let userAccount = new UserAccount({
                     firstName: req.body.userAccount.firstName,
                     lastName: req.body.userAccount.lastName,
                     description: req.body.userAccount.description,
@@ -89,26 +98,27 @@ router.post('/new', async function (req, res) {
                     country: req.body.userAccount.country,
                     currency: req.body.userAccount.currency,
                     localization: req.body.userAccount.localization,
+                    accountType: req.body.userAccount.accountType,
                     creationDate: Date.now(),
                     credentials: savedCredentials._id
                 });
 
-                let savedUserAccount_id = await newUserAccount.save();
+                let savedUserAccount_id = await userAccount.save();
 
-                let newClient = new client({
+                let client = new client({
                     userAccount: savedUserAccount_id,
-                    height: client.height,
-                    weight: client.weight,
-                    bmi: client.height / client.weight,
-                    unitSystem: client.unitSystem
+                    height: req.body.client.height,
+                    weight: req.body.client.weight,
+                    bmi: req.body.client.height / req.body.client.weight,
+                    unitSystem: req.body.client.unitSystem
                 });
 
-                let saved = await newClient.save();
+                let saved = await client.save();
 
                 if (req.accepts("text/html")) {
                     res.redirect('/auth');
                 } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 201, res, savedCredentials);
+                    res = setResponse('json', 201, res, saved);
                 }
                 res.end();
             } catch (err) {
