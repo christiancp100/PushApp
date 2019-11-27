@@ -72,43 +72,43 @@ router.post('/new', async function (req, res) {
 
                 let savedCredentials = await newCredentials.save();
 
-                let newUserAccount = new UserAccount({
-                    firstName: req.body.userAccount.firstName,
-                    lastName: req.body.userAccount.lastName,
-                    description: req.body.userAccount.description,
-                    photo: req.body.userAccount.photo,
-                    birthday: req.body.userAccount.birthday,
-                    sex: req.body.userAccount.sex,
-                    email: req.body.userAccount.email,
-                    phone: req.body.userAccount.phone,
-                    address1: req.body.userAccount.address1,
-                    address2: req.body.userAccount.address2,
-                    city: req.body.userAccount.city,
-                    state: req.body.userAccount.state,
-                    zipCode: req.body.userAccount.zipCode,
-                    country: req.body.userAccount.country,
-                    currency: req.body.userAccount.currency,
-                    localization: req.body.userAccount.localization,
-                    creationDate: Date.now(),
-                    credentials: savedCredentials._id
-                });
-
-                let savedUserAccount_id = await newUserAccount.save();
-
-                let newClient = new client({
-                    userAccount: savedUserAccount_id,
-                    height: client.height,
-                    weight: client.weight,
-                    bmi: client.height / client.weight,
-                    unitSystem: client.unitSystem
-                });
-
-                let saved = await newClient.save();
+                // let newUserAccount = new UserAccount({
+                //     firstName: req.body.userAccount.firstName,
+                //     lastName: req.body.userAccount.lastName,
+                //     description: req.body.userAccount.description,
+                //     photo: req.body.userAccount.photo,
+                //     birthday: req.body.userAccount.birthday,
+                //     sex: req.body.userAccount.sex,
+                //     email: req.body.userAccount.email,
+                //     phone: req.body.userAccount.phone,
+                //     address1: req.body.userAccount.address1,
+                //     address2: req.body.userAccount.address2,
+                //     city: req.body.userAccount.city,
+                //     state: req.body.userAccount.state,
+                //     zipCode: req.body.userAccount.zipCode,
+                //     country: req.body.userAccount.country,
+                //     currency: req.body.userAccount.currency,
+                //     localization: req.body.userAccount.localization,
+                //     creationDate: Date.now(),
+                //     credentials: savedCredentials._id
+                // });
+                //
+                // let savedUserAccount_id = await newUserAccount.save();
+                //
+                // let newClient = new client({
+                //     userAccount: savedUserAccount_id,
+                //     height: client.height,
+                //     weight: client.weight,
+                //     bmi: client.height / client.weight,
+                //     unitSystem: client.unitSystem
+                // });
+                //
+                // let saved = await newClient.save();
 
                 if (req.accepts("text/html")) {
                     res.redirect('/auth');
                 } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 201, res, saved);
+                    res = setResponse('json', 201, res, savedCredentials);
                 }
                 res.end();
             } catch (err) {
