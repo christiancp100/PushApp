@@ -7,7 +7,6 @@
   "scripts": {
     "start": "DEBUG='push-app-server' bin/www",
     "nodemon": "nodemon bin/www",
-    "test": "npm run test-mocha",
     "test-mocha": "./node_modules/mocha/bin/mocha -R spec ./test/routes ./test/hypermedia",
     "dustc": "cd ./views; dustc *.dust partials/*.dust register_forms/*.dust -o ../public/js/views.js"
   },
@@ -41,6 +40,7 @@
     "mongoose": "^5.7.12",
     "morgan": "^1.9.1",
     "node": "^13.1.0",
+    "nodemon": "^2.0.1",
     "request": "^2.88.0",
     "socket.io": "^2.3.0",
     "supertest": "^4.0.2"

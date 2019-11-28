@@ -38,7 +38,11 @@ const routers = require('./routes/routers');
 app.use('/', routers.root);
 app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
+app.use('/schedule', routers.schedule);
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes
 app.use(function (req, res, next) {

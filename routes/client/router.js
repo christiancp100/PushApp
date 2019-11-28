@@ -15,7 +15,7 @@ let Client = mongoose.model('Client');
 let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
 
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
 
 // GET all
 router.get('/', function (req, res) {
@@ -320,6 +320,11 @@ router.post('/auth', async (req, res) => {
     //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
     res.end();
 })
+
+router.get('/prueba', function (req, res) {
+  UserAccount.find({}).then(found => console.log(found));
+  console.log("fin");
+});
 
 
 module.exports = router;
