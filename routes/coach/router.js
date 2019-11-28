@@ -8,9 +8,11 @@ const bcrypt = require('bcrypt');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
+require('../../models/CoachClients.js');
 
 let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
+let CoachClients = mongoose.model('CoachClients');
 
 // GET all coach
 function getCoaches(req, res) {
@@ -264,7 +266,7 @@ router.put('/delete/:id', async (req, res) => {
             console.log('Searching for coach with ID: ' + req.params.id + '.');
             try {
                 let found = await UserAccount.findById(req.params.id);
-                if (found != null) {
+                if (found != null && found.type === 'coach') {
                     found.firstName = 'anonymous';
                     found.lastName = ' ';
                     found.description = '';
@@ -273,7 +275,6 @@ router.put('/delete/:id', async (req, res) => {
                     found.phone = 0;
                     found.address1 = ' ';
                     found.address2 = '';
-                    console.log('MODIFICATO');
                 } else {
                     res = setResponse('error', 404, res, { Error: 'Coach not found!' });
                     res.end();
@@ -318,6 +319,117 @@ router.post('/auth', async (req, res) => {
     //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
     //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
     res.end("DONE");
+});
+
+// POST a new coach-client relation
+router.post('/hire', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Creating a new relation coach-client: ' + req.params.id + '.');
+            let hire = new CoachClients({
+                _coachId: req.body._coachId,
+                _clientId: req.body._clientId,
+            });
+            hire.save()
+                .then((saved) => {
+                    console.log(saved);
+                    res = setResponse('html', 201, res);
+                    res.end();
+                })
+                .catch((err) => {
+                    res = setResponse(err, 500, res, { Error: 'Cannot create a new hire' });
+                    res.end();
+                })
+        }
+    }
+});
+
+// GET the clients of a coach
+router.get('/hire/coach/:id', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Searching for coach with ID: ' + req.params.id + '.');
+            if (req.params.id) {
+                CoachClients.find({_coachId: req.params.id})
+                    .then((found) => {
+                        console.log(found);
+                        console.log('The coach has ' + found.length + ' clients.');
+                        res = setResponse('json', 200, res, found);
+                        res.end();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        res = setResponse('json', 500, { Error : err});
+                        res.end();
+                    })
+            } else {
+                res = setResponse('json', 404, { Error : 'No clients for the given coach' });
+                res.end();
+            }
+        }
+    }
+});
+
+// GET the coaches of a client
+router.get('/hire/client/:id', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Searching for client with ID: ' + req.params.id + '.');
+            if (req.params.id) {
+                CoachClients.find({_clientId: req.params.id})
+                    .then((found) => {
+                        console.log(found);
+                        console.log('The client has ' + found.length + ' coaches.');
+                        res = setResponse('json', 200, res, found);
+                        res.end();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        res = setResponse('json', 500, { Error : err});
+                        res.end();
+                    })
+            } else {
+                res = setResponse('json', 404, { Error : 'No coaches for the given client' });
+                res.end();
+            }
+        }
+    }
+});
+
+router.delete('/hire/:id', async (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            try {
+                console.log('Searching for hire-relation with ID: ' + req.params.id + '.');
+                let found = await CoachClients.findById(req.params.id);
+                if (found === null) {
+                    res = setResponse('json', 404, res, {Error: 'No hire-relation for the given id'});
+                    res.end();
+                } else {
+                    try {
+                        let removed = await CoachClients.remove(found);
+                        console.log('The hire-relation has been deleted!');
+                        res = setResponse('json', 200, res, removed);
+                        res.end();
+                    } catch (e) {
+                        res = setResponse('json', 500, res, {Error: e});
+                        res.end();
+                    }
+                }
+            } catch (e) {
+                res = setResponse('json', 500, res, {Error: e});
+                res.end();
+            }
+        }
+    }
 });
 
 // Customized response

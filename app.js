@@ -10,8 +10,10 @@ const app = express();
 
 // Models
 require('./models/ClientInfo.js');
-require('./models/Coach.js');
 require('./models/Credential.js');
+require('./models/UserAccount.js');
+require('./models/CoachClients.js');
+
 
 // Mongoose connection to MongoDB and Collection name declaration
 mongoose.connect('mongodb://localhost/PushApp');
