@@ -17,13 +17,9 @@ let Credentials = mongoose.model('Credentials');
 // GET all
 router.get('/', async (req, res) => {
     try {
-        // req.body.isDeleted = false;
-        req.body.firstName = "Anonymous";
-        const filter = getFilter(req);
         let clients = await UserAccount.find({});
-
         let result = await clients.filter((o) => {
-            return (filter.firstName !== o.firstName);
+            return (o.isDeleted === false);
         });
 
         if (req.accepts("text/html")) {
@@ -109,7 +105,7 @@ router.post('/new', async (req, res) => {
                     _userAccountId: savedUserAccount._id
                 });
 
-                let savedCredentials = await credentials.save();
+                await credentials.save();
 
                 let clientInfo = new ClientInfo({
                     _clientId: savedUserAccount._id,
@@ -166,6 +162,9 @@ router.get('/search', function (req, res) {
                 }
                 if (filter.country) {
                     return (filter.country.toLowerCase() === o.country.toLowerCase());
+                }
+                if (filter.isDeleted) {
+                    return (filter.isDeleted === o.isDeleted);
                 }
             });
 
@@ -225,16 +224,13 @@ router.put('/edit/:id', async (req, res) => {
                     foundClient.localization = req.body.userAccount.localization;
 
                     let savedClient = await foundClient.save();
-                    let foundClientInfos = await ClientInfo.find({});
-                    let foundClientInfo = foundClientInfos.filter((o) => {
-                        return (savedClient._id.toString() === o._clientId.toString());
-                    });
+                    let foundClientInfo = await ClientInfo.findOne({_clientId: req.params.id});
 
-                    foundClientInfo[0].height = req.body.clientInfo.height;
-                    foundClientInfo[0].weight = req.body.clientInfo.weight;
-                    foundClientInfo[0].unitSystem = req.body.clientInfo.unitSystem;
+                    foundClientInfo.height = req.body.clientInfo.height;
+                    foundClientInfo.weight = req.body.clientInfo.weight;
+                    foundClientInfo.unitSystem = req.body.clientInfo.unitSystem;
 
-                    let savedClientInfo = await foundClientInfo[0].save();
+                    let savedClientInfo = await foundClientInfo.save();
 
                     console.log('User with ID: ' + req.params.id + ' updated!');
                     if (req.accepts("text/html")) {
@@ -279,26 +275,19 @@ router.delete('/delete/:id', async (req, res) => {
                 foundClient.address2 = '';
                 foundClient.isDeleted = true;
 
-                let foundCredential = await Credentials.findOne({_id: req.params.id});
-                // let foundCredentials = await Credentials.find({});
-                // let foundCredential = await foundCredentials.filter((o) => {
-                //     return (foundClient._id.toString() === o._userAccountId.toString());
-                // });
+                let foundCredential = await Credentials.findOne({_userAccountId: req.params.id});
+                await foundClient.save();
 
-                try {
-                    await foundClient.save();
+                if (foundCredential !== undefined) {
                     await foundCredential.remove();
-
-                    console.log('Client with ID ' + req.params.id + ' was successfully deleted!');
-                    if (req.accepts("text/html")) {
-                        res = setResponse('html', 201, res);
-                        res.redirect('/');
-                    } else if (req.accepts("application/json")) {
-                        res = setResponse('json', 200, res, {Result: `Client with ID ` + foundClient._id.toString() + ` was successfully deleted!`});
-                        res.end();
-                    }
-                } catch (err) {
-                    throw err;
+                }
+                console.log('Client with ID ' + req.params.id + ' was successfully deleted!');
+                if (req.accepts("text/html")) {
+                    res = setResponse('html', 200, res);
+                    res.redirect('/');
+                } else if (req.accepts("application/json")) {
+                    res = setResponse('json', 200, res, {Result: `Client with ID ` + foundClient._id.toString() + ` was successfully deleted!`});
+                    res.end();
                 }
             } else {
                 res = setResponse('error', 404, res, {Error: 'Client not found!'});
@@ -390,7 +379,6 @@ router.post('/auth', async (req, res) => {
             return res.status(400).send('Incorrect username.');
         }
         const validPassword = await bcrypt.compare(req.body.password, client.access.password);
-
 
         if (!validPassword) {
             return res.status(400).send('Incorrect email or password.');
