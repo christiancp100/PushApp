@@ -137,6 +137,9 @@ router.post('/auth', async (req, res) => {
     res.send("DONE");
   }
 });
-
+router.get('/test', function (req, res) {
+  res.render('register_forms/register_1');
+  res.end();
+})
 /** router for /root */
 module.exports = router;

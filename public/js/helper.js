@@ -24,3 +24,7 @@ function mySubmit() {
     }
     return true;
 }
+
+function testing() {
+    localStorage.setItem('username', 'casual name');
+}
