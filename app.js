@@ -38,6 +38,7 @@ const routers = require('./routes/routers');
 app.use('/', routers.root);
 app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
+app.use('/auth', routers.auth);
 
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes
