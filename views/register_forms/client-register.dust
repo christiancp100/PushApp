@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{title}</title>
+    <title>Client register</title>
 </head>
 
 <body onload="findName()">
 <h2>Register new Client</h2>
-<form onsubmit="return mySubmit();" action="clients/new"  method="post" enctype="application/x-www-form-urlencoded">
-    {>"partials/register"/}
+<form onsubmit="return mySubmit();" action="/clients/new"  method="post" enctype="application/x-www-form-urlencoded">
+    {>"../partials/register"/}
     <div>
         <label>bmi:
             {?bmi}<input value="{bmi}" type="text" name="bmi"/>
@@ -43,7 +43,7 @@
     </div>
 </form>
 <script src="/js/helper.js"></script>
-<script src="/dustjs-linkedin/dust-core.min.js"></script>
+<script src="js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
 </body>
 

@@ -100,11 +100,13 @@ router.get("/client/dashboard", (req, res) => {
   };
   res.render("dashboard_client", menu)
 });
+
 router.get('/testing', function (req, res) {
     res.type('text/html');
     //res.render('register_forms/coach-register');
     res.render('register_forms/client-register');
     //res.render('register_forms/register_1');
 })
+
 /** router for /root */
 module.exports = router;

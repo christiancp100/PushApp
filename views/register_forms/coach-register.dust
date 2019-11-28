@@ -4,6 +4,7 @@
     <title>Coach register</title>
 </head>
 <body onload="findName()">
+<h2>Register new Coach</h2>
 <form onsubmit="return mySubmit()" method="post" action="/coaches/new" enctype="application/x-www-form-urlencoded">
     {>"../partials/register"/}
 
@@ -15,13 +16,9 @@
     </label>
     <input type="submit" value="Create Account"/>
 </form>
-<script src="/js/fetch.js"></script>
 <script src="/js/helper.js"></script>
 <script src="js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
-
 </body>
-
-
 
 </html>
