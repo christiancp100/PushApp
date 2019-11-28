@@ -4,7 +4,7 @@ require('./Schedule');
 const Schema = mongoose.Schema;
 
 const ClientInfoSchema = exports.ClientSchema = new Schema({
-    _userAccount: {type: Schema.Types.ObjectId, ref: 'UserAccount', required: true},
+    _clientId: {type: Schema.Types.ObjectId, ref: 'UserAccount', required: true},
     height: {type: Number},
     weight: {type: Number},
     bmi: {type: Number},
