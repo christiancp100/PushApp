@@ -18,7 +18,7 @@ function getCoaches(req, res) {
         .then((coaches) => {
             if (req.accepts('text/html')) {
                 res.end();
-            } else if (req.accepts('application/json')){
+            } else if (req.accepts('application/json')) {
                 res = setResponse('json', 200, res, result);
             } else {
                 res.status(400);
@@ -74,6 +74,15 @@ router.post('/new', async (req, res) => {
                 creationDate: Date.now(),
                 _credentials: credentialRef._id
             });
+            if (user.description === undefined) {
+                user.description = '';
+            }
+            if (user.photo === undefined) {
+                user.photo = '';
+            }
+            if (user.address2 === undefined) {
+                user.address2 = '';
+            }
             let savedUser = await user.save();
             if (req.accepts("text/html")) {
                 res = setResponse('html', 201, res);
@@ -83,11 +92,11 @@ router.post('/new', async (req, res) => {
             }
             res.end(savedUser);
         } catch (e) {
-            res = setResponse('json', 400, res, {Error:""+ e + "First name, last name, birthday, sex, email address, phone number, at least one address, city, state, zip code and country must be provided"});
+            res = setResponse('json', 400, res, {Error: e + ""});
             res.end();
         }
     } else {
-        res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
+        res = setResponse('json', 400, res, { Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed." });
         res.end();
     }
 });
@@ -151,7 +160,8 @@ router.get('/search', function (req, res) {
     UserAccount.find(filter)
         .then((coaches) => {
             if (coaches.length > 0) {
-                console.log("coaches has been found!");
+                let length = coaches.length;
+                console.log(length + " coaches has been found!");
                 console.log(coaches);
                 if (req.accepts('html')) {
                     res.status(200);
@@ -165,15 +175,15 @@ router.get('/search', function (req, res) {
             }
         })
         .catch((err) => {
-            res = setResponse(err, 500, res, coaches);
-            res.end();
+            console.log("0 coaches has been found!");
+            res.status(404).end()
         })
 });
 
 router.get('/setting', function (req, res) {
     //todo render setting with info from database
     //todo check headers
-})
+});
 
 // Edit a coach
 // It works only with all the required information provided
@@ -186,30 +196,56 @@ router.put('/edit/:id', async (req, res) => {
             try {
                 let found = await UserAccount.findById(req.params.id);
                 if (found != null) {
-                    found.firstName = req.body.firstName;
-                    found.lastName = req.body.lastName;
+                    if (req.body.firstName) {
+                        found.firstName = req.body.firstName;
+                    }
+                    if (req.body.lastName) {
+                        found.lastName = req.body.lastName;
+                    }
                     if (req.body.description) {
                         found.description = req.body.description;
                     }
                     if (req.body.photo) {
                         found.photo = req.body.photo;
                     }
-                    found.birthday = req.body.birthday;
-                    found.sex = req.body.sex;
-                    found.email = req.body.email;
-                    found.phone = req.body.phone;
-                    found.address1 = req.body.address1;
+                    if (req.body.birthday) {
+                        found.birthday = req.body.birthday;
+                    }
+                    if (req.body.sex) {
+                        found.sex = req.body.sex;
+                    }
+                    if (req.body.email) {
+                        found.email = req.body.email;
+                    }
+                    if (req.body.phone) {
+                        found.phone = req.body.phone;
+                    }
+                    if (req.body.address1) {
+                        found.address1 = req.body.address1;
+                    }
                     if (req.body.address2) {
                         found.address2 = req.body.address2;
                     }
-                    found.city = req.body.city;
-                    found.state = req.body.state;
-                    found.zipCode = req.body.zipCode;
-                    found.country = req.body.country;
-                    found.currency = req.body.currency;
-                    found.localization = req.body.localization;
+                    if (req.body.city) {
+                        found.city = req.body.city;
+                    }
+                    if (req.body.state) {
+                        found.state = req.body.state;
+                    }
+                    if (req.body.zipCode) {
+                        found.zipCode = req.body.zipCode;
+                    }
+                    if (req.body.country) {
+                        found.country = req.body.country;
+                    }
+                    if (req.body.currency) {
+                        found.currency = req.body.currency;
+                    }
+                    if (req.body.localization) {
+                        found.localization = req.body.localization;
+                    }
                 } else {
-                    res = setResponse('error', 404, res, {Error: 'Coach not found!'});
+                    res = setResponse('error', 404, res, { Error: 'Coach not found!' });
                     res.end();
                 }
                 let saved = await found.save();
@@ -222,7 +258,7 @@ router.put('/edit/:id', async (req, res) => {
                     res.end();
                 }
             } catch (e) {
-                res = setResponse(e, 500, res, {Error: 'Coach not found!'});
+                res = setResponse(e, 404, res, {Error: 'Coach not found!'});
             }
         }
     }
@@ -249,7 +285,7 @@ router.put('/delete/:id', async (req, res) => {
                     found.address2 = '';
                     console.log('MODIFICATO');
                 } else {
-                    res = setResponse('error', 404, res, {Error: 'Coach not found!'});
+                    res = setResponse('error', 404, res, { Error: 'Coach not found!' });
                     res.end();
                 }
                 console.log(found);
@@ -268,7 +304,7 @@ router.put('/delete/:id', async (req, res) => {
                     res.end();
                 }
             } catch (e) {
-                res = setResponse(e, 500, res, {Error: 'Coach not found!'});
+                res = setResponse(e, 500, res, { Error: 'Coach not found!' });
             }
         }
     }
@@ -277,12 +313,12 @@ router.put('/delete/:id', async (req, res) => {
 router.post('/auth', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
-        let client = await Credentials.findOne({username: req.body.username});
-        console.log(client);
-        if (!client) {
-            return res.status(400).send('Incorrect username.');
-        }
-        const validPassword = await bcrypt.compare(req.body.password, client.password);
+    let client = await Credentials.findOne({ username: req.body.username });
+    console.log(client);
+    if (!client) {
+        return res.status(400).send('Incorrect username.');
+    }
+    const validPassword = await bcrypt.compare(req.body.password, client.password);
 
 
         if (!validPassword) {
@@ -316,17 +352,17 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-/*router.post('/username', async (req, res) => {
-    if (req.get('Content-Type') === "application/json"){
+router.post('/username', async (req, res) => {
+    if (req.get('Content-Type') === "application/json") {
         console.log(req.body);
-        let found = await Credentials.findOne({username : req.body.username})
-            if (!found){
-                console.log("TRUE");
-                res.send(true);
-                } else {
-                console.log("FALSE");
-                res.send(false);
-            }
+        let found = await Credentials.findOne({ username: req.body.username })
+        if (!found) {
+            console.log("TRUE");
+            res.send(true);
+        } else {
+            console.log("FALSE");
+            res.send(false);
+        }
     } else {
         res.status(500).end("ERROR")
     }

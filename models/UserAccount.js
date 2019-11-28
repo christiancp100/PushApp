@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const Credentials = require('./Credential');
+require('./Credential');
 
 const UserAccountSchema = exports.UserAccountSchema = new Schema({
     firstName: {type: String, required: true},
