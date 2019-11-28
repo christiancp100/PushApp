@@ -8,9 +8,11 @@ const mongoose = require('mongoose');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
+require('../../models/CoachClients.js');
 
 let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
+let CoachClients = mongoose.model('CoachClients');
 
 // GET all coach
 function getCoaches(req, res) {
@@ -18,7 +20,7 @@ function getCoaches(req, res) {
         .then((coaches) => {
             if (req.accepts('text/html')) {
                 res.end();
-            } else if (req.accepts('application/json')){
+            } else if (req.accepts('application/json')) {
                 res = setResponse('json', 200, res, result);
             } else {
                 res.status(400);
@@ -31,18 +33,21 @@ function getCoaches(req, res) {
         });
 }
 
+
+router.get('/', function (req, res) {
+    res.type("html");
+    res.render('coach-board');
+    /*if (req.header('accept') == "text/html") {
+
+    } else {
+        res.status(400).end()
+    }*/
+})
 // Create a new coach
 router.post('/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
         console.log('Creating new coach...');
         try {
-            let salt = await bcrypt.genSalt(10);
-            let code = await bcrypt.hash(req.body.password, salt);
-            let credentials = new Credentials({
-                username: req.body.username,
-                password: code
-            });
-            let credentialRef = await credentials.save();
             let user = new UserAccount({
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
@@ -62,18 +67,35 @@ router.post('/new', async (req, res) => {
                 localization: req.body.localization,
                 accountType: 'coach',
                 creationDate: Date.now(),
-                _credentials: credentialRef._id
+                isDeleted: false
             });
+            if (user.description === undefined) {
+                user.description = '';
+            }
+            if (user.photo === undefined) {
+                user.photo = '';
+            }
+            if (user.address2 === undefined) {
+                user.address2 = '';
+            }
             let savedUser = await user.save();
+            let salt = await bcrypt.genSalt(10);
+            let code = await bcrypt.hash(req.body.password, salt);
+            let credentials = new Credentials({
+                username: req.body.username,
+                password: code,
+                _userAccountId: savedUser._id
+            });
+            let credentialRef = await credentials.save();
             if (req.accepts("text/html")) {
                 res = setResponse('html', 201, res);
-                res.redirect('/');
+                res.end();
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 201, res, savedUser);
             }
             res.end(savedUser);
         } catch (e) {
-            res = setResponse('json', 400, res, {Error:""+ e + "First name, last name, birthday, sex, email address, phone number, at least one address, city, state, zip code and country must be provided"});
+            res = setResponse('json', 400, res, {Error: e + ""});
             res.end();
         }
     } else {
@@ -85,99 +107,67 @@ router.post('/new', async (req, res) => {
 // Creates filter for searching coaches on the database
 function getFilter(req) {
     let filter = {};
+    filter.accountType = 'coach';
+    filter.isDeleted = 'false';
     let request;
     if (Object.keys(req.body).length > 0) {
         request = req.body;
     } else if (Object.keys(req.query).length > 0) {
         request = req.query;
     }
-
     if (request !== undefined) {
         //Filter based on:
-        // ID-
+        // ID
         if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
-            filter = {'_id':request.id};
+            filter._id = request.id;
         }
         // First name
         if (request.firstName !== undefined) {
-            filter = {data: 'userAccount', field: lastName};
-            filter = {'userAccount.firstName':request.firstName};
+            filter.firstName = request.firstName;
         }
         // Last name
         if (request.lastName !== undefined) {
-            filter = {'userAccount.lastName':request.lastName};
+            filter.lastName = request.lastName;
         }
         // Birthday
         if (request.birthday !== undefined) {
-            filter = {'userAccount.birthday':request.birthday};
+            filter.birthday = request.birthday;
         }
         // Sex
         if (request.sex !== undefined) {
-            filter = {'userAccount.sex':request.sex};
+            filter.sex = request.sex;
         }
         // City
         if (request.city !== undefined) {
-            filter = {'userAccount.city':request.city};
+            filter.city = request.city;
         }
         // State
         if (request.state !== undefined) {
-            filter = {'userAccount.state':request.state};
+            filter.state = request.state;
         }
         // Country
         if (request.country !== undefined) {
-            filter = {'userAccount.country':request.country};
+            filter.country = request.country;
         }
         // Services
         if (request.services !== undefined) {
-            filter = {'services':request.services};
+            filter.services = request.services;
         }
-        // filter.userAccount = userAccount;
         return filter;
     }
 }
 
 // Search for coach
 router.get('/search', function (req, res) {
-    const filter = getFilter(req);
+    let filter = getFilter(req);
     UserAccount.find(filter)
         .then((coaches) => {
-            let result = coaches.filter((o) => {
-                if (filter._id) {
-                    return (filter._id.toLowerCase() === o._id.toLowerCase());
-                }
-                if (filter.firstName) {
-                    return (filter.firstName.toLowerCase() === o.firstName.toLowerCase());
-                }
-                if (filter.lastName) {
-                    return (filter.lastName.toLowerCase() === o.lastName.toLowerCase());
-                }
-                if (filter.birthday) {
-                    return (filter.birthday.toLowerCase() === o.birthday.toLowerCase());
-                }
-                if (filter.sex) {
-                    return (filter.sex.toLowerCase() === o.sex.toLowerCase());
-                }
-                if (filter.city) {
-                    return (filter.city.toLowerCase() === o.city.toLowerCase());
-                }
-                if (filter.state) {
-                    return (filter.state.toLowerCase() === o.state.toLowerCase());
-                }
-                if (filter.country) {
-                    return (filter.country.toLowerCase() === o.country.toLowerCase());
-                }
-                if (filter.certificates) {
-                    return (filter.certificates.toLowerCase() === o.certificates.toLowerCase());
-                }
-                if (filter.services) {
-                    return (filter.services.toLowerCase() === o.services.toLowerCase());
-                }
-            });
             if (coaches.length > 0) {
+                let length = coaches.length;
+                console.log(length + " coaches has been found!");
+                console.log(coaches);
                 if (req.accepts('html')) {
-                    // res.render("coaches", coaches);
                     res.status(200);
-                    console.log("coaches has been found!");
                 } else if (req.accepts('json')) {
                     res = setResponse('json', 200, res, result);
                 }
@@ -185,12 +175,18 @@ router.get('/search', function (req, res) {
             } else {
                 res = setResponse('error', 404, res, result);
                 res.end();
-            }})
+            }
+        })
         .catch((err) => {
-            res.status(500).end();
-        });
+            console.log("0 coaches has been found!");
+            res.status(404).end()
+        })
 });
 
+router.get('/setting', function (req, res) {
+    //todo render setting with info from database
+    //todo check headers
+});
 
 // Edit a coach
 // It works only with all the required information provided
@@ -203,28 +199,54 @@ router.put('/edit/:id', async (req, res) => {
             try {
                 let found = await UserAccount.findById(req.params.id);
                 if (found != null) {
-                    found.firstName = req.body.firstName;
-                    found.lastName = req.body.lastName;
+                    if (req.body.firstName) {
+                        found.firstName = req.body.firstName;
+                    }
+                    if (req.body.lastName) {
+                        found.lastName = req.body.lastName;
+                    }
                     if (req.body.description) {
                         found.description = req.body.description;
                     }
                     if (req.body.photo) {
                         found.photo = req.body.photo;
                     }
-                    found.birthday = req.body.birthday;
-                    found.sex = req.body.sex;
-                    found.email = req.body.email;
-                    found.phone = req.body.phone;
-                    found.address1 = req.body.address1;
+                    if (req.body.birthday) {
+                        found.birthday = req.body.birthday;
+                    }
+                    if (req.body.sex) {
+                        found.sex = req.body.sex;
+                    }
+                    if (req.body.email) {
+                        found.email = req.body.email;
+                    }
+                    if (req.body.phone) {
+                        found.phone = req.body.phone;
+                    }
+                    if (req.body.address1) {
+                        found.address1 = req.body.address1;
+                    }
                     if (req.body.address2) {
                         found.address2 = req.body.address2;
                     }
-                    found.city = req.body.city;
-                    found.state = req.body.state;
-                    found.zipCode = req.body.zipCode;
-                    found.country = req.body.country;
-                    found.currency = req.body.currency;
-                    found.localization = req.body.localization;
+                    if (req.body.city) {
+                        found.city = req.body.city;
+                    }
+                    if (req.body.state) {
+                        found.state = req.body.state;
+                    }
+                    if (req.body.zipCode) {
+                        found.zipCode = req.body.zipCode;
+                    }
+                    if (req.body.country) {
+                        found.country = req.body.country;
+                    }
+                    if (req.body.currency) {
+                        found.currency = req.body.currency;
+                    }
+                    if (req.body.localization) {
+                        found.localization = req.body.localization;
+                    }
                 } else {
                     res = setResponse('error', 404, res, {Error: 'Coach not found!'});
                     res.end();
@@ -239,7 +261,7 @@ router.put('/edit/:id', async (req, res) => {
                     res.end();
                 }
             } catch (e) {
-                res = setResponse(e, 500, res, {Error: 'Coach not found!'});
+                res = setResponse(e, 404, res, {Error: 'Coach not found!'});
             }
         }
     }
@@ -255,7 +277,7 @@ router.put('/delete/:id', async (req, res) => {
             console.log('Searching for coach with ID: ' + req.params.id + '.');
             try {
                 let found = await UserAccount.findById(req.params.id);
-                if (found != null) {
+                if (found != null && found.accountType === 'coach') {
                     found.firstName = 'anonymous';
                     found.lastName = ' ';
                     found.description = '';
@@ -264,15 +286,13 @@ router.put('/delete/:id', async (req, res) => {
                     found.phone = 0;
                     found.address1 = ' ';
                     found.address2 = '';
-                    console.log('MODIFICATO');
+                    found.isDeleted = true;
                 } else {
                     res = setResponse('error', 404, res, {Error: 'Coach not found!'});
                     res.end();
                 }
-                console.log(found);
                 let saved = found.save()
                     .then((saved) => {
-                        console.log(saved);
                         res.end();
                     })
                     .catch(err => console.log(err));
@@ -291,24 +311,116 @@ router.put('/delete/:id', async (req, res) => {
     }
 });
 
-router.post('/auth', async (req, res) => {
-    //todo check the request
 
-    let client = await Credentials.findOne({username : req.body.username});
-    console.log(client);
-    if (!client){
-        return res.status(400).send('Incorrect username.');
+// POST a new coach-client relation
+router.post('/hire', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Creating a new relation coach-client: ' + req.params.id + '.');
+            let hire = new CoachClients({
+                _coachId: req.body._coachId,
+                _clientId: req.body._clientId,
+            });
+            hire.save()
+                .then((saved) => {
+                    console.log(saved);
+                    res = setResponse('html', 201, res);
+                    res.end();
+                })
+                .catch((err) => {
+                    res = setResponse(err, 500, res, { Error: 'Cannot create a new hire' });
+                    res.end();
+                })
+        }
     }
-    const validPassword = await bcrypt.compare(req.body.password, client.password);
+});
 
-
-    if (!validPassword) {
-        return res.status(400).send('Incorrect email or password.');
+// GET the clients of a coach
+router.get('/hire/coach/:id', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Searching for coach with ID: ' + req.params.id + '.');
+            if (req.params.id) {
+                CoachClients.find({_coachId: req.params.id})
+                    .then((found) => {
+                        console.log(found);
+                        console.log('The coach has ' + found.length + ' clients.');
+                        res = setResponse('json', 200, res, found);
+                        res.end();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        res = setResponse('json', 500, { Error : err});
+                        res.end();
+                    })
+            } else {
+                res = setResponse('json', 404, { Error : 'No clients for the given coach' });
+                res.end();
+            }
+        }
     }
+});
 
-    //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
-    //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-    res.end("DONE");
+// GET the coaches of a client
+router.get('/hire/client/:id', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Searching for client with ID: ' + req.params.id + '.');
+            if (req.params.id) {
+                CoachClients.find({_clientId: req.params.id})
+                    .then((found) => {
+                        console.log(found);
+                        console.log('The client has ' + found.length + ' coaches.');
+                        res = setResponse('json', 200, res, found);
+                        res.end();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        res = setResponse('json', 500, { Error : err});
+                        res.end();
+                    })
+            } else {
+                res = setResponse('json', 404, { Error : 'No coaches for the given client' });
+                res.end();
+            }
+        }
+    }
+});
+
+router.delete('/hire/:id', async (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            try {
+                console.log('Searching for hire-relation with ID: ' + req.params.id + '.');
+                let found = await CoachClients.findById(req.params.id);
+                if (found === null) {
+                    res = setResponse('json', 404, res, {Error: 'No hire-relation for the given id'});
+                    res.end();
+                } else {
+                    try {
+                        let removed = await CoachClients.remove(found);
+                        console.log('The hire-relation has been deleted!');
+                        res = setResponse('json', 200, res, removed);
+                        res.end();
+                    } catch (e) {
+                        res = setResponse('json', 500, res, {Error: e});
+                        res.end();
+                    }
+                }
+            } catch (e) {
+                res = setResponse('json', 500, res, {Error: e});
+                res.end();
+            }
+        }
+    }
 });
 
 // Customized response
@@ -332,14 +444,14 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-router.get('/username', async (req, res) => {
-    if (req.get('Content-Type') === "application/json"){
-        console.log(req.body);
-        let found = await Credentials.findOne({username : req.body.username});
-        if (!found){
-            res.end(true);
-        } else {
-            res.end(false);
+
+router.post('/username', async (req, res) => {
+    if (req.get('Content-Type') === "application/json") {
+        try {
+            let username = await Credentials.find({});
+            res.send(username);
+        } catch (e) {
+            res.status(500).end("ERROR")
         }
     } else {
         res.status(500).end("ERROR")

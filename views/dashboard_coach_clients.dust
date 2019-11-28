@@ -7,15 +7,14 @@
   {>"dashboard_partials/header" name="Coach Ramon" profile-picture="/img/icons/user-pic.png"/}
   <main>
     <div class="container">
-      <div class="masonry row" style="position: relative; height: 2134.14px;">
+      {!<div class="masonry row" style="position: relative; height: 2134.14px;">
         <div class="col s12" style="position: absolute; left: 0px; top: 0px;">
-          <h2 class="center">Dashboard</h2>
-        </div>
-        {>"dashboard_partials/graph"/}
-        {>"dashboard_partials/composed_graph"/}
+          <h2 class="center">All Clients</h2>
+        </div>!}
+      <h2 class="center">All Clients</h2>
+      <p> wofofdfdsok </p>
+    {! !}
       </div>
-
-      {>"dashboard_partials/schedule" coach="true"/}
 
     </div>
     </div>
@@ -23,8 +22,5 @@
   {>"dashboard_partials/footer"/}
 
 </body>
-<script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 
-<script src="/js/schedule.js"></script>
-<script src="/js/views.js"></script>
 </html>

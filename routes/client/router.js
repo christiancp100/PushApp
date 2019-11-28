@@ -1,97 +1,153 @@
 /** @module root/router */
 'use strict';
 
-//const config = require('config');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-//const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
-require('../../models/Client.js');
+require('../../models/ClientInfo.js');
 
-let Client = mongoose.model('Client');
 let UserAccount = mongoose.model('UserAccount');
+let ClientInfo = mongoose.model('ClientInfo');
 let Credentials = mongoose.model('Credentials');
 
-//const bcrypt = require('bcrypt');
-
 // GET all
-router.get('/', function (req, res) {
-    req.body.isDeleted = false;
-    const filter = getFilter(req);
-    Client.find({})
-        .then((clients) => {
-            let result = clients.filter((o) => {
-                if (!filter.isDeleted) {
-                    return (filter.isDeleted === o.isDeleted);
-                } else {
-                    return false;
-                }
-            });
-            if (req.accepts("text/html")) {
-                // let usersModel = {
-                //   users: users,
-                //   title: "My Canvas"
-                // };
-                // res.render("result", usersModel);
-                res.end();
-            } else if (req.accepts("application/json")) {
-                res = setResponse('json', 200, res, result);
-            } else {
-                res.status(400);
-            }
-            res.end();
-        })
-        .catch((err) => {
-            res.status(500);
-            res.end();
+router.get('/', async (req, res) => {
+    try {
+        let clients = await UserAccount.find({});
+        let result = await clients.filter((o) => {
+            return (o.isDeleted === false);
         });
+
+        if (req.accepts("text/html")) {
+            // let usersModel = {
+            //   users: users,
+            //   title: "My Canvas"
+            // };
+            // res.render("result", usersModel);
+            res.end();
+        } else if (req.accepts("application/json")) {
+            res = setResponse('json', 200, res, result);
+        } else {
+            res.status(400);
+        }
+        res.end();
+    } catch (err) {
+        console.log(err);
+        res.status(500);
+        res.end();
+    }
 });
 
-// Creates a new users
-router.post('/new', function (req, res) {
-    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
-        console.log('Creating new users...');
-        if ('firstName' in req.body === undefined && 'lastName' in req.body === undefined && 'birthday' in req.body === undefined && 'sex' in req.body === undefined && 'email' in req.body === undefined && 'address1' in req.body === undefined && 'city' in req.body === undefined && 'state' in req.body === undefined && 'zipCode' in req.body === undefined && 'country' in req.body === undefined && 'currency' in req.body === undefined && 'username' in req.body === undefined && 'password' in req.body === undefined) {
-            res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
-            res.end();
-        } else {
-          bcrypt.genSalt(10)
-              .then(salt =>  bcrypt.hash(req.body.password, salt))
-              .catch(err => new Error(err))
-              .then(code => {
-                let credentials = new Credentials({
-                    username: req.body.userAccount.credentials.username,
-                    password: code
-                });
-                return credentials.save();
-              })
-              .then((saved) => {
-                  if (req.accepts("text/html")) {
-                      // res = setResponse('html', 201, res);
-                      res.redirect('/auth');//goto login page
-                  } else if (req.accepts("application/json")) {
-                      res = setResponse('json', 201, res, saved);
-                  }
-                  res.end(saved);
-              })
-              .catch((err) => {
-                  res.status(500).end("ERR");
-              });
+// Creates a new client
+router.post('/new', async (req, res) => {
+    try {
+        if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
+            console.log('Creating new users...');
 
+            if (req.body.firstName === undefined &&
+                req.body.lastName === undefined &&
+                req.body.birthday === undefined &&
+                req.body.sex === undefined &&
+                req.body.email === undefined &&
+                req.body.address1 === undefined &&
+                req.body.city === undefined &&
+                req.body.state === undefined &&
+                req.body.zipCode === undefined &&
+                req.body.country === undefined &&
+                req.body.currency === undefined &&
+                req.body.username === undefined &&
+                req.body.password === undefined) {
+                res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
+                res.end();
+            } else {
+                let userAccount = new UserAccount({
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    description: req.body.description,
+                    photo: req.body.photo,
+                    birthday: req.body.birthday,
+                    sex: req.body.sex,
+                    email: req.body.email,
+                    phone: req.body.phone,
+                    address1: req.body.address1,
+                    address2: req.body.address2,
+                    city: req.body.city,
+                    state: req.body.state,
+                    zipCode: req.body.zipCode,
+                    country: req.body.country,
+                    currency: req.body.currency,
+                    localization: req.body.localization,
+                    accountType: 'client',
+                    creationDate: Date.now()
+                });
+
+                if (req.body.description === undefined) {
+                    userAccount.description = '';
+                }
+                if (req.body.photo === undefined) {
+                    userAccount.photo = '';
+                }
+                if (req.body.address2 === undefined) {
+                    userAccount.address2 = '';
+                }
+
+                let savedUserAccount = await userAccount.save();
+
+                let hashedPassword = await bcrypt.hash(req.body.password, await bcrypt.genSalt(10));
+
+                let credentials = new Credentials({
+                    username: req.body.username,
+                    password: hashedPassword,
+                    _userAccountId: savedUserAccount._id
+                });
+
+                await credentials.save();
+
+                let clientInfo = new ClientInfo({
+                    _clientId: savedUserAccount._id,
+                    height: req.body.height,
+                    weight: req.body.weight,
+                    unitSystem: req.body.unitSystem
+                });
+
+                if (req.body.height === undefined) {
+                    clientInfo.height = '';
+                }
+                if (req.body.weight === undefined) {
+                    clientInfo.height = '';
+                }
+
+                let savedClientInfo = await clientInfo.save();
+
+                if (req.accepts("text/html")) {
+                    res.redirect('/auth');
+                } else if (req.accepts("application/json")) {
+                    savedUserAccount._credentials = 'private';
+                    res = setResponse('json', 201, res, {
+                        userAccount: savedUserAccount,
+                        clientInfo: savedClientInfo
+                    });
+                }
+                res.end();
+            }
+        } else {
+            res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
+            res.end();
         }
-    } else {
-        res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
-        res.end();
+    } catch (err) {
+        console.log(err);
+        res.status(500).end();
     }
 });
 
 // Search for and users
 router.get('/search', function (req, res) {
     const filter = getFilter(req);
-    Client.find({})
+    ClientInfo.find({})
         .then((clients) => {
             let result = clients.filter((o) => {
                 if (filter._id) {
@@ -108,6 +164,9 @@ router.get('/search', function (req, res) {
                 }
                 if (filter.country) {
                     return (filter.country.toLowerCase() === o.country.toLowerCase());
+                }
+                if (filter.isDeleted) {
+                    return (filter.isDeleted === o.isDeleted);
                 }
             });
 
@@ -140,94 +199,109 @@ router.get('/search', function (req, res) {
 ;
 
 // Edit an user
-router.put('/edit/:id', function (req, res) {
+router.put('/edit/:id', async (req, res) => {
     if (req.accepts("json")) {
         if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res.status(400).end();
         } else {
-            console.log('Searching for user with ID: ' + req.params.id + '.');
-            Client.findById({_id: req.params.id})
-                .then((found) => {
-                        if (found != null) {
-                            // found.firstName = req.body.firstName;
-                            // found.lastName = req.body.lastName;
-                            found.description = req.body.description;
-                            found.photo = req.body.photo;
-                            found.birthday = req.body.birthday;
-                            found.sex = req.body.sex;
-                            found.height = req.body.height;
-                            found.weight = req.body.weight;
-                            found.bmi = req.body.bmi;
-                            found.unitSystem = req.body.unitSystem;
-                            found.email = req.body.email;
-                            found.phone = req.body.phone;
-                            found.address1 = req.body.address1;
-                            found.address2 = req.body.address2;
-                            found.city = req.body.city;
-                            found.state = req.body.state;
-                            found.zipCode = req.body.zipCode;
-                            found.country = req.body.country;
-                            found.currency = req.body.currency;
-                            found.localization = req.body.localization;
-                            // found.authenticationProvider = req.body.authenticationProvider;
-                            return found.save()
-                        }
-                    },
-                    (err) => {
-                        res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
-                    })
-                .then((saved) => {
+            try {
+                console.log('Searching for user with ID: ' + req.params.id + '.');
+                let foundClient = await UserAccount.findById({_id: req.params.id});
+                if (foundClient !== null) {
+                    foundClient.firstName = req.body.firstName;
+                    foundClient.lastName = req.body.lastName;
+                    foundClient.description = req.body.description;
+                    foundClient.photo = req.body.photo;
+                    foundClient.birthday = req.body.birthday;
+                    foundClient.sex = req.body.sex;
+                    foundClient.email = req.body.email;
+                    foundClient.phone = req.body.phone;
+                    foundClient.address1 = req.body.address1;
+                    foundClient.address2 = req.body.address2;
+                    foundClient.city = req.body.city;
+                    foundClient.state = req.body.state;
+                    foundClient.zipCode = req.body.zipCode;
+                    foundClient.country = req.body.country;
+                    foundClient.currency = req.body.currency;
+                    foundClient.localization = req.body.localization;
+
+                    let savedClient = await foundClient.save();
+                    let foundClientInfo = await ClientInfo.findOne({_clientId: req.params.id});
+
+                    foundClientInfo.height = req.body.height;
+                    foundClientInfo.weight = req.body.weight;
+                    foundClientInfo.unitSystem = req.body.unitSystem;
+
+                    let savedClientInfo = await foundClientInfo.save();
+
                     console.log('User with ID: ' + req.params.id + ' updated!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
                         res.redirect('/');
                     } else if (req.accepts("application/json")) {
-                        res = setResponse('json', 201, res, saved);
+                        // delete savedClient._doc['_credentials'];
+                        res = setResponse('json', 201, res, {
+                            userAccount: savedClient,
+                            clientInfo: savedClientInfo
+                        });
                         res.end();
                     }
-                })
-                .catch((err) => {
-                    console.log(err)
-                    res.status(500);
-                    res.end();
-                });
+                } else {
+                    res = setResponse('error', 404, res, {Error: 'Client not found!'});
+                }
+            } catch
+                (err) {
+                console.log(err);
+                res.status(500);
+                res.end();
+            }
         }
     }
 });
 
-// Soft delete an user
-router.delete('/delete/:id', function (req, res) {
-    if (req.accepts("json")) {
-        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res.status(400).end();
-        } else {
+
+// Wipes client's userAccount and info without deleting the objects.
+router.delete('/delete/:id', async (req, res) => {
+    try {
+        if (req.accepts("json")) {
             console.log('Searching for user with ID: ' + req.params.id + '.');
-            Client.findById({_id: req.params.id})
-                .then((found) => {
-                        if (found != null) {
-                            found.isDeleted = true;
-                            return found.save()
-                        }
-                    },
-                    (err) => {
-                        res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
-                    })
-                .then((saved) => {
-                    console.log('User with ID: ' + req.params.id + ' was soft deleted!');
-                    if (req.accepts("text/html")) {
-                        res = setResponse('html', 201, res);
-                        res.redirect('/');
-                    } else if (req.accepts("application/json")) {
-                        res = setResponse('json', 201, res, saved);
-                        res.end();
-                    }
-                })
-                .catch((err) => {
-                    console.log(err)
-                    res.status(500);
+            let foundClient = await UserAccount.findById({_id: req.params.id});
+            if (foundClient !== null && foundClient.accountType === 'client') {
+                foundClient.firstName = 'anonymous';
+                foundClient.lastName = ' ';
+                foundClient.description = '';
+                foundClient.photo = '';
+                foundClient.email = ' ';
+                foundClient.phone = ' ';
+                foundClient.address1 = ' ';
+                foundClient.address2 = '';
+                foundClient.isDeleted = true;
+
+                let foundCredential = await Credentials.findOne({_userAccountId: req.params.id});
+                await foundClient.save();
+
+                if (foundCredential !== undefined) {
+                    await foundCredential.remove();
+                }
+                console.log('Client with ID ' + req.params.id + ' was successfully deleted!');
+                if (req.accepts("text/html")) {
+                    res = setResponse('html', 200, res);
+                    res.redirect('/');
+                } else if (req.accepts("application/json")) {
+                    res = setResponse('json', 200, res, {Result: `Client with ID ` + foundClient._id.toString() + ` was successfully deleted!`});
                     res.end();
-                });
+                }
+            } else {
+                res = setResponse('error', 404, res, {Error: 'Client not found!'});
+            }
+        } else {
+            res = setResponse('error', 400, res);
         }
+    } catch
+        (err) {
+        console.log(err);
+        res.status(500);
+        res.end();
     }
 });
 
@@ -262,9 +336,10 @@ function getFilter(req) {
         if (request.country !== undefined) {
             filter.country = request.country;
         }
+
         // Search by sex
-        if (request.sex !== undefined) {
-            filter.sex = request.sex;
+        if (request._clientId !== undefined) {
+            filter._clientId = request._clientId;
         }
         // Search non deleted
         if (request.isDeleted === undefined) {
@@ -307,7 +382,6 @@ router.post('/auth', async (req, res) => {
         }
         const validPassword = await bcrypt.compare(req.body.password, client.access.password);
 
-
         if (!validPassword) {
             return res.status(400).send('Incorrect email or password.');
         }
@@ -315,16 +389,10 @@ router.post('/auth', async (req, res) => {
         const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));
         return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
-
-    //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
-    //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-    res.end();
-})
-
-router.get('/prueba', function (req, res) {
-  UserAccount.find({}).then(found => console.log(found));
-  console.log("fin");
 });
 
+router.get('/all', function (req, res) {
+
+})
 
 module.exports = router;
