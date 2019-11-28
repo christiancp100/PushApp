@@ -38,6 +38,7 @@ app.use('/', routers.root);
 app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
 app.use('/auth', routers.auth);
+app.use('/workouts', routers.workout);
 
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes
