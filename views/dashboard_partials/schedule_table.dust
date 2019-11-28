@@ -8,7 +8,7 @@
             <th data-field="comments">Comments</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="scheduleTable">
         <tr>
             <td>Bench Press</td>
             <td>10</td>
@@ -29,3 +29,6 @@
         {/coach}
     </tbody>
 </table>
+<script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>
+<script src="/js/schedule.js"></script>
