@@ -15,7 +15,6 @@ async function findName() {
     return result;*/
 }
 function mySubmit() {
-     console.log("SUMBINT");
      let name = document.getElementById("user").value;
     for (let i = 0; i < arr.length; i++) {
         if (arr[i].username === name){
@@ -25,6 +24,6 @@ function mySubmit() {
     return true;
 }
 
-function testing() {
-    localStorage.setItem('username', 'casual name');
+function testing(name) {
+    localStorage.setItem('username', name);
 }

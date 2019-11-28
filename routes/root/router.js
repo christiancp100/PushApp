@@ -6,8 +6,10 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 require('../../models/Credential.js');
+require('../../models/UserAccount.js');
 
 let Credentials = mongoose.model('Credentials');
+let UserAccount = mongoose.model('UserAccount');
 
 router.get('/', function (req, res, next) {
   if (req.accepts("html")) {
@@ -19,10 +21,13 @@ router.get('/', function (req, res, next) {
 });
 
 
-router.get('/register', (req, res, next) => {
+router.get('/register-coach', (req, res, next) => {
   res.render('register_forms/coach-register');
 })
 
+router.get('/register-client', (req, res, next) => {
+  res.render('register_forms/client-register');
+})
 
 router.get('/coach/dashboard', (req, res) => {
   let menu = {
@@ -117,6 +122,9 @@ router.get("/client/dashboard", (req, res) => {
   res.render("dashboard_client", menu)
 });
 
+router.get('/auth', function (req, res) {
+  res.render('login.dust')
+})
 router.post('/auth', async (req, res) => {
   if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
@@ -131,10 +139,14 @@ router.post('/auth', async (req, res) => {
     if (!validPassword) {
       return res.status(400).send('Incorrect email or password.');
     }
-    localStorage.setItem('username', req.body.username);
     //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
     //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-    res.send("DONE");
+    let account = await UserAccount.findById(client._userAccountId);
+    if (account.accountType === 'coach'){
+      res.redirect('/coach/dashboard');
+    } else {
+      res.redirect('/client/dashboard');
+    }
   }
 });
 router.get('/test', function (req, res) {
