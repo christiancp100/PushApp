@@ -243,7 +243,7 @@ router.put('/edit/:id', async (req, res) => {
                         res = setResponse('html', 201, res);
                         res.redirect('/');
                     } else if (req.accepts("application/json")) {
-                        savedClient._doc._credentials = "secret";
+                        delete savedClient._doc['_credentials'];
                         res = setResponse('json', 201, res, {
                             userAccount: savedClient,
                             clientInfo: savedClientInfo
@@ -385,6 +385,6 @@ router.post('/auth', async (req, res) => {
 
     const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));//send what is needed??
     return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-})
+});
 
 module.exports = router;
