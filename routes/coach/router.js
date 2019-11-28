@@ -48,13 +48,6 @@ router.post('/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
         console.log('Creating new coach...');
         try {
-            let salt = await bcrypt.genSalt(10);
-            let code = await bcrypt.hash(req.body.password, salt);
-            let credentials = new Credentials({
-                username: req.body.username,
-                password: code
-            });
-            let credentialRef = await credentials.save();
             let user = new UserAccount({
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
@@ -74,7 +67,7 @@ router.post('/new', async (req, res) => {
                 localization: req.body.localization,
                 accountType: 'coach',
                 creationDate: Date.now(),
-                _credentials: credentialRef._id
+                isDeleted: false
             });
             if (user.description === undefined) {
                 user.description = '';
@@ -86,6 +79,14 @@ router.post('/new', async (req, res) => {
                 user.address2 = '';
             }
             let savedUser = await user.save();
+            let salt = await bcrypt.genSalt(10);
+            let code = await bcrypt.hash(req.body.password, salt);
+            let credentials = new Credentials({
+                username: req.body.username,
+                password: code,
+                _userAccountId: savedUser._id
+            });
+            let credentialRef = await credentials.save();
             if (req.accepts("text/html")) {
                 res = setResponse('html', 201, res);
                 res.end();
@@ -107,6 +108,7 @@ router.post('/new', async (req, res) => {
 function getFilter(req) {
     let filter = {};
     filter.accountType = 'coach';
+    filter.isDeleted = 'false';
     let request;
     if (Object.keys(req.body).length > 0) {
         request = req.body;
@@ -158,7 +160,6 @@ function getFilter(req) {
 // Search for coach
 router.get('/search', function (req, res) {
     let filter = getFilter(req);
-    console.log(filter);
     UserAccount.find(filter)
         .then((coaches) => {
             if (coaches.length > 0) {
@@ -276,7 +277,7 @@ router.put('/delete/:id', async (req, res) => {
             console.log('Searching for coach with ID: ' + req.params.id + '.');
             try {
                 let found = await UserAccount.findById(req.params.id);
-                if (found != null && found.type === 'coach') {
+                if (found != null && found.accountType === 'coach') {
                     found.firstName = 'anonymous';
                     found.lastName = ' ';
                     found.description = '';
@@ -285,14 +286,13 @@ router.put('/delete/:id', async (req, res) => {
                     found.phone = 0;
                     found.address1 = ' ';
                     found.address2 = '';
+                    found.isDeleted = true;
                 } else {
                     res = setResponse('error', 404, res, {Error: 'Coach not found!'});
                     res.end();
                 }
-                console.log(found);
                 let saved = found.save()
                     .then((saved) => {
-                        console.log(saved);
                         res.end();
                     })
                     .catch(err => console.log(err));
