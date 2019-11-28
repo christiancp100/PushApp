@@ -13,7 +13,6 @@ require('../../models/ClientInfo.js');
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
 let Credentials = mongoose.model('Credentials');
-const bcrypt = require('bcrypt');
 
 // GET all
 router.get('/', async (req, res) => {
@@ -400,6 +399,10 @@ router.post('/auth', async (req, res) => {
         const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));
         return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
+});
+
+router.get('/all', function (req, res) {
+    
 })
 
 module.exports = router;

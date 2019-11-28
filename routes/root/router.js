@@ -3,6 +3,11 @@
 
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+require('../../models/Credential.js');
+
+let Credentials = mongoose.model('Credentials');
 
 router.get('/', function (req, res, next) {
   if (req.accepts("html")) {
@@ -15,29 +20,9 @@ router.get('/', function (req, res, next) {
 
 
 router.get('/register', (req, res, next) => {
-  //TODO if the user is logged in, redirect to the admin panel
-  //First part of the register form, just select coach or user
-  res.render("register_forms/register_1", {});
-});
+  res.render('register_forms/coach-register');
+})
 
-router.post('/register', function (req, res, next) {
-    //Check data
-    if (req.body.typeofuser == "coach") {
-      res.render("register_3_coach", {});
-    } else if (req.body.typeofuser == "client") {
-      res.render("register_3_client", {});
-    } else {
-      res.status(400).render("error");
-    }
-  }
-);
-
-router.post('/register-coach', function (req, res, next) {
-  let body = JSON.parse(req.body);
-  console.log(body.email, body.password, body.typeofuser);
-
-  res.status(200);
-});
 
 router.get('/coach/dashboard', (req, res) => {
   let menu = {
@@ -70,6 +55,37 @@ router.get('/coach/dashboard', (req, res) => {
   res.render("dashboard_coach.dust", menu);
 });
 
+router.get('/coach/dashboard/clients', (req, res) =>{
+  let menu = {
+    items: [
+      {name: "Dashboard", icon: "web"},
+      {name: "Clients", icon: "list"},
+      {name: "Schedules", icon: "dashboard"},
+      {name: "Chat", icon: "chat"},
+    ],
+    accordions: [
+      {
+        title: "Accounting",
+        icon: "chevron_left",
+        subItems: [
+          {name: "Revenue", icon: "show_chart"},
+          {name: "Users", icon: "equalizer"},
+          {name: "Conversion Rate", icon: "multiline_chart"},
+        ]
+      },
+      {
+        title: "Account",
+        icon: "chevron_left",
+        subItems: [
+          {name: "Logout", icon: "person"},
+          {name: "Settings", icon: "settings"},
+        ]
+      }
+    ]
+  };
+  res.render("dashboard_coach_clients.dust", menu);
+  })
+
 router.get("/client/dashboard", (req, res) => {
   let menu = {
     items: [
@@ -101,12 +117,26 @@ router.get("/client/dashboard", (req, res) => {
   res.render("dashboard_client", menu)
 });
 
-router.get('/testing', function (req, res) {
-    res.type('text/html');
-    //res.render('register_forms/coach-register');
-    res.render('register_forms/client-register');
-    //res.render('register_forms/register_1');
-})
+router.post('/auth', async (req, res) => {
+  if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
+
+    let client = await Credentials.findOne({ username: req.body.username });
+    console.log(client);
+    if (!client) {
+      return res.status(400).send('Incorrect username.');
+    }
+    const validPassword = await bcrypt.compare(req.body.password, client.password);
+
+
+    if (!validPassword) {
+      return res.status(400).send('Incorrect email or password.');
+    }
+    localStorage.setItem('username', req.body.username);
+    //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
+    //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+    res.send("DONE");
+  }
+});
 
 /** router for /root */
 module.exports = router;
