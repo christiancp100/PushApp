@@ -3,7 +3,6 @@
 /*
 * Auxiliar functions
 */
-
 function checkMethod(method, body) {
     switch (method.toUpperCase()) {
         case "GET":
@@ -71,24 +70,3 @@ function doJSONRequest(method, url, headers, body) {
     ).then(result => result.json());
 }
 
-
-
-function fetchClient(e) {
-    console.log("funziona!!!");
-    e.preventDefault();
-    let reg = document.getElementById("reg");
-    dust.render(
-        "register_forms/client-register",
-        {},
-        (err, out) => reg.innerHTML = out);
-}
-
-function fetchCoach(e) {
-    e.preventDefault();
-    console.log("funziona22!!!");
-    let reg = document.getElementById("reg");
-    dust.render(
-        "register_forms/coach-register",
-        {pt : "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"},
-        (err, out) => reg.innerHTML = out);
-}
