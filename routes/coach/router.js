@@ -64,6 +64,15 @@ router.post('/new', async (req, res) => {
                 creationDate: Date.now(),
                 _credentials: credentialRef._id
             });
+            if (user.description === undefined) {
+                user.description = '';
+            }
+            if (user.photo === undefined) {
+                user.photo = '';
+            }
+            if (user.address2 === undefined) {
+                user.address2 = '';
+            }
             let savedUser = await user.save();
             if (req.accepts("text/html")) {
                 res = setResponse('html', 201, res);
@@ -73,7 +82,7 @@ router.post('/new', async (req, res) => {
             }
             res.end(savedUser);
         } catch (e) {
-            res = setResponse('json', 400, res, {Error:""+ e + "First name, last name, birthday, sex, email address, phone number, at least one address, city, state, zip code and country must be provided"});
+            res = setResponse('json', 400, res, {Error: e + ""});
             res.end();
         }
     } else {
@@ -141,7 +150,8 @@ router.get('/search', function (req, res) {
     UserAccount.find(filter)
         .then((coaches) => {
             if (coaches.length > 0) {
-                console.log("coaches has been found!");
+                let length = coaches.length;
+                console.log(length + " coaches has been found!");
                 console.log(coaches);
                 if (req.accepts('html')) {
                     res.status(200);
@@ -155,15 +165,15 @@ router.get('/search', function (req, res) {
             }
         })
         .catch((err) => {
-            res = setResponse(err, 500, res, coaches);
-            res.end();
+            console.log("0 coaches has been found!");
+            res.status(404).end()
         })
 });
 
 router.get('/setting', function (req, res) {
     //todo render setting with info from database
     //todo check headers
-})
+});
 
 // Edit a coach
 // It works only with all the required information provided
@@ -176,28 +186,54 @@ router.put('/edit/:id', async (req, res) => {
             try {
                 let found = await UserAccount.findById(req.params.id);
                 if (found != null) {
-                    found.firstName = req.body.firstName;
-                    found.lastName = req.body.lastName;
+                    if (req.body.firstName) {
+                        found.firstName = req.body.firstName;
+                    }
+                    if (req.body.lastName) {
+                        found.lastName = req.body.lastName;
+                    }
                     if (req.body.description) {
                         found.description = req.body.description;
                     }
                     if (req.body.photo) {
                         found.photo = req.body.photo;
                     }
-                    found.birthday = req.body.birthday;
-                    found.sex = req.body.sex;
-                    found.email = req.body.email;
-                    found.phone = req.body.phone;
-                    found.address1 = req.body.address1;
+                    if (req.body.birthday) {
+                        found.birthday = req.body.birthday;
+                    }
+                    if (req.body.sex) {
+                        found.sex = req.body.sex;
+                    }
+                    if (req.body.email) {
+                        found.email = req.body.email;
+                    }
+                    if (req.body.phone) {
+                        found.phone = req.body.phone;
+                    }
+                    if (req.body.address1) {
+                        found.address1 = req.body.address1;
+                    }
                     if (req.body.address2) {
                         found.address2 = req.body.address2;
                     }
-                    found.city = req.body.city;
-                    found.state = req.body.state;
-                    found.zipCode = req.body.zipCode;
-                    found.country = req.body.country;
-                    found.currency = req.body.currency;
-                    found.localization = req.body.localization;
+                    if (req.body.city) {
+                        found.city = req.body.city;
+                    }
+                    if (req.body.state) {
+                        found.state = req.body.state;
+                    }
+                    if (req.body.zipCode) {
+                        found.zipCode = req.body.zipCode;
+                    }
+                    if (req.body.country) {
+                        found.country = req.body.country;
+                    }
+                    if (req.body.currency) {
+                        found.currency = req.body.currency;
+                    }
+                    if (req.body.localization) {
+                        found.localization = req.body.localization;
+                    }
                 } else {
                     res = setResponse('error', 404, res, {Error: 'Coach not found!'});
                     res.end();
@@ -212,7 +248,7 @@ router.put('/edit/:id', async (req, res) => {
                     res.end();
                 }
             } catch (e) {
-                res = setResponse(e, 500, res, {Error: 'Coach not found!'});
+                res = setResponse(e, 404, res, {Error: 'Coach not found!'});
             }
         }
     }
@@ -324,6 +360,6 @@ router.post('/username', async (req, res) => {
 router.get('/uss', function (req, res) {
     res.type("text/html");
     res.render('user-register', {});
-})
+});
 
 module.exports = router;
