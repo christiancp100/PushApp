@@ -1,0 +1,99 @@
+<div>
+    <label>First name:
+        <input required pattern="[a-zA-Z][a-z]+$" type="text" value="{firstName}" name="firstName"/>
+    </label>
+</div>
+<div>
+    <label>Last name:
+        <input required pattern="[a-zA-Z][a-z]+$" type="text" value="{lastName}" name="lastName"/>
+    </label>
+</div>
+<div>
+    <label>Description:
+        {?description}<input type="text" value="{description}" name="description"/>
+        {:else}<input type="text" name="description"/>{/description}
+    </label>
+</div>
+<div>
+    <label>Choose yor photo:
+        <input accept="image/*" type="file" name="image"/>
+    </label>
+</div>
+<div>
+    <label>Birthday:
+        <input required value="{bday}" min="1900-01-01" max="{maxDate}" type="date" name="birthday"/>
+    </label>
+</div>
+<div>
+    <label>Sex:<br>
+        <input type="radio" name="sex" value="male" required> Male<br>
+        <input type="radio" name="sex" value="female"> Female<br>
+        <input type="radio" name="sex" value="other"> Other
+    </label>
+</div>
+<div>
+    <label>unit system:<br>
+        <input type="radio" name="unitSystem" value="metric"> Metric<br>
+        <input type="radio" name="unitSystem" value="other"> other<br>
+        <input type="radio" name="unitSystem" value="other"> Other
+    </label>
+</div>
+<div>
+    <label>Phone:
+        <input required value="{phone}" type="text" name="phone"/>
+    </label>
+</div>
+<div>
+    <label>address1:
+        <input required value="{address1}" type="text" name="address1"/>
+    </label>
+</div>
+<div>
+    <label>address2:
+        <input type="text" value="{address2}" name="address2"/>
+    </label>
+</div>
+<div>
+    <label>city:
+        <input required value="{city}" type="text" name="city"/>
+    </label>
+</div>
+<div>
+    <label>state:
+        <input required value="{state}"type="text" name="state"/>
+    </label>
+</div>
+<div>
+    <label>zip Code:
+        <input required value="{zipCode}" type="text" name="zipCode"/>
+    </label>
+</div>
+<div>
+    <label>Country:
+        <input required value="{country}" type="text" name="country"/>
+    </label>
+</div>
+<div>
+    <label>Currency:
+        <select required id="currency" name="currency">
+            <option value="Euro">€</option>
+            <option value="CHF">CHF</option>
+            <option value="USD">$</option>
+            <option value="AUS">AU$</option>
+            <option value="CAN">$CAN</option>
+            <option value="Yen">¥</option>
+            <option value="GBP">£</option>
+            <option value="SWE">kr</option>
+        </select>
+    </label>
+</div>
+<div>
+    <label>Localization: {!TODO lolcalization function work!}
+        <input onload="getLocation()" name="localization"/>
+    </label>
+</div>
+<div>
+    <label>Email:
+        <input required value="{email}" type="email" name="email"/>
+    </label>
+</div>

@@ -9,7 +9,7 @@ const ExerciseSchema = exports.ExerciseSchema = new Schema({
     weightUnit: {type: String, required:true },
     pumpWeight: {type: Number, required:true },
     bodyPart: {type: String},    //taken from the API(?)
-    set:{type: Number},
+    set: {type: Number},
     repetitions: {type:Number}
 });
 

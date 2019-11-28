@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{title}</title>
+{!    <link rel='stylesheet' href='/stylesheets/style.css' />!}
+</head>
+
+<body>
+{!    {>"partials/nav"/}!}
+<h2>Register new Client</h2>
+<form onsubmit="return mySubmit(event);" action="clients/new"  method="post" enctype="application/x-www-form-urlencoded">
+    {>"partials/register"/}
+    <div>
+        <label>bmi:
+            {?bmi}<input value="{bmi}" type="text" name="bmi"/>
+            {:else}<input type="text" name="bmi"/>{/bmi}
+        </label>
+    </div>
+    <div>
+        <label>height (in cm):
+            {?height}<input pattern="[0-2][0-9]{2}" value="{height}" type="text" name="height"/>
+            {:else}<input pattern="[0-2][0-9]{2}" type="text" name="height"/>{/height}
+        </label>
+    </div>
+    <div>
+        <label>weight (in kg):
+            {?weight}<input pattern="[0-9]{3}" value="{weight}" type="text" name="weight"/>
+            {:else} <input pattern="[0-9]{3}" type="text" name="weight"/>{/weight}
+        </label>
+    </div>
+    <div>
+        <label>Username:
+            <input required id="user" value="" type="text" name="username"/>
+        </label>
+    </div>
+    <div>
+        <label>Password:
+            <input required {!pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"!} type="password"
+                   title="The password should contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                   name="password"/>
+        </label>
+    </div>
+    <div>
+        <input type="submit" value="Register"/>
+    </div>
+</form>
+</body>
+<script src="/js/Coach-help.js"></script>
+{!<script src="/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>!}
+</html>

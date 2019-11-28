@@ -64,7 +64,7 @@ router.post('/new', async (req, res) => {
             req.body.userAccount.currency === undefined &&
             req.body.credentials.username === undefined &&
             req.body.credentials.password === undefined) {
-            res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
+            res = setResponse('json', 400, res, { Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided" });
             res.end();
         } else {
             try {
@@ -114,17 +114,17 @@ router.post('/new', async (req, res) => {
                     res.redirect('/auth');
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
-                    res = setResponse('json', 201, res, {userAccount: savedUserAccount, clientInfo: savedClientInfo});
+                    res = setResponse('json', 201, res, { userAccount: savedUserAccount, clientInfo: savedClientInfo });
                 }
                 res.end();
             } catch
-                (err) {
+            (err) {
                 console.log(err);
                 res.status(500).end();
             }
         }
     } else {
-        res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
+        res = setResponse('json', 400, res, { Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed." });
         res.end();
     }
 });
@@ -178,7 +178,7 @@ router.get('/search', function (req, res) {
             res.end();
         });
 })
-;
+    ;
 
 // Edit an user
 router.put('/edit/:id', async (req, res) => {
@@ -188,7 +188,7 @@ router.put('/edit/:id', async (req, res) => {
         } else {
             try {
                 console.log('Searching for user with ID: ' + req.params.id + '.');
-                let foundClient = await UserAccount.findById({_id: req.params.id});
+                let foundClient = await UserAccount.findById({ _id: req.params.id });
                 if (foundClient !== null) {
                     foundClient.firstName = req.body.userAccount.firstName;
                     foundClient.lastName = req.body.userAccount.lastName;
@@ -251,10 +251,10 @@ router.put('/edit/:id', async (req, res) => {
                         res.end();
                     }
                 } else {
-                    res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
+                    res = setResponse('error', 404, res, { Error: 'Favorite not found!' });
                 }
             } catch
-                (err) {
+            (err) {
                 console.log(err);
                 res.status(500);
                 res.end();
@@ -271,15 +271,15 @@ router.delete('/delete/:id', function (req, res) {
             res.status(400).end();
         } else {
             console.log('Searching for user with ID: ' + req.params.id + '.');
-            ClientInfo.findById({_id: req.params.id})
+            ClientInfo.findById({ _id: req.params.id })
                 .then((found) => {
-                        if (found != null) {
-                            found.isDeleted = true;
-                            return found.save()
-                        }
-                    },
+                    if (found != null) {
+                        found.isDeleted = true;
+                        return found.save()
+                    }
+                },
                     (err) => {
-                        res = setResponse('error', 404, res, {Error: 'Favorite not found!'});
+                        res = setResponse('error', 404, res, { Error: 'Favorite not found!' });
                     })
                 .then((saved) => {
                     console.log('User with ID: ' + req.params.id + ' was soft deleted!');
@@ -369,22 +369,23 @@ function setResponse(type, code, res, msg) {
 }
 
 router.post('/auth', async (req, res) => {
-    //todo check the request
+    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
-    let clientInfo = await ClientInfo.findOne({'access.username': req.body.username});
-    console.log(clientInfo);
-    if (!clientInfo) {
-        return res.status(400).send('Incorrect username.');
+        let client = await Client.findOne({ 'access.username': req.body.username });
+        console.log(client);
+        if (!client) {
+            return res.status(400).send('Incorrect username.');
+        }
+        const validPassword = await bcrypt.compare(req.body.password, client.access.password);
+
+
+        if (!validPassword) {
+            return res.status(400).send('Incorrect email or password.');
+        }
+        //encode the _id of user object in the mongo
+        const token = jwt.sign({ _id: client._id }, config.get('PrivateKey'));
+        return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
-    const validPassword = await bcrypt.compare(req.body.password, clientInfo.access.password);
-
-
-    if (!validPassword) {
-        return res.status(400).send('Incorrect email or password.');
-    }
-
-    const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));//send what is needed??
-    return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-});
+})
 
 module.exports = router;

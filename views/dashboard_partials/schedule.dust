@@ -1,0 +1,49 @@
+<div class="masonry row" style="position: relative; height: 1150.14px;">
+    <div class="col s12" style="position: absolute; left: 0px; top: 0px;">
+        <h2 class="center">Create New Schedule</h2>
+    </div>
+    <div class="col s12">
+        <div class="input-field col s6">
+            <input id="last_name" type="text" class="validate">
+            <label for="last_name">Schedule Name</label>
+        </div>
+        <div class="input-field col s12 m6">
+            <select class="icons">
+                <option value="" disabled selected>Choose your option</option>
+                <option value="" data-icon="https://randomuser.me/api/portraits/men/61.jpg" class="left">Erick
+                </option>
+                <option value="" data-icon="https://randomuser.me/api/portraits/women/76.jpg" class="left">Davide
+                </option>
+                <option value="" data-icon="https://randomuser.me/api/portraits/men/59.jpg" class="left">Christian
+                </option>
+            </select>
+            <label>User</label>
+        </div>
+        <div class="input-field col m6 s12">
+            <select>
+                <option value="" disabled selected>Session</option>
+                <option value="1">Monday</option>
+                <option value="2">Wednesday</option>
+                <option value="3">Friday</option>
+            </select>
+            <label>User</label>
+        </div>
+
+        <div class="input-field col m6 s12">
+            <a class="btn-floating btn-small waves-effect waves-light black">
+                <i class="material-icons">add</i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col l12 m6 s12" style="position: absolute; left: 344px; top: 107px;">
+        <div class="card">
+            {>"dashboard_partials/schedule_table"/}
+        </div>
+        <div class="row center">
+            <a class="btn-floating btn-large waves-effect waves-light black">
+                <i class="material-icons">add</i>
+            </a>
+        </div>
+    </div>
+</div>

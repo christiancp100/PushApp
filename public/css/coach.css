@@ -1,0 +1,39 @@
+.profile-pic{
+    margin-top: 0.5rem;
+    width: 3rem;
+    filter: invert();
+}
+
+.nav {
+    flex: 0 0 17vw;
+    background-color: red;
+    float: left;
+    margin-right: 20px;
+    border: 2px solid black;
+    border-left-style: none;
+}
+
+main {
+    flex: 1;
+    background-color: #E0FFFF;
+    border: 1px solid black;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 25px;
+}
+
+aside {
+    flex: 0 0 17vw;
+    background-color: darkgray;
+    margin-left: 20px;
+    border: 2px solid black;
+    border-right-style: none;
+}
+
+#center {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+    flex: 1;
+}

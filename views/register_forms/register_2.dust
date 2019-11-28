@@ -1,9 +1,0 @@
-<form action="/register/3/{{typeOfUser}}" method="POST">
-    <input name="email" type="text" placeholder="email">
-    <input name="password" type="password" placeholder="password">
-    <button type="submit" onclick="register3">Register</button>
-</form>
-
-<script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
-<script src="/js/views.js"></script>
-<script src="/js/fetch.js"></script>

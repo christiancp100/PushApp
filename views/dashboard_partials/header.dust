@@ -1,0 +1,21 @@
+<header>
+    <div class="navbar-fixed">
+        <nav class="navbar black">
+            <div class="nav-wrapper"><a href="#!" class="brand-logo white-text">Home</a>
+                <ul id="nav-mobile" class="right">
+                    <li class="hide-on-med-and-down"><a href="#!" data-target="dropdown1" class="dropdown-trigger waves-effect"><i class="material-icons white-text">notifications</i></a>
+                        <div id="dropdown1" class="dropdown-content notifications black" tabindex="0">
+                            <div class="notifications-title white-text" tabindex="0">notifications</div>
+                            {>"dashboard_partials/notification"/}
+                        </div>
+                    </li>
+                    <li><a href="#!"><i class="material-icons white-text">settings</i></a>
+                    </li>
+                </ul><a href="#!" data-target="sidenav-left" class="sidenav-trigger left"><i
+                        class="material-icons white-text">menu</i></a>
+            </div>
+        </nav>
+    </div>
+    {>"dashboard_partials/nav" nItems=items nAccordions=accordions /}
+
+</header>

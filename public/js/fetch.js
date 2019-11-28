@@ -72,61 +72,23 @@ function doJSONRequest(method, url, headers, body) {
 }
 
 
-function getNext(event) {
-    event.preventDefault();
-    let reg1 = document.getElementById("reg-1");
-    let reg2 = document.getElementById("reg-2");
 
-    reg1.style.display = "None";
-    reg2.style.display = "Block";
-
-    newInput = document.createElement("input");
-    newInput.type = "hidden";
-    newInput.name = "typeofuser";
-    newInput.value = event.target.name;
-    reg2.appendChild(newInput);
+function fetchClient(e) {
+    console.log("funziona!!!");
+    e.preventDefault();
+    let reg = document.getElementById("reg");
+    dust.render(
+        "register_forms/client-register",
+        {},
+        (err, out) => reg.innerHTML = out);
 }
 
-
-function registerUser(event) {
-    console.log("funziona!!!");
-    event.preventDefault();
-    let reg = document.getElementById("reg-2");
-    console.log(reg.childNodes);
-
-    let body = {
-      email : reg.childNodes[0].value,
-      password : reg.childNodes[1].value,
-      typeofuser : reg.childNodes[3].value,
-    };
-
-    if (reg.childNodes[3].value == "coach") {
-      console.log(body);
-        fetch("/register-coach", {
-            method: 'post',
-            headers: {},
-            body : JSON.stringify(body)
-        })
-            .then(res => {
-                dust.render(
-                    "register_forms/register_3_coach",
-                    {},
-                    (err, out) => {
-                        document.getElementsByTagName("body")[0].innerHTML = out;
-                    });
-            });
-    }
-    else if (reg.childNodes[2].name == "client") {
-        doJSONRequest(
-            "POST",
-            "/register-coach",
-            { Accept: "application/json" },
-            body
-        ).then(res => {
-            dust.render(
-                "register_forms/register_3_client",
-                {},
-                (err, out) => document.getElementsByTagName("body")[0].innerHTML = out);
-        });
-    }
+function fetchCoach(e) {
+    e.preventDefault();
+    console.log("funziona22!!!");
+    let reg = document.getElementById("reg");
+    dust.render(
+        "register_forms/coach-register",
+        {pt : "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"},
+        (err, out) => reg.innerHTML = out);
 }
