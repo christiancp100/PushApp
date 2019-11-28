@@ -8,9 +8,11 @@ const bcrypt = require('bcrypt');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
+require('../../models/CoachClients.js');
 
 let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
+let CoachClients = mongoose.model('CoachClients');
 
 // GET all coach
 function getCoaches(req, res) {
@@ -31,18 +33,21 @@ function getCoaches(req, res) {
         });
 }
 
+
+router.get('/', function (req, res) {
+    res.type("html");
+    res.render('coach-board');
+    /*if (req.header('accept') == "text/html") {
+
+    } else {
+        res.status(400).end()
+    }*/
+})
 // Create a new coach
 router.post('/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
         console.log('Creating new coach...');
         try {
-            let salt = await bcrypt.genSalt(10);
-            let code = await bcrypt.hash(req.body.password, salt);
-            let credentials = new Credentials({
-                username: req.body.username,
-                password: code
-            });
-            let credentialRef = await credentials.save();
             let user = new UserAccount({
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
@@ -62,7 +67,7 @@ router.post('/new', async (req, res) => {
                 localization: req.body.localization,
                 accountType: 'coach',
                 creationDate: Date.now(),
-                _credentials: credentialRef._id
+                isDeleted: false
             });
             if (user.description === undefined) {
                 user.description = '';
@@ -74,6 +79,14 @@ router.post('/new', async (req, res) => {
                 user.address2 = '';
             }
             let savedUser = await user.save();
+            let salt = await bcrypt.genSalt(10);
+            let code = await bcrypt.hash(req.body.password, salt);
+            let credentials = new Credentials({
+                username: req.body.username,
+                password: code,
+                _userAccountId: savedUser._id
+            });
+            let credentialRef = await credentials.save();
             if (req.accepts("text/html")) {
                 res = setResponse('html', 201, res);
                 res.end();
@@ -86,7 +99,7 @@ router.post('/new', async (req, res) => {
             res.end();
         }
     } else {
-        res = setResponse('json', 400, res, { Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed." });
+        res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
         res.end();
     }
 });
@@ -95,6 +108,7 @@ router.post('/new', async (req, res) => {
 function getFilter(req) {
     let filter = {};
     filter.accountType = 'coach';
+    filter.isDeleted = 'false';
     let request;
     if (Object.keys(req.body).length > 0) {
         request = req.body;
@@ -146,7 +160,6 @@ function getFilter(req) {
 // Search for coach
 router.get('/search', function (req, res) {
     let filter = getFilter(req);
-    console.log(filter);
     UserAccount.find(filter)
         .then((coaches) => {
             if (coaches.length > 0) {
@@ -235,7 +248,7 @@ router.put('/edit/:id', async (req, res) => {
                         found.localization = req.body.localization;
                     }
                 } else {
-                    res = setResponse('error', 404, res, { Error: 'Coach not found!' });
+                    res = setResponse('error', 404, res, {Error: 'Coach not found!'});
                     res.end();
                 }
                 let saved = await found.save();
@@ -264,7 +277,7 @@ router.put('/delete/:id', async (req, res) => {
             console.log('Searching for coach with ID: ' + req.params.id + '.');
             try {
                 let found = await UserAccount.findById(req.params.id);
-                if (found != null) {
+                if (found != null && found.accountType === 'coach') {
                     found.firstName = 'anonymous';
                     found.lastName = ' ';
                     found.description = '';
@@ -273,15 +286,13 @@ router.put('/delete/:id', async (req, res) => {
                     found.phone = 0;
                     found.address1 = ' ';
                     found.address2 = '';
-                    console.log('MODIFICATO');
+                    found.isDeleted = true;
                 } else {
-                    res = setResponse('error', 404, res, { Error: 'Coach not found!' });
+                    res = setResponse('error', 404, res, {Error: 'Coach not found!'});
                     res.end();
                 }
-                console.log(found);
                 let saved = found.save()
                     .then((saved) => {
-                        console.log(saved);
                         res.end();
                     })
                     .catch(err => console.log(err));
@@ -294,30 +305,142 @@ router.put('/delete/:id', async (req, res) => {
                     res.end();
                 }
             } catch (e) {
-                res = setResponse(e, 500, res, { Error: 'Coach not found!' });
+                res = setResponse(e, 500, res, {Error: 'Coach not found!'});
             }
         }
     }
 });
 
 router.post('/auth', async (req, res) => {
-    //todo check the request
+    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
-    let client = await Credentials.findOne({ username: req.body.username });
-    console.log(client);
-    if (!client) {
-        return res.status(400).send('Incorrect username.');
+        let client = await Credentials.findOne({username: req.body.username});
+        console.log(client);
+        if (!client) {
+            return res.status(400).send('Incorrect username.');
+        }
+        const validPassword = await bcrypt.compare(req.body.password, client.password);
+
+
+        if (!validPassword) {
+            return res.status(400).send('Incorrect email or password.');
+        }
+
+        //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
+        //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+        res.end("DONE");
     }
-    const validPassword = await bcrypt.compare(req.body.password, client.password);
+});
 
-
-    if (!validPassword) {
-        return res.status(400).send('Incorrect email or password.');
+// POST a new coach-client relation
+router.post('/hire', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Creating a new relation coach-client: ' + req.params.id + '.');
+            let hire = new CoachClients({
+                _coachId: req.body._coachId,
+                _clientId: req.body._clientId,
+            });
+            hire.save()
+                .then((saved) => {
+                    console.log(saved);
+                    res = setResponse('html', 201, res);
+                    res.end();
+                })
+                .catch((err) => {
+                    res = setResponse(err, 500, res, { Error: 'Cannot create a new hire' });
+                    res.end();
+                })
+        }
     }
+});
 
-    //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
-    //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-    res.end("DONE");
+// GET the clients of a coach
+router.get('/hire/coach/:id', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Searching for coach with ID: ' + req.params.id + '.');
+            if (req.params.id) {
+                CoachClients.find({_coachId: req.params.id})
+                    .then((found) => {
+                        console.log(found);
+                        console.log('The coach has ' + found.length + ' clients.');
+                        res = setResponse('json', 200, res, found);
+                        res.end();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        res = setResponse('json', 500, { Error : err});
+                        res.end();
+                    })
+            } else {
+                res = setResponse('json', 404, { Error : 'No clients for the given coach' });
+                res.end();
+            }
+        }
+    }
+});
+
+// GET the coaches of a client
+router.get('/hire/client/:id', (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            console.log('Searching for client with ID: ' + req.params.id + '.');
+            if (req.params.id) {
+                CoachClients.find({_clientId: req.params.id})
+                    .then((found) => {
+                        console.log(found);
+                        console.log('The client has ' + found.length + ' coaches.');
+                        res = setResponse('json', 200, res, found);
+                        res.end();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        res = setResponse('json', 500, { Error : err});
+                        res.end();
+                    })
+            } else {
+                res = setResponse('json', 404, { Error : 'No coaches for the given client' });
+                res.end();
+            }
+        }
+    }
+});
+
+router.delete('/hire/:id', async (req, res) => {
+    if (req.accepts("json")) {
+        if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            try {
+                console.log('Searching for hire-relation with ID: ' + req.params.id + '.');
+                let found = await CoachClients.findById(req.params.id);
+                if (found === null) {
+                    res = setResponse('json', 404, res, {Error: 'No hire-relation for the given id'});
+                    res.end();
+                } else {
+                    try {
+                        let removed = await CoachClients.remove(found);
+                        console.log('The hire-relation has been deleted!');
+                        res = setResponse('json', 200, res, removed);
+                        res.end();
+                    } catch (e) {
+                        res = setResponse('json', 500, res, {Error: e});
+                        res.end();
+                    }
+                }
+            } catch (e) {
+                res = setResponse('json', 500, res, {Error: e});
+                res.end();
+            }
+        }
+    }
 });
 
 // Customized response
@@ -344,7 +467,7 @@ function setResponse(type, code, res, msg) {
 router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json") {
         console.log(req.body);
-        let found = await Credentials.findOne({ username: req.body.username })
+        let found = await Credentials.findOne({username: req.body.username})
         if (!found) {
             console.log("TRUE");
             res.send(true);
@@ -357,9 +480,17 @@ router.post('/username', async (req, res) => {
     }
 });
 
-router.get('/uss', function (req, res) {
-    res.type("text/html");
-    res.render('user-register', {});
+router.post('/username', async (req, res) => {
+    if (req.get('Content-Type') === "application/json") {
+        try {
+            let username = await Credentials.find({});
+            res.send(username);
+        } catch (e) {
+            res.status(500).end("ERROR")
+        }
+    } else {
+        res.status(500).end("ERROR")
+    }
 });
 
 module.exports = router;
