@@ -31,6 +31,16 @@ function getCoaches(req, res) {
         });
 }
 
+
+router.get('/', function (req, res) {
+    res.type("html");
+    res.render('coach-board');
+    /*if (req.header('accept') == "text/html") {
+
+    } else {
+        res.status(400).end()
+    }*/
+})
 // Create a new coach
 router.post('/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
@@ -265,23 +275,24 @@ router.put('/delete/:id', async (req, res) => {
 });
 
 router.post('/auth', async (req, res) => {
-    //todo check the request
+    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
-    let client = await Credentials.findOne({username : req.body.username});
-    console.log(client);
-    if (!client){
-        return res.status(400).send('Incorrect username.');
+        let client = await Credentials.findOne({username: req.body.username});
+        console.log(client);
+        if (!client) {
+            return res.status(400).send('Incorrect username.');
+        }
+        const validPassword = await bcrypt.compare(req.body.password, client.password);
+
+
+        if (!validPassword) {
+            return res.status(400).send('Incorrect email or password.');
+        }
+
+        //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
+        //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+        res.end("DONE");
     }
-    const validPassword = await bcrypt.compare(req.body.password, client.password);
-
-
-    if (!validPassword) {
-        return res.status(400).send('Incorrect email or password.');
-    }
-
-    //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
-    //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-    res.end("DONE");
 });
 
 // Customized response
@@ -305,7 +316,7 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-router.post('/username', async (req, res) => {
+/*router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json"){
         console.log(req.body);
         let found = await Credentials.findOne({username : req.body.username})
@@ -319,11 +330,18 @@ router.post('/username', async (req, res) => {
     } else {
         res.status(500).end("ERROR")
     }
+});*/
+router.post('/username', async (req, res) => {
+    if (req.get('Content-Type') === "application/json"){
+        try {
+            let username = await Credentials.find({});
+            res.send(username);
+        } catch (e) {
+            res.status(500).end("ERROR")
+        }
+    } else {
+        res.status(500).end("ERROR")
+    }
 });
-
-router.get('/uss', function (req, res) {
-    res.type("text/html");
-    res.render('user-register', {});
-})
 
 module.exports = router;

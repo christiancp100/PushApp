@@ -13,18 +13,6 @@ router.get('/', function (req, res, next) {
   }
 });
 
-router.get('/test', function (req, res) {
-    let date = new Date();
-    //max date is maximum date to be registered (today)
-    let neededDate = "" + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-    let obj = {
-        firstName : 'maxim',
-        maxDate : neededDate,
-        weight : null
-    }
-    res.render('user-register', obj);
-
-})
 
 router.get('/register', (req, res, next) => {
   //TODO if the user is logged in, redirect to the admin panel
@@ -114,7 +102,9 @@ router.get("/client/dashboard", (req, res) => {
 });
 router.get('/testing', function (req, res) {
     res.type('text/html');
-    res.render('coach-board', {});
+    //res.render('register_forms/coach-register');
+    res.render('register_forms/client-register');
+    //res.render('register_forms/register_1');
 })
 /** router for /root */
 module.exports = router;

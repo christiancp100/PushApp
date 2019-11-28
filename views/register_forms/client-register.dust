@@ -2,13 +2,11 @@
 <html>
 <head>
     <title>{title}</title>
-{!    <link rel='stylesheet' href='/stylesheets/style.css' />!}
 </head>
 
-<body>
-{!    {>"partials/nav"/}!}
+<body onload="findName()">
 <h2>Register new Client</h2>
-<form onsubmit="return mySubmit(event);" action="clients/new"  method="post" enctype="application/x-www-form-urlencoded">
+<form onsubmit="return mySubmit();" action="clients/new"  method="post" enctype="application/x-www-form-urlencoded">
     {>"partials/register"/}
     <div>
         <label>bmi:
@@ -35,7 +33,7 @@
     </div>
     <div>
         <label>Password:
-            <input required {!pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"!} type="password"
+            <input required type="password"
                    title="The password should contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
                    name="password"/>
         </label>
@@ -44,8 +42,9 @@
         <input type="submit" value="Register"/>
     </div>
 </form>
+<script src="/js/helper.js"></script>
+<script src="/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>
 </body>
-<script src="/js/Coach-help.js"></script>
-{!<script src="/dustjs-linkedin/dust-core.min.js"></script>
-<script src="/js/views.js"></script>!}
+
 </html>

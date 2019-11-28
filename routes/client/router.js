@@ -14,7 +14,6 @@ require('../../models/Client.js');
 let Client = mongoose.model('Client');
 let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
-
 const bcrypt = require('bcrypt');
 
 // GET all

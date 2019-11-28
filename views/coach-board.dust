@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Coach</title>
-    <link rel='stylesheet' href='./../public/css/coach.css' />
+    <link type="text/css" rel='stylesheet' href='./../public/css/coach.css'/>
 </head>
 <body>
 
