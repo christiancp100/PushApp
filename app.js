@@ -10,7 +10,6 @@ const app = express();
 
 // Models
 require('./models/ClientInfo.js');
-require('./models/Coach.js');
 require('./models/Credential.js');
 
 // Mongoose connection to MongoDB and Collection name declaration

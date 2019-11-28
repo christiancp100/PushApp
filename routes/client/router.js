@@ -13,7 +13,6 @@ require('../../models/ClientInfo.js');
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
 let Credentials = mongoose.model('Credentials');
-const bcrypt = require('bcrypt');
 
 // GET all
 router.get('/', async (req, res) => {
@@ -290,7 +289,7 @@ router.delete('/delete/:id', async (req, res) => {
                     await foundClient.save();
                     await foundCredential.remove();
 
-                    console.log('Client with ID: ' + req.params.id + ' was deleted!');
+                    console.log('Client with ID ' + req.params.id + ' was successfully deleted!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
                         res.redirect('/');

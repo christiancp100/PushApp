@@ -96,7 +96,7 @@ router.post('/new', async (req, res) => {
             res.end();
         }
     } else {
-        res = setResponse('json', 400, res, { Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed." });
+        res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
         res.end();
     }
 });
@@ -245,7 +245,7 @@ router.put('/edit/:id', async (req, res) => {
                         found.localization = req.body.localization;
                     }
                 } else {
-                    res = setResponse('error', 404, res, { Error: 'Coach not found!' });
+                    res = setResponse('error', 404, res, {Error: 'Coach not found!'});
                     res.end();
                 }
                 let saved = await found.save();
@@ -285,7 +285,7 @@ router.put('/delete/:id', async (req, res) => {
                     found.address2 = '';
                     console.log('MODIFICATO');
                 } else {
-                    res = setResponse('error', 404, res, { Error: 'Coach not found!' });
+                    res = setResponse('error', 404, res, {Error: 'Coach not found!'});
                     res.end();
                 }
                 console.log(found);
@@ -304,7 +304,7 @@ router.put('/delete/:id', async (req, res) => {
                     res.end();
                 }
             } catch (e) {
-                res = setResponse(e, 500, res, { Error: 'Coach not found!' });
+                res = setResponse(e, 500, res, {Error: 'Coach not found!'});
             }
         }
     }
@@ -313,12 +313,12 @@ router.put('/delete/:id', async (req, res) => {
 router.post('/auth', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
-    let client = await Credentials.findOne({ username: req.body.username });
-    console.log(client);
-    if (!client) {
-        return res.status(400).send('Incorrect username.');
-    }
-    const validPassword = await bcrypt.compare(req.body.password, client.password);
+        let client = await Credentials.findOne({username: req.body.username});
+        console.log(client);
+        if (!client) {
+            return res.status(400).send('Incorrect username.');
+        }
+        const validPassword = await bcrypt.compare(req.body.password, client.password);
 
 
         if (!validPassword) {
@@ -355,7 +355,7 @@ function setResponse(type, code, res, msg) {
 router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json") {
         console.log(req.body);
-        let found = await Credentials.findOne({ username: req.body.username })
+        let found = await Credentials.findOne({username: req.body.username})
         if (!found) {
             console.log("TRUE");
             res.send(true);
@@ -366,9 +366,10 @@ router.post('/username', async (req, res) => {
     } else {
         res.status(500).end("ERROR")
     }
-});*/
+});
+
 router.post('/username', async (req, res) => {
-    if (req.get('Content-Type') === "application/json"){
+    if (req.get('Content-Type') === "application/json") {
         try {
             let username = await Credentials.find({});
             res.send(username);
