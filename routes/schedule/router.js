@@ -3,7 +3,6 @@
 
 const express = require('express');
 const router = express.Router();
-<<<<<<< Updated upstream
 const mongoose = require('mongoose');
 
 
@@ -51,7 +50,7 @@ router.post("/create-routine", (req, res) => {
 
   schedule.save()
     .then(savedRoutine => {
-      
+
     })
 
 });
@@ -71,18 +70,6 @@ router.get("/workout", (req, res) => {
   res.render("workout", {});
 });
 
-=======
 
-router.get('/', function (req, res, next) {
-  if (req.accepts("html")) {
-    res.render('workout', {title: 'PushApp'});
-  } else {
-    res.status(500);
-    res.end();
-  }
-});
-
-
->>>>>>> Stashed changes
 /** router for /root */
 module.exports = router;
