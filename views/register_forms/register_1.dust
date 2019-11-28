@@ -1,11 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>register</title>
+</head>
+<body>
 <div id="reg">
-<button type="submit" onclick="fetchCoach(event)" name="coach">1. Coach</button>
+<button onclick="fetchCoach(event)" name="coach">1. Coach</button>
+{!does not work with fetch!}
 
-
-<button type="submit" onclick="fetchClient(event)" name="client">2. Client</button>
+<button onclick="fetchClient(event)" name="client">2. Client</button>
 </div>
 
 
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/fetch.js"></script>
+</body>
+</html>

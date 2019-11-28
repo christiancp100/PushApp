@@ -1,22 +1,26 @@
-async function mySubmit(e) {
-    e.preventDefault();
-    let name =  document.getElementById("user").value;
-    console.log("This is name:");
-    console.log(name);
-    try {
-        let res = await fetch('./username', {
+//store into array on server
+let arr;
+async function findName() {
+     let res = await fetch('/coaches/username', {
             method: "POST",
             body: JSON.stringify({username: name}),
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
-        let result = await res.json();
-        console.log(result);
-        return result;
-    }
-    catch (e) {
-        throw new Error(e);
-    }
+        });
+     arr = await res.json();
+     console.log(arr);
+    /*let result = await res.json();
+    console.log(result);
+    return result;*/
 }
-
+function mySubmit() {
+     console.log("SUMBINT");
+     let name = document.getElementById("user").value;
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i].username === name){
+            return false;
+        }
+    }
+    return true;
+}

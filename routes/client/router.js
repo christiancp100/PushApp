@@ -13,6 +13,7 @@ require('../../models/ClientInfo.js');
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
 let Credentials = mongoose.model('Credentials');
+const bcrypt = require('bcrypt');
 
 // GET all
 router.get('/', async (req, res) => {
