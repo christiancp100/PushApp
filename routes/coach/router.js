@@ -39,15 +39,15 @@ router.get('/', async (req, res) => {
 });
 
 
-router.get('/', function (req, res) {
-    res.type("html");
-    res.render('coach-board');
-    /*if (req.header('accept') == "text/html") {
-
-    } else {
-        res.status(400).end()
-    }*/
-})
+// router.get('/', function (req, res) {
+//     res.type("html");
+//     res.render('coach-board');
+//     /*if (req.header('accept') == "text/html") {
+//
+//     } else {
+//         res.status(400).end()
+//     }*/
+// });
 // Create a new coach
 router.post('/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
@@ -89,7 +89,7 @@ router.post('/new', async (req, res) => {
                 if (user.address2 === undefined) {
                     user.address2 = '';
                 }
-                await user.save();
+                let savedUser = await user.save();
                 let salt = await bcrypt.genSalt(10);
                 let code = await bcrypt.hash(req.body.password, salt);
                 let credentials = new Credentials({
@@ -97,14 +97,13 @@ router.post('/new', async (req, res) => {
                     password: code,
                     _userAccountId: savedUser._id
                 });
-                let saved = await credentials.save();
+                await credentials.save();
                 if (req.accepts("text/html")) {
                     res.redirect('/auth');
                 } else if (req.accepts("application/json")) {
-                    saved.USerAccount._credentials = 'private';
-                    res = setResponse('json', 201, res, {userAccount: user, clientInfo: saved});
+                    res = setResponse('json', 201, res, savedUser);
                 }
-                res.end();
+                res.end(savedUser);
             } catch (e) {
                 res.status(500).end();
             }
