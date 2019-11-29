@@ -16,7 +16,7 @@ require('./models/CoachClients.js');
 
 
 // Mongoose connection to MongoDB and Collection name declaration
-mongoose.connect('mongodb://localhost/PushApp');
+mongoose.connect('mongodb://localhost/PushApp', { useNewUrlParser: true , useUnifiedTopology:true});
 
 // Dust views rendering engine
 app.set('view engine', 'dust');
