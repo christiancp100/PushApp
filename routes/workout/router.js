@@ -16,7 +16,7 @@ let Exercise = mongoose.model('Exercise');
 /* GETS */
 // Get ALL at /workouts root, not serving data
 router.get('/', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             res = setResponse('json', 400, res, {Message: 'Nothing here. Go exercise!'});
             res.end();
@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
 
 // Get ALL schedules
 router.get('/schedules', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let found = await Schedule.find({});
             res = setResponse('json', 200, res, found);
@@ -53,7 +53,7 @@ router.get('/schedules', async (req, res) => {
 
 // Get ALL sessions
 router.get('/sessions', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let found = await Session.find({});
             res = setResponse('json', 200, res, found);
@@ -72,7 +72,7 @@ router.get('/sessions', async (req, res) => {
 
 // Get ALL exercises
 router.get('/exercises', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let found = await Exercise.find({});
             res = setResponse('json', 200, res, found);
@@ -92,7 +92,7 @@ router.get('/exercises', async (req, res) => {
 /* SEARCHES BY... */
 // Search schedules by...
 router.get('/schedules/search', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
             let found = await Schedule.findOne({filter});
@@ -112,7 +112,7 @@ router.get('/schedules/search', async (req, res) => {
 
 // Search sessions by...
 router.get('/sessions/search', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
             let found = await Session.findOne({filter});
@@ -132,7 +132,7 @@ router.get('/sessions/search', async (req, res) => {
 
 // Search exercises by...
 router.get('/exercises/search', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
             let found = await Exercise.findOne({filter});
@@ -509,7 +509,6 @@ function getFilter(req) {
         if (request.clientId !== undefined) {
             filter._clientId = request.clientId;
         }
-
 
         // Search non deleted
         if (request.isDeleted === undefined) {
