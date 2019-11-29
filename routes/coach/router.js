@@ -50,7 +50,7 @@ router.get('/', async (req, res) => {
 // });
 // Create a new coach
 router.post('/new', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
+    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
         console.log('Creating new coach...');
         if (req.body.firstName === undefined && req.body.lastName === undefined && req.body.birthday === undefined && req.body.sex === undefined &&
             req.body.email === undefined && req.body.address1 === undefined && req.body.city === undefined && req.body.state === undefined &&
@@ -105,6 +105,7 @@ router.post('/new', async (req, res) => {
                 }
                 res.end(savedUser);
             } catch (e) {
+                console.log(e);
                 res.status(500).end();
             }
         }
@@ -340,7 +341,7 @@ router.post('/hire', (req, res) => {
                     res.end();
                 })
                 .catch((err) => {
-                    res = setResponse(err, 500, res, { Error: 'Cannot create a new hire' });
+                    res = setResponse(err, 500, res, {Error: 'Cannot create a new hire'});
                     res.end();
                 })
         }
@@ -364,11 +365,11 @@ router.get('/hire/coach/:id', (req, res) => {
                     })
                     .catch((err) => {
                         console.log(err);
-                        res = setResponse('json', 500, { Error : err});
+                        res = setResponse('json', 500, {Error: err});
                         res.end();
                     })
             } else {
-                res = setResponse('json', 404, { Error : 'No clients for the given coach' });
+                res = setResponse('json', 404, {Error: 'No clients for the given coach'});
                 res.end();
             }
         }
@@ -392,11 +393,11 @@ router.get('/hire/client/:id', (req, res) => {
                     })
                     .catch((err) => {
                         console.log(err);
-                        res = setResponse('json', 500, { Error : err});
+                        res = setResponse('json', 500, {Error: err});
                         res.end();
                     })
             } else {
-                res = setResponse('json', 404, { Error : 'No coaches for the given client' });
+                res = setResponse('json', 404, {Error: 'No coaches for the given client'});
                 res.end();
             }
         }
