@@ -15,23 +15,28 @@ let Credentials = mongoose.model('Credentials');
 let CoachClients = mongoose.model('CoachClients');
 
 // GET all coach
-function getCoaches(req, res) {
-    UserAccount.find({})
-        .then((coaches) => {
-            if (req.accepts('text/html')) {
-                res.end();
-            } else if (req.accepts('application/json')) {
-                res = setResponse('json', 200, res, result);
-            } else {
-                res.status(400);
-            }
-            res.end();
-        })
-        .catch((err) => {
-            res.status(500);
-            res.end();
+router.get('/', async (req, res) => {
+    try {
+        let coaches = await UserAccount.find({});
+        let result = await coaches.filter((o) => {
+            return (o.isDeleted === false);
         });
-}
+
+        if (req.accepts("text/html")) {
+            //render
+            res.end();
+        } else if (req.accepts("application/json")) {
+            res = setResponse('json', 200, res, result);
+        } else {
+            res.status(400);
+        }
+        res.end();
+    } catch (err) {
+        console.log(err);
+        res.status(500);
+        res.end();
+    }
+});
 
 
 router.get('/', function (req, res) {
@@ -47,56 +52,62 @@ router.get('/', function (req, res) {
 router.post('/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
         console.log('Creating new coach...');
-        try {
-            let user = new UserAccount({
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                description: req.body.description,
-                photo: req.body.photo,
-                birthday: req.body.birthday,
-                sex: req.body.sex,
-                email: req.body.email,
-                phone: req.body.phone,
-                address1: req.body.address1,
-                address2: req.body.address2,
-                city: req.body.city,
-                state: req.body.state,
-                zipCode: req.body.zipCode,
-                country: req.body.country,
-                currency: req.body.currency,
-                localization: req.body.localization,
-                accountType: 'coach',
-                creationDate: Date.now(),
-                isDeleted: false
-            });
-            if (user.description === undefined) {
-                user.description = '';
-            }
-            if (user.photo === undefined) {
-                user.photo = '';
-            }
-            if (user.address2 === undefined) {
-                user.address2 = '';
-            }
-            let savedUser = await user.save();
-            let salt = await bcrypt.genSalt(10);
-            let code = await bcrypt.hash(req.body.password, salt);
-            let credentials = new Credentials({
-                username: req.body.username,
-                password: code,
-                _userAccountId: savedUser._id
-            });
-            let credentialRef = await credentials.save();
-            if (req.accepts("text/html")) {
-                res = setResponse('html', 201, res);
-                res.end();
-            } else if (req.accepts("application/json")) {
-                res = setResponse('json', 201, res, savedUser);
-            }
-            res.end(savedUser);
-        } catch (e) {
-            res = setResponse('json', 400, res, {Error: e + ""});
+        if (req.body.firstName === undefined && req.body.lastName === undefined && req.body.birthday === undefined && req.body.sex === undefined &&
+            req.body.email === undefined && req.body.address1 === undefined && req.body.city === undefined && req.body.state === undefined &&
+            req.body.zipCode === undefined && req.body.country === undefined && req.body.currency === undefined && req.body.username === undefined && req.body.password === undefined) {
+            res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
+        } else {
+            try {
+                let user = new UserAccount({
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    description: req.body.description,
+                    photo: req.body.photo,
+                    birthday: req.body.birthday,
+                    sex: req.body.sex,
+                    email: req.body.email,
+                    phone: req.body.phone,
+                    address1: req.body.address1,
+                    address2: req.body.address2,
+                    city: req.body.city,
+                    state: req.body.state,
+                    zipCode: req.body.zipCode,
+                    country: req.body.country,
+                    currency: req.body.currency,
+                    localization: req.body.localization,
+                    accountType: 'coach',
+                    creationDate: Date.now(),
+                    isDeleted: false
+                });
+                if (user.description === undefined) {
+                    user.description = '';
+                }
+                if (user.photo === undefined) {
+                    user.photo = '';
+                }
+                if (user.address2 === undefined) {
+                    user.address2 = '';
+                }
+                await user.save();
+                let salt = await bcrypt.genSalt(10);
+                let code = await bcrypt.hash(req.body.password, salt);
+                let credentials = new Credentials({
+                    username: req.body.username,
+                    password: code,
+                    _userAccountId: savedUser._id
+                });
+                let saved = await credentials.save();
+                if (req.accepts("text/html")) {
+                    res.redirect('/auth');
+                } else if (req.accepts("application/json")) {
+                    saved.USerAccount._credentials = 'private';
+                    res = setResponse('json', 201, res, {userAccount: user, clientInfo: saved});
+                }
+                res.end();
+            } catch (e) {
+                res.status(500).end();
+            }
         }
     } else {
         res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
@@ -165,21 +176,21 @@ router.get('/search', function (req, res) {
             if (coaches.length > 0) {
                 let length = coaches.length;
                 console.log(length + " coaches has been found!");
-                console.log(coaches);
                 if (req.accepts('html')) {
                     res.status(200);
+                    //render
                 } else if (req.accepts('json')) {
-                    res = setResponse('json', 200, res, result);
+                    res = setResponse('json', 200, res, coaches);
                 }
                 res.end();
             } else {
-                res = setResponse('error', 404, res, result);
+                res = setResponse('error', 404, res, coaches);
                 res.end();
             }
         })
         .catch((err) => {
             console.log("0 coaches has been found!");
-            res.status(404).end()
+            res.status(500).end()
         })
 });
 
@@ -257,11 +268,11 @@ router.put('/edit/:id', async (req, res) => {
                     res = setResponse('html', 201, res);
                     res.redirect('/');
                 } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 201, res, saved);
+                    res = setResponse('json', 201, res, {userAccount: saved});
                     res.end();
                 }
             } catch (e) {
-                res = setResponse(e, 404, res, {Error: 'Coach not found!'});
+                res.status(500).end();
             }
         }
     }
@@ -301,11 +312,11 @@ router.put('/delete/:id', async (req, res) => {
                     res = setResponse('html', 201, res);
                     res.redirect('/');
                 } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 201, res, saved);
+                    res = setResponse('json', 201, res, {userAccount: saved});
                     res.end();
                 }
             } catch (e) {
-                res = setResponse(e, 500, res, {Error: 'Coach not found!'});
+                res.status(500).end();
             }
         }
     }
