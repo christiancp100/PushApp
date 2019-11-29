@@ -389,4 +389,8 @@ router.post('/auth', async (req, res) => {
     }
 });
 
+router.get('/all', function (req, res) {
+
+})
+
 module.exports = router;

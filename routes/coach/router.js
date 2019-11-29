@@ -311,26 +311,6 @@ router.put('/delete/:id', async (req, res) => {
     }
 });
 
-router.post('/auth', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
-
-        let client = await Credentials.findOne({username: req.body.username});
-        console.log(client);
-        if (!client) {
-            return res.status(400).send('Incorrect username.');
-        }
-        const validPassword = await bcrypt.compare(req.body.password, client.password);
-
-
-        if (!validPassword) {
-            return res.status(400).send('Incorrect email or password.');
-        }
-
-        //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
-        //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-        res.end("DONE");
-    }
-});
 
 // POST a new coach-client relation
 router.post('/hire', (req, res) => {
@@ -464,21 +444,6 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-router.post('/username', async (req, res) => {
-    if (req.get('Content-Type') === "application/json") {
-        console.log(req.body);
-        let found = await Credentials.findOne({username: req.body.username})
-        if (!found) {
-            console.log("TRUE");
-            res.send(true);
-        } else {
-            console.log("FALSE");
-            res.send(false);
-        }
-    } else {
-        res.status(500).end("ERROR")
-    }
-});
 
 router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json") {
