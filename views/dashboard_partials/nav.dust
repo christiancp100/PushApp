@@ -2,7 +2,7 @@
     <li><a href="#" class="logo-container white-text">{name}<i class=""><img class="cirlce profile-pic" src="{profile-picture}" alt=""></i></a></li>
     <li class="no-padding">
         <ul>
-            {#nItems}
+            {#nItems}{!put links inside the array, or use AJAX!}
                 <li><a href="#" class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
              {/nItems}
         </ul>

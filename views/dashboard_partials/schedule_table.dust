@@ -8,24 +8,13 @@
             <th data-field="comments">Comments</th>
         </tr>
     </thead>
-    <tbody>
-        <tr>
-            <td>Bench Press</td>
-            <td>10</td>
-            <td>3</td>
-            <td>20kg</td>
-            <td>Technique!</td>
-        </tr>
-        <tr>
-            <td>Row</td>
-            <td>12</td>
-            <td>5</td>
-            <td>50kg</td>
-            <td>Back position!</td>
-        </tr>
+    <tbody id="scheduleTable">
         {>"dashboard_partials/schedule_table_row"/}
         {?coach}
         {>"dashboard_partials/schedule_table_input_row"/}
         {/coach}
     </tbody>
 </table>
+<script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>
+<script src="/js/schedule.js"></script>

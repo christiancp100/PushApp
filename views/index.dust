@@ -123,8 +123,7 @@
             </div>
         </div>
     </section>
-
-
+{>"partials/footer"/}
 </body>
 
 </html>

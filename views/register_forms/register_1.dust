@@ -5,7 +5,7 @@
 </head>
 <body>
 <div id="reg">
-<button onclick="fetchCoach(event)" name="coach">1. Coach</button>
+<button onclick="testing()" name="coach">1. Coach</button>
 {!does not work with fetch!}
 
 <button onclick="fetchClient(event)" name="client">2. Client</button>
@@ -14,6 +14,6 @@
 
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
-<script src="/js/fetch.js"></script>
+<script src="/js/helper.js"></script>
 </body>
 </html>

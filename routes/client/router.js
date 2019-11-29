@@ -42,65 +42,65 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Creates a new users
+// Creates a new client
 router.post('/new', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
-        console.log('Creating new users...');
+    try {
+        if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
+            console.log('Creating new users...');
 
-        if (req.body.userAccount.firstName === undefined &&
-            req.body.userAccount.lastName === undefined &&
-            req.body.userAccount.birthday === undefined &&
-            req.body.userAccount.sex === undefined &&
-            req.body.userAccount.email === undefined &&
-            req.body.userAccount.address1 === undefined &&
-            req.body.userAccount.city === undefined &&
-            req.body.userAccount.state === undefined &&
-            req.body.userAccount.zipCode === undefined &&
-            req.body.userAccount.country === undefined &&
-            req.body.userAccount.currency === undefined &&
-            req.body.credentials.username === undefined &&
-            req.body.credentials.password === undefined) {
-            res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
-            res.end();
-        } else {
-            try {
+            if (req.body.firstName === undefined &&
+                req.body.lastName === undefined &&
+                req.body.birthday === undefined &&
+                req.body.sex === undefined &&
+                req.body.email === undefined &&
+                req.body.address1 === undefined &&
+                req.body.city === undefined &&
+                req.body.state === undefined &&
+                req.body.zipCode === undefined &&
+                req.body.country === undefined &&
+                req.body.currency === undefined &&
+                req.body.username === undefined &&
+                req.body.password === undefined) {
+                res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
+                res.end();
+            } else {
                 let userAccount = new UserAccount({
-                    firstName: req.body.userAccount.firstName,
-                    lastName: req.body.userAccount.lastName,
-                    description: req.body.userAccount.description,
-                    photo: req.body.userAccount.photo,
-                    birthday: req.body.userAccount.birthday,
-                    sex: req.body.userAccount.sex,
-                    email: req.body.userAccount.email,
-                    phone: req.body.userAccount.phone,
-                    address1: req.body.userAccount.address1,
-                    address2: req.body.userAccount.address2,
-                    city: req.body.userAccount.city,
-                    state: req.body.userAccount.state,
-                    zipCode: req.body.userAccount.zipCode,
-                    country: req.body.userAccount.country,
-                    currency: req.body.userAccount.currency,
-                    localization: req.body.userAccount.localization,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    description: req.body.description,
+                    photo: req.body.photo,
+                    birthday: req.body.birthday,
+                    sex: req.body.sex,
+                    email: req.body.email,
+                    phone: req.body.phone,
+                    address1: req.body.address1,
+                    address2: req.body.address2,
+                    city: req.body.city,
+                    state: req.body.state,
+                    zipCode: req.body.zipCode,
+                    country: req.body.country,
+                    currency: req.body.currency,
+                    localization: req.body.localization,
                     accountType: 'client',
                     creationDate: Date.now()
                 });
 
-                if (req.body.userAccount.description === undefined) {
+                if (req.body.description === undefined) {
                     userAccount.description = '';
                 }
-                if (req.body.userAccount.photo === undefined) {
+                if (req.body.photo === undefined) {
                     userAccount.photo = '';
                 }
-                if (req.body.userAccount.address2 === undefined) {
+                if (req.body.address2 === undefined) {
                     userAccount.address2 = '';
                 }
 
                 let savedUserAccount = await userAccount.save();
 
-                let hashedPassword = await bcrypt.hash(req.body.credentials.password, await bcrypt.genSalt(10));
+                let hashedPassword = await bcrypt.hash(req.body.password, await bcrypt.genSalt(10));
 
                 let credentials = new Credentials({
-                    username: req.body.credentials.username,
+                    username: req.body.username,
                     password: hashedPassword,
                     _userAccountId: savedUserAccount._id
                 });
@@ -109,15 +109,15 @@ router.post('/new', async (req, res) => {
 
                 let clientInfo = new ClientInfo({
                     _clientId: savedUserAccount._id,
-                    height: req.body.clientInfo.height,
-                    weight: req.body.clientInfo.weight,
-                    unitSystem: req.body.clientInfo.unitSystem
+                    height: req.body.height,
+                    weight: req.body.weight,
+                    unitSystem: req.body.unitSystem
                 });
 
-                if (req.body.clientInfo.height === undefined) {
+                if (req.body.height === undefined) {
                     clientInfo.height = '';
                 }
-                if (req.body.clientInfo.weight === undefined) {
+                if (req.body.weight === undefined) {
                     clientInfo.height = '';
                 }
 
@@ -127,18 +127,20 @@ router.post('/new', async (req, res) => {
                     res.redirect('/auth');
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
-                    res = setResponse('json', 201, res, {userAccount: savedUserAccount, clientInfo: savedClientInfo});
+                    res = setResponse('json', 201, res, {
+                        userAccount: savedUserAccount,
+                        clientInfo: savedClientInfo
+                    });
                 }
                 res.end();
-            } catch
-                (err) {
-                console.log(err);
-                res.status(500).end();
             }
+        } else {
+            res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
+            res.end();
         }
-    } else {
-        res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
-        res.end();
+    } catch (err) {
+        console.log(err);
+        res.status(500).end();
     }
 });
 
@@ -206,36 +208,35 @@ router.put('/edit/:id', async (req, res) => {
                 console.log('Searching for user with ID: ' + req.params.id + '.');
                 let foundClient = await UserAccount.findById({_id: req.params.id});
                 if (foundClient !== null) {
-                    foundClient.firstName = req.body.userAccount.firstName;
-                    foundClient.lastName = req.body.userAccount.lastName;
-                    foundClient.description = req.body.userAccount.description;
-                    foundClient.photo = req.body.userAccount.photo;
-                    foundClient.birthday = req.body.userAccount.birthday;
-                    foundClient.sex = req.body.userAccount.sex;
-                    foundClient.email = req.body.userAccount.email;
-                    foundClient.phone = req.body.userAccount.phone;
-                    foundClient.address1 = req.body.userAccount.address1;
-                    foundClient.address2 = req.body.userAccount.address2;
-                    foundClient.city = req.body.userAccount.city;
-                    foundClient.state = req.body.userAccount.state;
-                    foundClient.zipCode = req.body.userAccount.zipCode;
-                    foundClient.country = req.body.userAccount.country;
-                    foundClient.currency = req.body.userAccount.currency;
-                    foundClient.localization = req.body.userAccount.localization;
+                    foundClient.firstName = req.body.firstName;
+                    foundClient.lastName = req.body.lastName;
+                    foundClient.description = req.body.description;
+                    foundClient.photo = req.body.photo;
+                    foundClient.birthday = req.body.birthday;
+                    foundClient.sex = req.body.sex;
+                    foundClient.email = req.body.email;
+                    foundClient.phone = req.body.phone;
+                    foundClient.address1 = req.body.address1;
+                    foundClient.address2 = req.body.address2;
+                    foundClient.city = req.body.city;
+                    foundClient.state = req.body.state;
+                    foundClient.zipCode = req.body.zipCode;
+                    foundClient.country = req.body.country;
+                    foundClient.currency = req.body.currency;
+                    foundClient.localization = req.body.localization;
 
                     let savedClient = await foundClient.save();
                     let foundClientInfo = await ClientInfo.findOne({_clientId: req.params.id});
 
-                    foundClientInfo.height = req.body.clientInfo.height;
-                    foundClientInfo.weight = req.body.clientInfo.weight;
-                    foundClientInfo.unitSystem = req.body.clientInfo.unitSystem;
+                    foundClientInfo.height = req.body.height;
+                    foundClientInfo.weight = req.body.weight;
+                    foundClientInfo.unitSystem = req.body.unitSystem;
 
                     let savedClientInfo = await foundClientInfo.save();
 
                     console.log('User with ID: ' + req.params.id + ' updated!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
-                        res.redirect('/');
                     } else if (req.accepts("application/json")) {
                         // delete savedClient._doc['_credentials'];
                         res = setResponse('json', 201, res, {
@@ -284,7 +285,6 @@ router.delete('/delete/:id', async (req, res) => {
                 console.log('Client with ID ' + req.params.id + ' was successfully deleted!');
                 if (req.accepts("text/html")) {
                     res = setResponse('html', 200, res);
-                    res.redirect('/');
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 200, res, {Result: `Client with ID ` + foundClient._id.toString() + ` was successfully deleted!`});
                     res.end();
@@ -387,6 +387,10 @@ router.post('/auth', async (req, res) => {
         const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));
         return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
+});
+
+router.get('/all', function (req, res) {
+
 })
 
 module.exports = router;

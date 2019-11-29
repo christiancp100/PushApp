@@ -7,7 +7,7 @@ const SessionSchema = exports.SessionSchema = new Schema({
     _clientId: {type: Schema.Types.ObjectId, ref: 'UserAccount', required: true},
     weekday: {type: Date, required: true},
     exercises: {type: [Schema.Types.ObjectId], ref: 'Exercise', default: () => []},
-    duration: {type: Number}
+    duration: {type: Number, default: 0}
     // difficultyLevel: {type: Number, required: true}
 });
 
