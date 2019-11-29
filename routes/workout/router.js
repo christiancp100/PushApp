@@ -206,7 +206,7 @@ router.post('/sessions/new', async (req, res) => {
                     weekday: req.body.weekday
                 });
 
-                if (req.body.duration === undefined) {
+                if (req.body.duration !== undefined) {
                     session.duration = req.body.duration;
                 }
                 let savedSession = await session.save();
@@ -251,7 +251,7 @@ router.post('/exercises/new', async (req, res) => {
                     repetitions: req.body.repetitions
                 });
 
-                if (req.body.comment === undefined) {
+                if (req.body.comment !== undefined) {
                     session.comment = req.body.comment;
                 }
                 let savedExercise = await exercise.save();
@@ -314,10 +314,10 @@ router.put('/sessions/edit/:id', async (req, res) => {
             let found = await Session.findById({_id: req.params.id});
 
             if (found !== null) {
-                if (req.body.weekday === undefined) {
+                if (req.body.weekday !== undefined) {
                     found.weekday = req.body.weekday;
                 }
-                if (req.body.duration === undefined) {
+                if (req.body.duration !== undefined) {
                     found.duration = req.body.duration;
                 }
                 let saved = await found.save();
@@ -364,7 +364,7 @@ router.put('/exercises/edit/:id', async (req, res) => {
                 });
 
                 if (req.body.comment === undefined) {
-                    session.comment = req.body.comment;
+                    exercise.comment = req.body.comment;
                 }
                 let savedExercise = await exercise.save();
 
@@ -430,7 +430,7 @@ router.delete('/sessions/delete/:id', async (req, res) => {
 });
 
 // Deletes an exercise
-router.delete('/exercise/delete/:id', async (req, res) => {
+router.delete('/exercises/delete/:id', async (req, res) => {
     try {
         if (req.accepts("json")) {
             let found = await Exercise.findById({_id: req.params.id});
