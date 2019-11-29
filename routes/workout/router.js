@@ -289,6 +289,9 @@ router.put('/schedules/edit/:id', async (req, res) => {
                 if (req.body.endDate === undefined) {
                     found.endDate = req.body.endDate;
                 }
+                if (req.body.sessions !== undefined) { // assigns sessions to schedule
+                    found.sessions = req.body.sessions;
+                }
                 let saved = await found.save();
                 res = setResponse('json', 200, res, saved);
             } else {
@@ -319,6 +322,9 @@ router.put('/sessions/edit/:id', async (req, res) => {
                 }
                 if (req.body.duration !== undefined) {
                     found.duration = req.body.duration;
+                }
+                if (req.body.exercises !== undefined) { // assigns exercises to session
+                    found.exercises = req.body.exercises;
                 }
                 let saved = await found.save();
                 res = setResponse('json', 200, res, saved);
