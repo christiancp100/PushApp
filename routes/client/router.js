@@ -237,7 +237,6 @@ router.put('/edit/:id', async (req, res) => {
                     console.log('User with ID: ' + req.params.id + ' updated!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
-                        res.redirect('/');
                     } else if (req.accepts("application/json")) {
                         // delete savedClient._doc['_credentials'];
                         res = setResponse('json', 201, res, {
@@ -286,7 +285,6 @@ router.delete('/delete/:id', async (req, res) => {
                 console.log('Client with ID ' + req.params.id + ' was successfully deleted!');
                 if (req.accepts("text/html")) {
                     res = setResponse('html', 200, res);
-                    res.redirect('/');
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 200, res, {Result: `Client with ID ` + foundClient._id.toString() + ` was successfully deleted!`});
                     res.end();

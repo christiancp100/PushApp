@@ -89,6 +89,67 @@ router.get('/exercises', async (req, res) => {
     }
 });
 
+/* SEARCHES BY... */
+// Search schedules by...
+router.get('/schedules/search', async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+        try {
+            let filter = getFilter(req);
+            let found = await Schedule.findOne({filter});
+            res = setResponse('json', 200, res, found);
+            res.end();
+        } catch (err) {
+            console.log(err);
+            res.status(500);
+            res.end();
+        }
+    } else {
+        console.log(err);
+        res.status(500);
+        res.end();
+    }
+});
+
+// Search sessions by...
+router.get('/sessions/search', async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+        try {
+            let filter = getFilter(req);
+            let found = await Session.findOne({filter});
+            res = setResponse('json', 200, res, found);
+            res.end();
+        } catch (err) {
+            console.log(err);
+            res.status(500);
+            res.end();
+        }
+    } else {
+        console.log(err);
+        res.status(500);
+        res.end();
+    }
+});
+
+// Search exercises by...
+router.get('/exercises/search', async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json")) {
+        try {
+            let filter = getFilter(req);
+            let found = await Exercise.findOne({filter});
+            res = setResponse('json', 200, res, found);
+            res.end();
+        } catch (err) {
+            console.log(err);
+            res.status(500);
+            res.end();
+        }
+    } else {
+        console.log(err);
+        res.status(500);
+        res.end();
+    }
+});
+
 /* POSTS */
 // Create new schedule
 router.post('/schedules/new', async (req, res) => {
@@ -321,8 +382,78 @@ router.put('/exercises/edit/:id', async (req, res) => {
     }
 });
 
-// Helpers
-// Creates filter for searching users on the database
+/* DELETE */
+// Deletes an schedule
+router.delete('/schedules/delete/:id', async (req, res) => {
+    try {
+        if (req.accepts("json")) {
+            let found = await Schedule.findById({_id: req.params.id});
+            await found.remove();
+            console.log('Schedule with ID ' + req.params.id + ' was successfully deleted!');
+            if (req.accepts("text/html")) {
+                res = setResponse('html', 200, res);
+            } else if (req.accepts("application/json")) {
+                res = setResponse('json', 200, res, {Result: `Schedule with ID ` + found._id.toString() + ` was successfully deleted!`});
+                res.end();
+            }
+        } else {
+            res = setResponse('error', 404, res, {Error: 'Schedule not found!'});
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500);
+        res.end();
+    }
+});
+
+// Deletes an schedule
+router.delete('/sessions/delete/:id', async (req, res) => {
+    try {
+        if (req.accepts("json")) {
+            let found = await Session.findById({_id: req.params.id});
+            await found.remove();
+            console.log('Session with ID ' + req.params.id + ' was successfully deleted!');
+            if (req.accepts("text/html")) {
+                res = setResponse('html', 200, res);
+            } else if (req.accepts("application/json")) {
+                res = setResponse('json', 200, res, {Result: `Session with ID ` + found._id.toString() + ` was successfully deleted!`});
+                res.end();
+            }
+        } else {
+            res = setResponse('error', 404, res, {Error: 'Session not found!'});
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500);
+        res.end();
+    }
+});
+
+// Deletes an exercise
+router.delete('/exercise/delete/:id', async (req, res) => {
+    try {
+        if (req.accepts("json")) {
+            let found = await Exercise.findById({_id: req.params.id});
+            await found.remove();
+            console.log('Exercise with ID ' + req.params.id + ' was successfully deleted!');
+            if (req.accepts("text/html")) {
+                res = setResponse('html', 200, res);
+            } else if (req.accepts("application/json")) {
+                res = setResponse('json', 200, res, {Result: `Exercise with ID ` + found._id.toString() + ` was successfully deleted!`});
+                res.end();
+            }
+        } else {
+            res = setResponse('error', 404, res, {Error: 'Exercise not found!'});
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500);
+        res.end();
+    }
+});
+
+// HELPERS //
+// Creates filter for searching workout related documents on the database
 function getFilter(req) {
     const filter = {};
     let request;
