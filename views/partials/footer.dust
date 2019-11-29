@@ -23,14 +23,6 @@
             </div>
         </div>
 
-        <div class="col-lg-4 col-xs-6">
-            <ul class="legal-disclaimer">
-                <li><a class="footer-list-element" href="#">Cookies Policy</a></li>
-                <li><a class="footer-list-element" href="#">Privacy Policy</a></li>
-                <li><a class="footer-list-element" href="#">Moneyback Policy</a></li>
-                <li><a class="footer-list-element" href="#about">Support</a></li>
-            </ul>
-        </div>
         <div class="col-lg-4 col-xs-12">
             <img class="footer-logo" src="img/logoPushApp.svg" alt="">
         </div>
