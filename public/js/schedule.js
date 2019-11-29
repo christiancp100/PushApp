@@ -1,14 +1,12 @@
+let level = 0;
 function addRow(e) {
 
-    let level = 0;
     let table = document.getElementById('scheduleTable');
     let rows =  table.querySelectorAll("tr");
 
-    let lastRow = table.childNodes[rows.length-1];
-    console.log(lastRow);
-    //The lastRow elements s.t. we can retrieve the content and put it in the table
+    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
     let exName = lastRow.querySelectorAll('td input')[0];
-    console.log(exName);
     let exReps = lastRow.querySelectorAll('td input')[1];
     let exSets = lastRow.querySelectorAll('td input')[2];
     let exWeight = lastRow.querySelectorAll('td input')[3];
@@ -37,6 +35,22 @@ function addRow(e) {
     newExerciseComments.id = 'exerciseComments' + level;
     newExerciseComments.innerHTML = exComments.value;
 
+    let newExerciseRemoveInput = document.createElement('input');
+    newExerciseRemoveInput.type = 'submit';
+    newExerciseRemoveInput.value = '-';
+    newExerciseRemoveInput.className = 'btn-floating btn-small waves-effect waves-light black';
+    newExerciseRemoveInput.addEventListener('click', removeRow);
+
+    let newExerciseAddInput = document.createElement('input');
+    newExerciseRemoveInput.type = 'submit';
+    newExerciseRemoveInput.value = '-';
+    newExerciseRemoveInput.className = 'btn-floating btn-small waves-effect waves-light black';
+    newExerciseRemoveInput.addEventListener('click', removeRow);
+
+    let icon = document.createElement('i');//just for beauty reason
+    icon.className= 'material-icons';
+    newExerciseRemoveInput.appendChild(icon);
+
 
     table.insertBefore(newExerciseRow, table.childNodes[rows.length-1]);
     newExerciseRow.appendChild(newExerciseName);
@@ -44,9 +58,11 @@ function addRow(e) {
     newExerciseRow.appendChild(newExerciseSets);
     newExerciseRow.appendChild(newExerciseWeight);
     newExerciseRow.appendChild(newExerciseComments);
+    newExerciseRow.appendChild(newExerciseRemoveInput);
     level++;
 }
 
-function sessionDone(e){
-
+function removeRow(){
+    let toRemove = this.parentNode;
+    toRemove.parentNode.removeChild(toRemove);
 }
