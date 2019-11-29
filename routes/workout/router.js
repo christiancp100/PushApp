@@ -145,7 +145,7 @@ router.post('/sessions/new', async (req, res) => {
                     weekday: req.body.weekday
                 });
 
-                if (req.body.weekday === undefined) {
+                if (req.body.duration === undefined) {
                     session.duration = req.body.duration;
                 }
                 let savedSession = await session.save();
@@ -177,7 +177,7 @@ router.post('/exercises/new', async (req, res) => {
                 req.body.bodyPart === undefined &&
                 req.body.set === undefined &&
                 req.body.repetitions === undefined) {
-                res = setResponse('json', 400, res, {Error: "Exercise name, description, weight units, pump weight, body part, set and repetitions must be provided."});
+                res = setResponse('json', 400, res, {Error: "Exercise sequence number, name, description, weight units, pump weight, body part, set and repetitions must be provided."});
                 res.end();
             } else {
                 let exercise = new Exercise({
@@ -210,33 +210,30 @@ router.post('/exercises/new', async (req, res) => {
 });
 
 /* PUTS */
-// Update schedule
+// Update schedule // pending push to sessions[]
 router.put('/schedules/edit/:id', async (req, res) => {
     try {
         if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
             console.log('Editing schedule...');
+            console.log('Searching for schedule with ID: ' + req.params.id + '.');
+            let found = await Schedule.findById({_id: req.params.id});
 
-            if (req.body._coachId === undefined &&
-                req.body._clientId === undefined &&
-                req.body.name === undefined &&
-                req.body.startDate === undefined &&
-                req.body.endDate === undefined) {
-                res = setResponse('json', 400, res, {Error: "Coach ID, Client ID, schedule name, start date and final date must be provided"});
-                res.end();
+            if (found !== null) {
+                if (req.body.name === undefined) {
+                    found.name = req.body.name;
+                }
+                if (req.body.startDate === undefined) {
+                    found.startDate = req.body.startDate;
+                }
+                if (req.body.endDate === undefined) {
+                    found.endDate = req.body.endDate;
+                }
+                let saved = await found.save();
+                res = setResponse('json', 200, res, saved);
             } else {
-                let schedule = new Schedule({
-                    _coachId: req.body._coachId,
-                    _clientId: req.body._clientId,
-                    name: req.body.name,
-                    startDate: req.body.startDate,
-                    endDate: req.body.endDate
-                });
-
-                let savedSchedule = await schedule.save();
-
-                res = setResponse('json', 200, res, savedSchedule);
-                res.end();
+                res = setResponse('json', 404, res);
             }
+            res.end();
         } else {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
@@ -247,32 +244,27 @@ router.put('/schedules/edit/:id', async (req, res) => {
     }
 });
 
-// Update session
+// Update session // pending push to exercises[]
 router.put('/sessions/edit/:id', async (req, res) => {
     try {
         if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
             console.log('Editing session...');
+            console.log('Searching for session with ID: ' + req.params.id + '.');
+            let found = await Session.findById({_id: req.params.id});
 
-            if (req.body._coachId === undefined &&
-                req.body._clientId === undefined &&
-                req.body.weekday === undefined) {
-                res = setResponse('json', 400, res, {Error: "Coach ID, Client ID and weekday must be provided"});
-                res.end();
-            } else {
-                let session = new Session({
-                    _coachId: req.body._coachId,
-                    _clientId: req.body._clientId,
-                    weekday: req.body.weekday
-                });
-
+            if (found !== null) {
                 if (req.body.weekday === undefined) {
-                    session.duration = req.body.duration;
+                    found.weekday = req.body.weekday;
                 }
-                let savedSession = await session.save();
-
-                res = setResponse('json', 200, res, savedSession);
-                res.end();
+                if (req.body.duration === undefined) {
+                    found.duration = req.body.duration;
+                }
+                let saved = await found.save();
+                res = setResponse('json', 200, res, saved);
+            } else {
+                res = setResponse('json', 404, res);
             }
+            res.end();
         } else {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
@@ -288,7 +280,7 @@ router.put('/sessions/edit/:id', async (req, res) => {
 router.put('/exercises/edit/:id', async (req, res) => {
     try {
         if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
-            console.log('Creating new exercise...');
+            console.log('Editing exercise...');
 
             if (req.body.name === undefined &&
                 req.body.description === undefined &&
@@ -328,4 +320,95 @@ router.put('/exercises/edit/:id', async (req, res) => {
         res.status(500).end();
     }
 });
+
+// Helpers
+// Creates filter for searching users on the database
+function getFilter(req) {
+    const filter = {};
+    let request;
+
+    if (Object.keys(req.body).length > 0) {
+        request = req.body;
+    } else if (Object.keys(req.query).length > 0) {
+        request = req.query;
+    }
+
+    if (request !== undefined) {
+        // Filter by ID
+        if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
+            filter._id = request.id;
+        }
+
+        // Filter by name
+        if (request.name !== undefined) {
+            filter.name = request.name;
+        }
+
+        // Filter by body part
+        if (request.bodyPart !== undefined) {
+            filter.bodyPart = request.bodyPart;
+        }
+
+        // Filter by start date
+        if (request.startDate !== undefined) {
+            filter.startDate = request.startDate;
+        }
+
+        // Search by end date
+        if (request.endDate !== undefined) {
+            filter.endDate = request.endDate;
+        }
+
+        // Search by weekday
+        if (request.weekday !== undefined) {
+            filter.weekday = request.weekday;
+        }
+
+        // Search by duration
+        if (request.duration !== undefined) {
+            filter.duration = request.duration;
+        }
+
+        // Search by coachId
+        if (request.coachId !== undefined) {
+            filter._coachId = request.coachId;
+        }
+
+        // Search by coachId
+        if (request.clientId !== undefined) {
+            filter._clientId = request.clientId;
+        }
+
+
+        // Search non deleted
+        if (request.isDeleted === undefined) {
+            filter.isDeleted = false;
+        } else {
+            filter.isDeleted = request.isDeleted;
+        }
+        return filter;
+    }
+}
+
+// Creates custom responses
+function setResponse(type, code, res, msg) {
+    res.status(code);
+    switch (type) {
+        case 'json':
+            res.set('Content-Type', 'application/json');
+            res.json(msg);
+            return res;
+            break;
+        case 'html':
+            return res.set('Content-Type', 'text/html');
+            break;
+        case 'error':
+            res.json(msg);
+            return res;
+            break;
+        default:
+            break;
+    }
+}
+
 module.exports = router;
