@@ -14,7 +14,6 @@ require('./models/Credential.js');
 require('./models/UserAccount.js');
 require('./models/CoachClients.js');
 
-
 // Mongoose connection to MongoDB and Collection name declaration
 mongoose.connect('mongodb://localhost/PushApp');
 
@@ -38,9 +37,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 // Initialize routers here
 const routers = require('./routes/routers');
 app.use('/', routers.root);
+app.use('/auth', routers.auth);
 app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
-app.use('/auth', routers.auth);
+app.use('/users', routers.users);
 app.use('/workouts', routers.workout);
 
 // Catch 404 and forward to error handler

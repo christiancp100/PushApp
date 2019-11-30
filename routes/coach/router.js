@@ -121,11 +121,17 @@ function getFilter(req) {
     filter.accountType = 'coach';
     filter.isDeleted = 'false';
     let request;
+    
     if (Object.keys(req.body).length > 0) {
         request = req.body;
-    } else if (Object.keys(req.query).length > 0) {
+    }
+    if (Object.keys(req.query).length > 0) {
         request = req.query;
     }
+    if (Object.keys(req.params).length > 0) {
+        request = req.query;
+    }
+
     if (request !== undefined) {
         //Filter based on:
         // ID

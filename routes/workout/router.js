@@ -83,8 +83,7 @@ router.get('/exercises', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
-        res.status(500);
+        res.status(400);
         res.end();
     }
 });
@@ -95,7 +94,7 @@ router.get('/schedules/search', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
-            let found = await Schedule.findOne({filter});
+            let found = await Schedule.findOne(filter);
             res = setResponse('json', 200, res, found);
             res.end();
         } catch (err) {
@@ -115,9 +114,14 @@ router.get('/sessions/search', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
-            let found = await Session.findOne({filter});
-            res = setResponse('json', 200, res, found);
-            res.end();
+            let found = await Session.findOne(filter);
+            if (found !== null) {
+                res = setResponse('json', 200, res, found);
+                res.end();
+            } else {
+                res = setResponse('json', 404, res, {});
+                res.end();
+            }
         } catch (err) {
             console.log(err);
             res.status(500);
@@ -135,7 +139,10 @@ router.get('/exercises/search', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
-            let found = await Exercise.findOne({filter});
+            let found = await Exercise.findOne(filter);
+
+            // if *()
+
             res = setResponse('json', 200, res, found);
             res.end();
         } catch (err) {
@@ -250,10 +257,7 @@ router.post('/exercises/new', async (req, res) => {
                     set: req.body.set,
                     repetitions: req.body.repetitions
                 });
-
-                if (req.body.comment !== undefined) {
-                    session.comment = req.body.comment;
-                }
+                
                 let savedExercise = await exercise.save();
 
                 res = setResponse('json', 200, res, savedExercise);
@@ -466,7 +470,11 @@ function getFilter(req) {
 
     if (Object.keys(req.body).length > 0) {
         request = req.body;
-    } else if (Object.keys(req.query).length > 0) {
+    }
+    if (Object.keys(req.query).length > 0) {
+        request = req.query;
+    }
+    if (Object.keys(req.params).length > 0) {
         request = req.query;
     }
 
@@ -514,13 +522,6 @@ function getFilter(req) {
         // Search by coachId
         if (request.clientId !== undefined) {
             filter._clientId = request.clientId;
-        }
-
-        // Search non deleted
-        if (request.isDeleted === undefined) {
-            filter.isDeleted = false;
-        } else {
-            filter.isDeleted = request.isDeleted;
         }
         return filter;
     }

@@ -100,7 +100,7 @@ router.post('/new', async (req, res) => {
                 let hashedPassword = await bcrypt.hash(req.body.password, await bcrypt.genSalt(10));
 
                 let credentials = new Credentials({
-                    username: req.body.username,
+                    username: req.body.username.toLowerCase(),
                     password: hashedPassword,
                     _userAccountId: savedUserAccount._id
                 });
@@ -195,8 +195,7 @@ router.get('/search', function (req, res) {
             res.status(500);
             res.end();
         });
-})
-;
+});
 
 // Edit an user
 router.put('/edit/:id', async (req, res) => {
@@ -357,14 +356,11 @@ function setResponse(type, code, res, msg) {
             res.set('Content-Type', 'application/json');
             res.json(msg);
             return res;
-            break;
         case 'html':
             return res.set('Content-Type', 'text/html');
-            break;
         case 'error':
             res.json(msg);
             return res;
-            break;
         default:
             break;
     }
