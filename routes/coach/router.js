@@ -93,7 +93,7 @@ router.post('/new', async (req, res) => {
                 let salt = await bcrypt.genSalt(10);
                 let code = await bcrypt.hash(req.body.password, salt);
                 let credentials = new Credentials({
-                    username: req.body.username,
+                    username: req.body.username.toLowerCase(),
                     password: code,
                     _userAccountId: savedUser._id
                 });
