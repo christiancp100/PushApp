@@ -311,6 +311,8 @@ function getFilter(req) {
         request = req.body;
     } else if (Object.keys(req.query).length > 0) {
         request = req.query;
+    } else if (Object.keys(req.params).length > 0) {
+        request = req.params;
     }
 
     if (request !== undefined) {
@@ -384,9 +386,5 @@ router.post('/auth', async (req, res) => {
         return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
 });
-
-router.get('/all', function (req, res) {
-
-})
 
 module.exports = router;

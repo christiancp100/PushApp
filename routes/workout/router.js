@@ -26,7 +26,6 @@ router.get('/', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -45,7 +44,6 @@ router.get('/schedules', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -64,7 +62,6 @@ router.get('/sessions', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -107,7 +104,6 @@ router.get('/schedules/search', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -131,7 +127,6 @@ router.get('/sessions/search', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -151,7 +146,7 @@ router.get('/exercises/search', async (req, res) => {
             res.end();
         } catch (err) {
             console.log(err);
-            res.status(404);
+            res.status(500);
             res.end();
         }
     } else {
@@ -184,7 +179,6 @@ router.post('/schedules/new', async (req, res) => {
                 });
 
                 let savedSchedule = await schedule.save();
-
                 res = setResponse('json', 200, res, savedSchedule);
                 res.end();
             }
@@ -219,8 +213,8 @@ router.post('/sessions/new', async (req, res) => {
                 if (req.body.duration !== undefined) {
                     session.duration = req.body.duration;
                 }
-                let savedSession = await session.save();
 
+                let savedSession = await session.save();
                 res = setResponse('json', 200, res, savedSession);
                 res.end();
             }
@@ -228,8 +222,7 @@ router.post('/sessions/new', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
-    } catch
-        (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).end();
     }
@@ -260,8 +253,8 @@ router.post('/exercises/new', async (req, res) => {
                     set: req.body.set,
                     repetitions: req.body.repetitions
                 });
-                let savedExercise = await exercise.save();
 
+                let savedExercise = await exercise.save();
                 res = setResponse('json', 200, res, savedExercise);
                 res.end();
             }
@@ -269,8 +262,7 @@ router.post('/exercises/new', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
-    } catch
-        (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).end();
     }
@@ -342,8 +334,7 @@ router.put('/sessions/edit/:id', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
-    } catch
-        (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).end();
     }
@@ -378,8 +369,8 @@ router.put('/exercises/edit/:id', async (req, res) => {
                 if (req.body.comment === undefined) {
                     exercise.comment = req.body.comment;
                 }
-                let savedExercise = await exercise.save();
 
+                let savedExercise = await exercise.save();
                 res = setResponse('json', 200, res, savedExercise);
                 res.end();
             }
@@ -387,8 +378,7 @@ router.put('/exercises/edit/:id', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
-    } catch
-        (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).end();
     }
@@ -406,10 +396,11 @@ router.delete('/schedules/delete/:id', async (req, res) => {
                 res = setResponse('html', 200, res);
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Schedule with ID ` + found._id.toString() + ` was successfully deleted!`});
-                res.end();
             }
+            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Schedule not found!'});
+            res.end();
         }
     } catch (err) {
         console.log(err);
@@ -429,10 +420,11 @@ router.delete('/sessions/delete/:id', async (req, res) => {
                 res = setResponse('html', 200, res);
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Session with ID ` + found._id.toString() + ` was successfully deleted!`});
-                res.end();
             }
+            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Session not found!'});
+            res.end();
         }
     } catch (err) {
         console.log(err);
@@ -452,10 +444,11 @@ router.delete('/exercises/delete/:id', async (req, res) => {
                 res = setResponse('html', 200, res);
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Exercise with ID ` + found._id.toString() + ` was successfully deleted!`});
-                res.end();
             }
+            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Exercise not found!'});
+            res.end();
         }
     } catch (err) {
         console.log(err);
@@ -537,14 +530,11 @@ function setResponse(type, code, res, msg) {
             res.set('Content-Type', 'application/json');
             res.json(msg);
             return res;
-            break;
         case 'html':
             return res.set('Content-Type', 'text/html');
-            break;
         case 'error':
             res.json(msg);
             return res;
-            break;
         default:
             break;
     }
