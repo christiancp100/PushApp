@@ -23,8 +23,48 @@ router.get('/', function (req, res, next) {
     }
 });
 
-async function renderClientDashboard(res) {
+// Dynamic user route according to userAccount type
+router.get('/:username', async (req, res, next) => {
+    try {
+        if (req.accepts("html")) {
+            const filter = getFilter(req);
+
+            let credentials = await Credentials.findOne(filter);
+            console.log()
+            if (credentials === null || credentials.username !== filter.username) {
+                // CHANGE FOR CORRECT 404 PAGE
+                res = setResponse('json', 404, res);
+            } else {
+                let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
+
+                if (activeUser.accountType === 'client') {
+                    await renderClientDashboard(res, activeUser);
+                }
+                if (activeUser.accountType === 'coach') {
+                    await renderCoachDashboard(res, activeUser);
+                }
+                if (activeUser.accountType === 'admin') {
+                    await renderAdminDashboard(res);
+                }
+            }
+        }
+        res.end();
+    } catch
+        (err) {
+        res.status(500);
+        res.end();
+    }
+});
+
+async function renderClientDashboard(res, activeUser) {
+    if (activeUser.photo === null || activeUser.photo === ' ') {
+        activeUser.photo = '/img/icons/user-pic.png';
+    }
     let menu = {
+        user: [
+            {firstName: activeUser.firstName},
+            {photo: activeUser.photo}
+        ],
         items: [
             {name: "Dashboard", icon: "web"},
             {name: "Next Workout", icon: "list"},
@@ -54,41 +94,15 @@ async function renderClientDashboard(res) {
     res.render("dashboard_client", menu);
 }
 
-// Dynamic user route according to userAccount type
-router.get('/:username', async (req, res, next) => {
-    try {
-        if (req.accepts("html")) {
-            const filter = getFilter(req);
-
-            let credentials = await Credentials.findOne(filter);
-            console.log()
-            if (credentials === null || credentials.username !== filter.username) {
-                // CHANGE FOR CORRECT 404 PAGE
-                res = setResponse('json', 404, res);
-            } else {
-                let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
-                
-                if (activeUser.accountType === 'client') {
-                    await renderClientDashboard(res);
-                }
-                if (activeUser.accountType === 'coach') {
-                    await renderCoachDashboard(res);
-                }
-                if (activeUser.accountType === 'admin') {
-                    await renderAdminDashboard(res);
-                }
-            }
-        }
-        res.end();
-    } catch
-        (err) {
-        res.status(500);
-        res.end();
+async function renderCoachDashboard(res, activeUser) {
+    if (activeUser.photo === null || activeUser.photo === ' ') {
+        activeUser.photo = '/img/icons/user-pic.png';
     }
-});
-
-async function renderCoachDashboard(res) {
     let menu = {
+        user: [
+            {firstName: "Coach " + activeUser.firstName},
+            {photo: activeUser.photo}
+        ],
         items: [
             {name: "Dashboard", icon: "web"},
             {name: "Clients", icon: "list"},
