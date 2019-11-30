@@ -1,4 +1,12 @@
+
 let level = 0;
+const mongoose = require('mongoose');
+require('./../../models/Exercise');
+const Exercise = mongoose.model('Exercise');
+
+require('./../../models/Session');
+const Session = mongoose.model('Session');
+
 function addRow(e) {
 
     let table = document.getElementById('scheduleTable');
@@ -62,7 +70,133 @@ function addRow(e) {
     level++;
 }
 
-function removeRow(){
+async function removeRow(){
     let toRemove = this.parentNode;
+
+    let filter= {
+        exerciseName : toRemove.childNodes[0].innerHTML,
+        rep : toRemove.childNodes[1].innerHTML,
+        sets : toRemove.childNodes[2].innerHTML,
+        weight : toRemove.childNodes[3].innerHTML,
+        comment : toRemove.childNodes[4].innerHTML
+    };
+
+    console.log('Looking for the exercise to remove...');
+    try {
+        let found = await fetch('/workouts/exercises/search', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept':'application/x-www-urlencoded'
+            },
+        });
+        console.log(found);
+    } catch (e) {
+        console.log(e);
+    }
+
     toRemove.parentNode.removeChild(toRemove);
+<<<<<<< Updated upstream
+
+
 }
+
+async function takeRows(e){
+    let id;
+
+    let day_btn = document.getElementById("day_btn");
+    let day = day_btn.options[day_btn.selectedIndex].text;
+
+    let sess = {
+        _coachId: '',
+        _clientId: '',
+        weekday: day,
+    };
+
+    try {
+            let obj = await fetch("/workouts/sessions/new", {
+                method: "POST",
+                body: JSON.stringify(sess),
+                headers: {
+                    "Content-Type":'application/json',
+                    'Accept':'application/x-www-urlencoded',
+                }
+            });
+            console.log(obj);
+            id = obj._id;
+            console.log(id);
+    }catch(err){
+        console.log(err);
+    }
+    let table = document.getElementById("scheduleTable");
+    let children = table.childNodes;
+    for(let i = 0; i <children.length; i++){
+        if(children[i].tagName === 'TR'){
+            // console.log(children[i], " is a tr for me!");
+                    saveInExercise(children[i], id);
+        }
+    }
+}
+
+let count = 0;
+
+async function saveInExercise(row, id){
+    this.count++;
+    if(!row.id){
+        console.log("NOT VALID");
+    }else {
+        let exerciseName = row.childNodes[0].innerHTML;
+        let rep = row.childNodes[1].innerHTML;
+        let sets = row.childNodes[2].innerHTML;
+        let weight = row.childNodes[3].innerHTML;
+        let comment = row.childNodes[4].innerHTML;
+
+        console.log(exerciseName, rep, sets, weight, comment);
+
+        try{
+            let ex = {
+                name: exerciseName,
+                description: 'description placeholder',
+                repetitions: rep,
+                set: sets,
+                comment: comment,
+                pumpWeight: weight,
+                weightUnit: 'weightUnit placeholder',
+                bodyPart: 'body part placeholder'
+            };
+            let saved = await fetch(
+                '/workouts/exercises/new',
+                {method : 'POST',
+                    body: JSON.stringify(ex),
+                    headers: {'Content-Type':'application/json'}
+                });
+        } catch (e) {
+            console.log(e);
+        }
+
+    }
+}
+
+function saveInSession(){
+
+}
+=======
+}
+
+
+function listClients(e) {
+    fetch("/coaches/hire/coach/5de0066518c1fa393a739ed6", {
+        'method': 'GET',
+        'headers': {'Content-Type': 'application/json}',
+                    'accept':'application/x-www-form-urlencoded'
+        },
+    })
+        .then((found) => {
+            console.log(found);
+            dust.render('partials/dashboard_partials/test', {found});
+        })
+        .catch((e) => {
+            console.log(e);
+        })
+}
+>>>>>>> Stashed changes
