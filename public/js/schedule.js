@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 require('./../../models/Exercise');
 const Exercise = mongoose.model('Exercise');
 
+require('./../../models/Session');
+const Session = mongoose.model('Session');
 
 function addRow(e) {
 
@@ -68,27 +70,77 @@ function addRow(e) {
     level++;
 }
 
-function removeRow(){
+async function removeRow(){
     let toRemove = this.parentNode;
+
+    let filter= {
+        exerciseName : toRemove.childNodes[0].innerHTML,
+        rep : toRemove.childNodes[1].innerHTML,
+        sets : toRemove.childNodes[2].innerHTML,
+        weight : toRemove.childNodes[3].innerHTML,
+        comment : toRemove.childNodes[4].innerHTML
+    };
+
+    console.log('Looking for the exercise to remove...');
+    try {
+        let found = await fetch('/workouts/exercises/search', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept':'application/x-www-urlencoded'
+            },
+        });
+        console.log(found);
+    } catch (e) {
+        console.log(e);
+    }
+
     toRemove.parentNode.removeChild(toRemove);
+
+
 }
 
-function takeRows(e){
+async function takeRows(e){
+    let id;
+
+    let day_btn = document.getElementById("day_btn");
+    let day = day_btn.options[day_btn.selectedIndex].text;
+
+    let sess = {
+        _coachId: '',
+        _clientId: '',
+        weekday: day,
+    };
+
+    try {
+            let obj = await fetch("/workouts/sessions/new", {
+                method: "POST",
+                body: JSON.stringify(sess),
+                headers: {
+                    "Content-Type":'application/json',
+                    'Accept':'application/x-www-urlencoded',
+                }
+            });
+            console.log(obj);
+            id = obj._id;
+            console.log(id);
+    }catch(err){
+        console.log(err);
+    }
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
     for(let i = 0; i <children.length; i++){
         if(children[i].tagName === 'TR'){
             // console.log(children[i], " is a tr for me!");
-                    saveInExercise(children[i]);
-
+                    saveInExercise(children[i], id);
         }
     }
 }
+
 let count = 0;
 
-async function saveInExercise(row){
+async function saveInExercise(row, id){
     this.count++;
-    console.log(row.id);
     if(!row.id){
         console.log("NOT VALID");
     }else {
@@ -115,12 +167,8 @@ async function saveInExercise(row){
                 '/workouts/exercises/new',
                 {method : 'POST',
                     body: JSON.stringify(ex),
-                    headers: {'Content-Type':'application/json'}});
-            if (saved){
-                console.log(saved);
-            } else {
-                console.log("ERROR");
-            }
+                    headers: {'Content-Type':'application/json'}
+                });
         } catch (e) {
             console.log(e);
         }

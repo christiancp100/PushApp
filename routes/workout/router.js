@@ -140,11 +140,10 @@ router.get('/exercises/search', async (req, res) => {
             res.end();
         } catch (err) {
             console.log(err);
-            res.status(500);
+            res.status(404);
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
