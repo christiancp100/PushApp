@@ -7,8 +7,9 @@
             <input id="last_name" type="text" class="validate">
             <label for="last_name">Schedule Name</label>
         </div>
-        <div class="input-field col s12 m6" onclick="listClients">
-            <select class="icons">
+        <div class="input-field col s12 m6" >
+
+            <select class="icons" >
                 {!<option value="" disabled selected>Choose your option</option>
                 <option value="" data-icon="https://randomuser.me/api/portraits/men/61.jpg" class="left">Erick
                 </option>
@@ -34,8 +35,14 @@
         </div>
 
         <div class="input-field col m6 s12">
+<<<<<<< Updated upstream
             <a class="btn-floating btn-small waves-effect waves-light black" onclick="takeRows(event)">
                 <i id="done_btn" class="material-icons" >done_outline</i>
+=======
+            <a class="btn-floating btn-small waves-effect waves-light black"  onclick="listClients(event)">
+                <i class="material-icons" >done_outline</i> {!onclick="sessionDone(event)"!}
+
+>>>>>>> Stashed changes
             </a>
         </div>
     </div>

@@ -96,6 +96,7 @@ async function removeRow(){
     }
 
     toRemove.parentNode.removeChild(toRemove);
+<<<<<<< Updated upstream
 
 
 }
@@ -179,3 +180,23 @@ async function saveInExercise(row, id){
 function saveInSession(){
 
 }
+=======
+}
+
+
+function listClients(e) {
+    fetch("/coaches/hire/coach/5de0066518c1fa393a739ed6", {
+        'method': 'GET',
+        'headers': {'Content-Type': 'application/json}',
+                    'accept':'application/x-www-form-urlencoded'
+        },
+    })
+        .then((found) => {
+            console.log(found);
+            dust.render('partials/dashboard_partials/test', {found});
+        })
+        .catch((e) => {
+            console.log(e);
+        })
+}
+>>>>>>> Stashed changes
