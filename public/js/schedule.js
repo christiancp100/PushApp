@@ -1,4 +1,10 @@
+
 let level = 0;
+const mongoose = require('mongoose');
+require('./../../models/Exercise');
+const Exercise = mongoose.model('Exercise');
+
+
 function addRow(e) {
 
     let table = document.getElementById('scheduleTable');
@@ -65,4 +71,63 @@ function addRow(e) {
 function removeRow(){
     let toRemove = this.parentNode;
     toRemove.parentNode.removeChild(toRemove);
+}
+
+function takeRows(e){
+    let table = document.getElementById("scheduleTable");
+    let children = table.childNodes;
+    for(let i = 0; i <children.length; i++){
+        if(children[i].tagName === 'TR'){
+            // console.log(children[i], " is a tr for me!");
+                    saveInExercise(children[i]);
+
+        }
+    }
+}
+let count = 0;
+
+async function saveInExercise(row){
+    this.count++;
+    console.log(row.id);
+    if(!row.id){
+        console.log("NOT VALID");
+    }else {
+        let exerciseName = row.childNodes[0].innerHTML;
+        let rep = row.childNodes[1].innerHTML;
+        let sets = row.childNodes[2].innerHTML;
+        let weight = row.childNodes[3].innerHTML;
+        let comment = row.childNodes[4].innerHTML;
+
+        console.log(exerciseName, rep, sets, weight, comment);
+
+        try{
+            let ex = {
+                name: exerciseName,
+                description: 'description placeholder',
+                repetitions: rep,
+                set: sets,
+                comment: comment,
+                pumpWeight: weight,
+                weightUnit: 'weightUnit placeholder',
+                bodyPart: 'body part placeholder'
+            };
+            let saved = await fetch(
+                '/workouts/exercises/new',
+                {method : 'POST',
+                    body: JSON.stringify(ex),
+                    headers: {'Content-Type':'application/json'}});
+            if (saved){
+                console.log(saved);
+            } else {
+                console.log("ERROR");
+            }
+        } catch (e) {
+            console.log(e);
+        }
+
+    }
+}
+
+function saveInSession(){
+
 }

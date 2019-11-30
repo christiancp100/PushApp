@@ -251,9 +251,6 @@ router.post('/exercises/new', async (req, res) => {
                     repetitions: req.body.repetitions
                 });
 
-                if (req.body.comment !== undefined) {
-                    session.comment = req.body.comment;
-                }
                 let savedExercise = await exercise.save();
 
                 res = setResponse('json', 200, res, savedExercise);
