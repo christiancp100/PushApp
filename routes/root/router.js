@@ -30,10 +30,10 @@ router.get('/:username', async (req, res, next) => {
             const filter = getFilter(req);
 
             let credentials = await Credentials.findOne(filter);
-            console.log()
+            console.log();
             if (credentials === null || credentials.username !== filter.username) {
                 // CHANGE FOR CORRECT 404 PAGE
-                res = setResponse('json', 404, res);
+                res = setResponse('json', 401, res, {Error: 'Unauthorized access!'});
             } else {
                 let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
 
