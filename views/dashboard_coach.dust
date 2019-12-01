@@ -3,7 +3,7 @@
 {>"dashboard_partials/head" css="/css/coach.css"/}
 
 
-<body class="has-fixed-sidenav" data-gr-c-s-loaded="true">
+<body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="renderClients()">
   {>"dashboard_partials/header" name="Coach Ramon" profile-picture="/img/icons/user-pic.png"/}
   <main>
     <div class="container">

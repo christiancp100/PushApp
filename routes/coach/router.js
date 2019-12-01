@@ -183,6 +183,7 @@ router.get('/search', function (req, res) {
                 let length = coaches.length;
                 console.log(length + " coaches has been found!");
                 if (req.accepts('html')) {
+                    res = setResponse('json', 200, res, coaches);
                     res.status(200);
                     //render
                 } else if (req.accepts('json')) {
