@@ -1,7 +1,9 @@
 
-let level = 0;
 
+
+//clicking the add button will call this function that simply creates the row in the table.
 function addRow(e) {
+    let level = 0;
 
     let table = document.getElementById('scheduleTable');
     let rows =  table.querySelectorAll("tr");
@@ -67,32 +69,34 @@ function addRow(e) {
 async function removeRow(){
     let toRemove = this.parentNode;
 
-    let filter= {
-        exerciseName : toRemove.childNodes[0].innerHTML,
-        rep : toRemove.childNodes[1].innerHTML,
-        sets : toRemove.childNodes[2].innerHTML,
-        weight : toRemove.childNodes[3].innerHTML,
-        comment : toRemove.childNodes[4].innerHTML
-    };
+    // let filter= {
+    //     exerciseName : toRemove.childNodes[0].innerHTML,
+    //     rep : toRemove.childNodes[1].innerHTML,
+    //     sets : toRemove.childNodes[2].innerHTML,
+    //     weight : toRemove.childNodes[3].innerHTML,
+    //     comment : toRemove.childNodes[4].innerHTML
+    // };
 
     console.log('Looking for the exercise to remove...');
-    try {
-        let found = await fetch('/workouts/exercises/search', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept':'application/x-www-urlencoded'
-            },
-        });
-        console.log(found);
-    } catch (e) {
-        console.log(e);
-    }
+    // try {
+    //     let found = await fetch('/workouts/exercises/search', {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Accept':'application/x-www-urlencoded'
+    //         },
+    //     });
+    //     console.log(found);
+    // } catch (e) {
+    //     console.log(e);
+    // }
 
     toRemove.parentNode.removeChild(toRemove);
 
 }
 
+//-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
+//CREATES new "empty" Schedule and Takes the rows to work with them to create new exercise
 
 async function takeRows(e){
 
@@ -100,10 +104,33 @@ async function takeRows(e){
 
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
+    //
+    // let scheduleName_btn = document.getElementById("last_name");
+    // let scheduleName = scheduleName_btn.options[scheduleName_btn.selectedIndex].text;
+
+    let sched= {
+        _coachId: "5de3c7d83fd27d2259009574",
+        _clientId: "5de3c7d83fd27d2259009576",
+        name: 'scheduleName placeholder',
+        sessions: [],
+        startDate: Date.now(),
+        endDate: Date.now(),
+    };
+
+    let res = await fetch(
+        "/workouts/schedules/new", {
+            method: "POST",
+            headers:{'Content-Type': 'application/json'},
+            body: JSON.stringify(sched)
+        }
+    );
+
+    let fields = await res.json();
+    console.log(fields);
+
     for(let i = 0; i <children.length; i++){
         if(children[i].tagName === 'TR'){
             // console.log(children[i], " is a tr for me!");
-
             let ex;
             let ex_id;
 
@@ -147,13 +174,17 @@ async function takeRows(e){
         }
     }
     console.log(A);
-    await saveInSession(A);
+    await saveInSessionAndSchedule(A,fields);
 }
 
-async function saveInSession(array){
+//-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
+//Creates a new Session taking the exercises of the previous function, push them into an array of exercises and
+//In schedule pushes into the array of sessions the newly created session
+async function saveInSessionAndSchedule(array, schedFields){
 
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
+
     let sess = {
         _coachId: "5de3c7d83fd27d2259009574",
         _clientId: "5de3c7d83fd27d2259009576",
@@ -168,30 +199,14 @@ async function saveInSession(array){
                 'Content-Type':'application/json'
             },
         });
-        let g =await res.json();
+
+        let fields = await res.json();
+
+        let sArray = schedFields.sessions;  //puts the new session id into existing schedule
+        sArray.push(fields._id);
+
     }catch(err){
         console.log(err);
     }
-    await saveInSchedule()
-}
-
-function saveInSchedule(Session){
 
 }
-
-
-// function listClients(e) {
-//     fetch("/coaches/hire/coach/5de0066518c1fa393a739ed6", {
-//         'method': 'GET',
-//         'headers': {'Content-Type': 'application/json}',
-//                     'accept':'application/x-www-form-urlencoded'
-//         },
-//     })
-//         .then((found) => {
-//             // console.log(found);
-//             dust.render('partials/dashboard_partials/test', {found});
-//         })
-//         .catch((e) => {
-//             console.log(e);
-//         })
-// }
