@@ -101,48 +101,24 @@ async function removeRow(){
 }
 
 async function takeRows(e){
-    let id;
 
-    let day_btn = document.getElementById("day_btn");
-    let day = day_btn.options[day_btn.selectedIndex].text;
-
-    let sess = {
-        _coachId: '',
-        _clientId: '',
-        weekday: day,
-    };
-
-    try {
-            let obj = await fetch("/workouts/sessions/new", {
-                method: "POST",
-                body: JSON.stringify(sess),
-                headers: {
-                    "Content-Type":'application/json',
-                    'Accept':'application/x-www-urlencoded',
-                }
-            });
-            console.log(obj);
-            id = obj._id;
-            console.log(id);
-    }catch(err){
-        console.log(err);
-    }
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
     for(let i = 0; i <children.length; i++){
         if(children[i].tagName === 'TR'){
             // console.log(children[i], " is a tr for me!");
-                    saveInExercise(children[i], id);
+                    saveInExercise(children[i]);
         }
     }
 }
 
 let count = 0;
 
-async function saveInExercise(row, id){
+async function saveInExercise(row){
+    let ex;
     this.count++;
     if(!row.id){
-        console.log("NOT VALID");
+        // console.log("NOT VALID");
     }else {
         let exerciseName = row.childNodes[0].innerHTML;
         let rep = row.childNodes[1].innerHTML;
@@ -150,10 +126,10 @@ async function saveInExercise(row, id){
         let weight = row.childNodes[3].innerHTML;
         let comment = row.childNodes[4].innerHTML;
 
-        console.log(exerciseName, rep, sets, weight, comment);
-
+        // console.log(exerciseName, rep, sets, weight, comment);
+        let id = 0;
         try{
-            let ex = {
+            ex = {
                 name: exerciseName,
                 description: 'description placeholder',
                 repetitions: rep,
@@ -163,21 +139,55 @@ async function saveInExercise(row, id){
                 weightUnit: 'weightUnit placeholder',
                 bodyPart: 'body part placeholder'
             };
-            let saved = await fetch(
+
+            let f = await fetch(
                 '/workouts/exercises/new',
                 {method : 'POST',
                     body: JSON.stringify(ex),
                     headers: {'Content-Type':'application/json'}
-                });
+                }).then(function(response) {
+                    console.log(response.json());
+                })
         } catch (e) {
             console.log(e);
         }
-
+        let A = [];
+        A.push(id);
+        console.log(A);
+    await saveInSession(A);
     }
 }
 
 
+async function saveInSession(A){
 
+    let day_btn = document.getElementById("day_btn");
+    let day = day_btn.options[day_btn.selectedIndex].text;
+
+    let sess = {
+        _coachId: "5de3c7d83fd27d2259009574",
+        _clientId: "5de3c7d83fd27d2259009576",
+        weekday: day,
+        exercises: A
+    };
+
+    try {
+        let res = await fetch("/workouts/sessions/new", {
+            method: "POST",
+            body: JSON.stringify(sess),
+            headers: {
+                'Content-Type':'application/json'
+            },
+        });
+        console.log(res);
+        saveInSchedule(res);
+    }catch(err){
+        console.log(err);
+    }
+}
+function saveInSchedule(Session){
+
+}
 function listClients(e) {
     fetch("/coaches/hire/coach/5de0066518c1fa393a739ed6", {
         'method': 'GET',
@@ -186,7 +196,7 @@ function listClients(e) {
         },
     })
         .then((found) => {
-            console.log(found);
+            // console.log(found);
             dust.render('partials/dashboard_partials/test', {found});
         })
         .catch((e) => {
