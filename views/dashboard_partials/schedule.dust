@@ -7,9 +7,9 @@
             <input id="last_name" type="text" class="validate">
             <label for="last_name">Schedule Name</label>
         </div>
-        <div class="input-field col s12 m6" >
+        <div class="input-field col s12 m6">
 
-            <select class="icons" id="pickUser" onchange="clientDropdown()">
+            <select class="icons" id="pickUser" onchange="renderClients()">
                 <option value="" disabled selected>Choose your option</option>
                 {#clients}
                 <option data-icon="https://randomuser.me/api/portraits/men/61.jpg" class="left">{firstName}</option>
