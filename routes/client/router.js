@@ -124,7 +124,7 @@ router.post('/new', async (req, res) => {
                 let savedClientInfo = await clientInfo.save();
 
                 if (req.accepts("text/html")) {
-                    res.redirect('/auth');
+                    res.redirect('/login');
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
                     res = setResponse('json', 201, res, {
@@ -368,18 +368,18 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-router.post('/auth', async (req, res) => {
+router.post('/login', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
         let client = await Client.findOne({'access.username': req.body.username});
         console.log(client);
         if (!client) {
-            return res.status(400).send('Incorrect username.');
+            return res.status(400).send('Incorrect username!');
         }
         const validPassword = await bcrypt.compare(req.body.password, client.access.password);
 
         if (!validPassword) {
-            return res.status(400).send('Incorrect email or password.');
+            return res.status(400).send('Incorrect password!');
         }
         //encode the _id of user object in the mongo
         const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));

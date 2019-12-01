@@ -99,7 +99,7 @@ router.post('/new', async (req, res) => {
                 });
                 await credentials.save();
                 if (req.accepts("text/html")) {
-                    res.redirect('/auth');
+                    res.redirect('/login');
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, savedUser);
                 }
@@ -121,7 +121,7 @@ function getFilter(req) {
     filter.accountType = 'coach';
     filter.isDeleted = 'false';
     let request;
-    
+
     if (Object.keys(req.body).length > 0) {
         request = req.body;
     }
