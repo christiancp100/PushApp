@@ -96,7 +96,6 @@ async function removeRow(){
     }
 
     toRemove.parentNode.removeChild(toRemove);
-<<<<<<< Updated upstream
 
 
 }
@@ -177,11 +176,6 @@ async function saveInExercise(row, id){
     }
 }
 
-function saveInSession(){
-
-}
-=======
-}
 
 
 function listClients(e) {
@@ -199,4 +193,3 @@ function listClients(e) {
             console.log(e);
         })
 }
->>>>>>> Stashed changes
