@@ -147,7 +147,7 @@ router.post('/new', async (req, res) => {
 // Search for and users
 router.get('/search', function (req, res) {
     const filter = getFilter(req);
-    ClientInfo.find({})
+    UserAccount.find({})
         .then((clients) => {
             let result = clients.filter((o) => {
                 if (filter._id) {
