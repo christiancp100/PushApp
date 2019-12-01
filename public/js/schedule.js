@@ -1,11 +1,5 @@
 
 let level = 0;
-const mongoose = require('mongoose');
-require('./../../models/Exercise');
-const Exercise = mongoose.model('Exercise');
-
-require('./../../models/Session');
-const Session = mongoose.model('Session');
 
 function addRow(e) {
 
@@ -97,80 +91,75 @@ async function removeRow(){
 
     toRemove.parentNode.removeChild(toRemove);
 
-
 }
 
+
 async function takeRows(e){
+
+    let A = [];
 
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
     for(let i = 0; i <children.length; i++){
         if(children[i].tagName === 'TR'){
             // console.log(children[i], " is a tr for me!");
-                    saveInExercise(children[i]);
+
+            let ex;
+            let ex_id;
+
+            this.count++;
+
+            if(children[i].id){
+
+                let exerciseName = children[i].childNodes[0].innerHTML;
+                let rep = children[i].childNodes[1].innerHTML;
+                let sets = children[i].childNodes[2].innerHTML;
+                let weight = children[i].childNodes[3].innerHTML;
+                let comment = children[i].childNodes[4].innerHTML;
+
+                try{
+                    ex = {
+                        name: exerciseName,
+                        description: 'description placeholder',
+                        repetitions: rep,
+                        set: sets,
+                        comment: comment,
+                        pumpWeight: weight,
+                        weightUnit: 'weightUnit placeholder',
+                        bodyPart: 'body part placeholder'
+                    };
+
+                    let res = await fetch(
+                        '/workouts/exercises/new',
+                        {method : 'POST',
+                            body: JSON.stringify(ex),
+                            headers: {'Content-Type':'application/json'}
+                        });
+
+                    let fields = await res.json();
+                    ex_id = fields._id;
+                    A.push(ex_id);
+
+                } catch (e) {
+                    console.log(e);
+                }
+            }
         }
     }
-}
-
-let count = 0;
-
-async function saveInExercise(row){
-    let ex;
-    this.count++;
-    if(!row.id){
-        // console.log("NOT VALID");
-    }else {
-        let exerciseName = row.childNodes[0].innerHTML;
-        let rep = row.childNodes[1].innerHTML;
-        let sets = row.childNodes[2].innerHTML;
-        let weight = row.childNodes[3].innerHTML;
-        let comment = row.childNodes[4].innerHTML;
-
-        // console.log(exerciseName, rep, sets, weight, comment);
-        let id = 0;
-        try{
-            ex = {
-                name: exerciseName,
-                description: 'description placeholder',
-                repetitions: rep,
-                set: sets,
-                comment: comment,
-                pumpWeight: weight,
-                weightUnit: 'weightUnit placeholder',
-                bodyPart: 'body part placeholder'
-            };
-
-            let f = await fetch(
-                '/workouts/exercises/new',
-                {method : 'POST',
-                    body: JSON.stringify(ex),
-                    headers: {'Content-Type':'application/json'}
-                }).then(function(response) {
-                    console.log(response.json());
-                })
-        } catch (e) {
-            console.log(e);
-        }
-        let A = [];
-        A.push(id);
-        console.log(A);
+    console.log(A);
     await saveInSession(A);
-    }
 }
 
-
-async function saveInSession(A){
+async function saveInSession(array){
 
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
-
     let sess = {
         _coachId: "5de3c7d83fd27d2259009574",
         _clientId: "5de3c7d83fd27d2259009576",
         weekday: day,
-        exercises: A
+        exercises: array
     };
-
     try {
         let res = await fetch("/workouts/sessions/new", {
             method: "POST",
@@ -179,27 +168,30 @@ async function saveInSession(A){
                 'Content-Type':'application/json'
             },
         });
-        console.log(res);
-        saveInSchedule(res);
+        let g =await res.json();
     }catch(err){
         console.log(err);
     }
+    await saveInSchedule()
 }
+
 function saveInSchedule(Session){
 
 }
-function listClients(e) {
-    fetch("/coaches/hire/coach/5de0066518c1fa393a739ed6", {
-        'method': 'GET',
-        'headers': {'Content-Type': 'application/json}',
-                    'accept':'application/x-www-form-urlencoded'
-        },
-    })
-        .then((found) => {
-            // console.log(found);
-            dust.render('partials/dashboard_partials/test', {found});
-        })
-        .catch((e) => {
-            console.log(e);
-        })
-}
+
+
+// function listClients(e) {
+//     fetch("/coaches/hire/coach/5de0066518c1fa393a739ed6", {
+//         'method': 'GET',
+//         'headers': {'Content-Type': 'application/json}',
+//                     'accept':'application/x-www-form-urlencoded'
+//         },
+//     })
+//         .then((found) => {
+//             // console.log(found);
+//             dust.render('partials/dashboard_partials/test', {found});
+//         })
+//         .catch((e) => {
+//             console.log(e);
+//         })
+// }
