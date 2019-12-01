@@ -9,14 +9,17 @@
         </div>
         <div class="input-field col s12 m6" >
 
-            <select class="icons" >
-                {!<option value="" disabled selected>Choose your option</option>
+            <select class="icons" id="pickUser" onchange="clientDropdown()">
+                <option value="" disabled selected>Choose your option</option>
+                {#clients}
+                <option data-icon="https://randomuser.me/api/portraits/men/61.jpg" class="left">{firstName}</option>
+                {/clients}
                 <option value="" data-icon="https://randomuser.me/api/portraits/men/61.jpg" class="left">Erick
                 </option>
                 <option value="" data-icon="https://randomuser.me/api/portraits/women/76.jpg" class="left">Davide
                 </option>
                 <option value="" data-icon="https://randomuser.me/api/portraits/men/59.jpg" class="left">Christian
-                </option>!}
+                </option>
             </select>
             <label>User</label>
         </div>
@@ -54,3 +57,4 @@
     </div>
 </div>
 <script src="/js/schedule.js"></script>
+<script src="/js/scheduleClientsDropdown.js"></script>
