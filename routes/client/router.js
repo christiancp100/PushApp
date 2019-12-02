@@ -100,7 +100,7 @@ router.post('/new', async (req, res) => {
                 let hashedPassword = await bcrypt.hash(req.body.password, await bcrypt.genSalt(10));
 
                 let credentials = new Credentials({
-                    username: req.body.username,
+                    username: req.body.username.toLowerCase(),
                     password: hashedPassword,
                     _userAccountId: savedUserAccount._id
                 });
@@ -147,7 +147,7 @@ router.post('/new', async (req, res) => {
 // Search for and users
 router.get('/search', function (req, res) {
     const filter = getFilter(req);
-    ClientInfo.find({})
+    UserAccount.find({})
         .then((clients) => {
             let result = clients.filter((o) => {
                 if (filter._id) {
@@ -195,8 +195,7 @@ router.get('/search', function (req, res) {
             res.status(500);
             res.end();
         });
-})
-;
+});
 
 // Edit an user
 router.put('/edit/:id', async (req, res) => {
@@ -237,7 +236,6 @@ router.put('/edit/:id', async (req, res) => {
                     console.log('User with ID: ' + req.params.id + ' updated!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
-                        res.redirect('/');
                     } else if (req.accepts("application/json")) {
                         // delete savedClient._doc['_credentials'];
                         res = setResponse('json', 201, res, {
@@ -286,7 +284,6 @@ router.delete('/delete/:id', async (req, res) => {
                 console.log('Client with ID ' + req.params.id + ' was successfully deleted!');
                 if (req.accepts("text/html")) {
                     res = setResponse('html', 200, res);
-                    res.redirect('/');
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 200, res, {Result: `Client with ID ` + foundClient._id.toString() + ` was successfully deleted!`});
                     res.end();
@@ -314,6 +311,8 @@ function getFilter(req) {
         request = req.body;
     } else if (Object.keys(req.query).length > 0) {
         request = req.query;
+    } else if (Object.keys(req.params).length > 0) {
+        request = req.params;
     }
 
     if (request !== undefined) {
@@ -359,14 +358,11 @@ function setResponse(type, code, res, msg) {
             res.set('Content-Type', 'application/json');
             res.json(msg);
             return res;
-            break;
         case 'html':
             return res.set('Content-Type', 'text/html');
-            break;
         case 'error':
             res.json(msg);
             return res;
-            break;
         default:
             break;
     }
@@ -390,9 +386,5 @@ router.post('/auth', async (req, res) => {
         return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
 });
-
-router.get('/all', function (req, res) {
-
-})
 
 module.exports = router;
