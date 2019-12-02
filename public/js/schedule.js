@@ -42,13 +42,14 @@ function addRow(e) {
     let newExerciseRemoveInput = document.createElement('input');
     newExerciseRemoveInput.type = 'submit';
     newExerciseRemoveInput.value = '-';
-    newExerciseRemoveInput.className = 'btn-floating btn-small waves-effect waves-light black';
+    newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
     let newExerciseAddInput = document.createElement('input');
     newExerciseRemoveInput.type = 'submit';
     newExerciseRemoveInput.value = '-';
-    newExerciseRemoveInput.className = 'btn-floating btn-small waves-effect waves-light black';
+    newExerciseRemoveInput.style.marginTop = "0.5rem";
+    newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
     let icon = document.createElement('i');//just for beauty reason
@@ -104,7 +105,7 @@ async function takeRows(e){
 
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
-    //
+
     // let scheduleName_btn = document.getElementById("last_name");
     // let scheduleName = scheduleName_btn.options[scheduleName_btn.selectedIndex].text;
 
@@ -126,7 +127,6 @@ async function takeRows(e){
     );
 
     let fields = await res.json();
-    console.log(fields);
 
     for(let i = 0; i <children.length; i++){
         if(children[i].tagName === 'TR'){
@@ -173,7 +173,6 @@ async function takeRows(e){
             }
         }
     }
-    console.log(A);
     await saveInSessionAndSchedule(A,fields);
 }
 
@@ -191,6 +190,7 @@ async function saveInSessionAndSchedule(array, schedFields){
         weekday: day,
         exercises: array
     };
+
     try {
         let res = await fetch("/workouts/sessions/new", {
             method: "POST",
@@ -201,10 +201,11 @@ async function saveInSessionAndSchedule(array, schedFields){
         });
 
         let fields = await res.json();
-
         let sArray = schedFields.sessions;  //puts the new session id into existing schedule
+        let s_id = schedFields._id;
         sArray.push(fields._id);
-
+        // let response = await fetch('/workouts/schedules/edit/'+ s_id, {method: "PUT",
+        //     })
     }catch(err){
         console.log(err);
     }

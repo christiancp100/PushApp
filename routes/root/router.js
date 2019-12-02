@@ -79,10 +79,12 @@ async function renderClientDashboard(res, activeUser) {
         activeUser.photo = '/img/icons/user-pic.png';
     }
     let menu = {
-        user: [
-            {firstName: activeUser.firstName},
-            {photo: activeUser.photo}
-        ],
+        user:
+            {
+              firstName: activeUser.firstName,
+              photo: activeUser.photo
+            }
+        ,
         items: [
             {name: "Dashboard", icon: "web"},
             {name: "Next Workout", icon: "list"},

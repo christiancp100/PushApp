@@ -1,5 +1,5 @@
-<div class="masonry row" style="position: relative; height: 1150.14px;">
-    <div class="col s12" style="position: absolute; left: 0px; top: 0px;">
+<div class="masonry row">
+    <div class="col s12">
         <h2 class="center">Create New Schedule</h2>
     </div>
     <div class="col s12">
@@ -9,7 +9,7 @@
         </div>
         <div class="input-field col s12 m6">
 
-            <select class="icons" id="pickUser" onchange="renderClients()">
+            <select class="icons" id="pickUser">
                 <option value="" disabled selected>Choose your option</option>
                 {#clients}
                 <option data-icon={photo}" class="left">{firstName} {lastName}
@@ -33,23 +33,20 @@
             </select>
             <label>Day</label>
         </div>
-
         <div class="input-field col m6 s12">
             <a class="btn-floating btn-small waves-effect waves-light black" onclick="takeRows(event)">
                 <i id="done_btn" class="material-icons" >done_outline</i>
         </div>
     </div>
-
-    <div class="col l12 m6 s12" style="position: absolute; left: 344px; top: 107px;">
-        <div class="card">
-            {>"dashboard_partials/schedule_table"/}
-        </div>
-
-        <div class="row center">
-            <a class="btn-floating btn-large waves-effect waves-light black" onclick="addRow(event)">
-                <i class="material-icons">add</i>
-            </a>
-        </div>
+</div>
+<div class="row">
+    <div class="col l12 m12 s12 card">
+        {>"dashboard_partials/schedule_table"/}
     </div>
+</div>
+<div class="row center">
+    <a class="btn-floating btn-large waves-effect waves-light black" onclick="addRow(event)">
+        <i class="material-icons">add</i>
+    </a>
 </div>
 <script src="/js/schedule.js"></script>
