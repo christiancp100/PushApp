@@ -29,7 +29,7 @@ function addRow(e) {
     newExerciseSets.innerHTML = exSets.value;
 
     let newExerciseWeight = document.createElement('td');
-    newExerciseWeight.id = 'exerciseReps' + level;
+    newExerciseWeight.id = 'exerciseWeight' + level;
     newExerciseWeight.innerHTML = exWeight.value;
 
     let newExerciseComments = document.createElement('td');

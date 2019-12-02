@@ -12,7 +12,7 @@
             <select class="icons" id="pickUser">
                 <option value="" disabled selected>Choose your option</option>
                 {#clients}
-                <option data-icon={photo}" class="left">{firstName} {lastName}</option>
+                <option data-icon="{photo}" value="{_userAccountId}" class="left">{firstName} {lastName}</option>
                 {/clients}
             </select>
             <label>User</label>
@@ -47,3 +47,4 @@
     </a>
 </div>
 <script src="/js/schedule.js"></script>
+<script src="/js/renderCoachTable.js"></script>
