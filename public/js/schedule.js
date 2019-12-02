@@ -42,13 +42,14 @@ function addRow(e) {
     let newExerciseRemoveInput = document.createElement('input');
     newExerciseRemoveInput.type = 'submit';
     newExerciseRemoveInput.value = '-';
-    newExerciseRemoveInput.className = 'btn-floating btn-small waves-effect waves-light black';
+    newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
     let newExerciseAddInput = document.createElement('input');
     newExerciseRemoveInput.type = 'submit';
     newExerciseRemoveInput.value = '-';
-    newExerciseRemoveInput.className = 'btn-floating btn-small waves-effect waves-light black';
+    newExerciseRemoveInput.style.marginTop = "0.5rem";
+    newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
     let icon = document.createElement('i');//just for beauty reason

@@ -37,6 +37,7 @@
     "klei-dust": "^1.0.0",
     "loadash": "^1.0.0",
     "method-override": "^3.0.0",
+    "mongodb": "latest",
     "mongoose": "^5.7.12",
     "morgan": "^1.9.1",
     "node": "^13.1.0",
@@ -44,8 +45,7 @@
     "passport": "^0.4.0",
     "request": "^2.88.0",
     "socket.io": "^2.3.0",
-    "supertest": "^4.0.2",
-    "mongodb": "latest"
+    "supertest": "^4.0.2"
   },
   "devDependencies": {
     "joi": "^14.3.1",

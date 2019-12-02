@@ -1,4 +1,4 @@
-<table class="highlight centered ">
+<table class="highlight centered" style="position: relative;">
     <thead>
         <tr>
             <th data-field="exercise">Exercise</th>
@@ -6,10 +6,10 @@
             <th data-field="sets">Nr. of Sets</th>
             <th data-field="weight">Weight</th>
             <th data-field="comments">Comments</th>
+            <th data-field="#">#</th>
         </tr>
     </thead>
     <tbody id="scheduleTable">
-        {>"dashboard_partials/schedule_table_row"/}
         {?coach}
         {>"dashboard_partials/schedule_table_input_row"/}
         {/coach}
