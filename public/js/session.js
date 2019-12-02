@@ -5,30 +5,33 @@ async function getExercises(userId) {
             'Content-Type': 'application/json'
         };
 
-        let session = await fetch("/workouts/sessions/search?_clientId=" + userId, {
+        let session = await fetch("/workouts/sessions/search?_clientId=" + userId + "&weekday=" + getWeekDay(), {
             method: 'GET',
             headers: headers,
         });
         session = await session.json();
 
-        let exercises;
-        let exercise;
-        for (let i = 0; i > session.exercises.length; i++) {
-            exercise = await fetch("/workouts/sessions/exercises?_id=" + session.exercises[i], {
+        let exercises = [];
+        for (let i = 0; i < session.exercises.length; i++) {
+            let exercise = await fetch("/workouts/exercises/findById?id=" + session.exercises[i], {
                 method: 'GET',
-                headers: headers,
+                headers: headers
             });
             exercise = await exercise.json();
             exercises.push(exercise);
         }
-        debugger
 
         dust.render("dashboard_partials\/schedule_table_row",
-            {session: session.exercises}, (err, out) =>
+            {exercises: exercises}, (err, out) =>
                 document.getElementById('scheduleTable').innerHTML = out);
     } catch (err) {
         console.log(err);
     }
+}
+
+function getWeekDay() {
+    const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    return weekdays[new Date().getDay()];
 }
 
 getExercises(localStorage.userAccountId);

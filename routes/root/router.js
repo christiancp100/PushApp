@@ -150,7 +150,7 @@ async function clientsDropdown(activeUser) {
                 for (let i = 0; i < result.length; i++) {
                     try {
                         let found = await UserAccount.findById(result[i]._clientId);
-                        console.log("AAA", found);
+
                         let clientInfo = {
                             firstName: found.firstName,
                             lastName: found.lastName,

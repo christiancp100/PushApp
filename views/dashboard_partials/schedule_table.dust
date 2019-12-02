@@ -2,10 +2,11 @@
     <thead>
         <tr>
             <th data-field="exercise">Exercise</th>
+            <th data-field="bodyPart">Body Part</th>
             <th data-field="repetitions">Repetitions</th>
             <th data-field="sets">Nr. of Sets</th>
             <th data-field="weight">Weight</th>
-            <th data-field="description">Description</th>
+            <th data-field="comments">Comments</th>
             <th>
             </th>
             {?coach}
