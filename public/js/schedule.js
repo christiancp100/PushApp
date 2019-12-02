@@ -91,9 +91,7 @@ async function removeRow(){
     // } catch (e) {
     //     console.log(e);
     // }
-
     toRemove.parentNode.removeChild(toRemove);
-
 }
 
 //-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
@@ -110,7 +108,7 @@ async function takeRows(e){
     // let scheduleName = scheduleName_btn.options[scheduleName_btn.selectedIndex].text;
 
     let sched= {
-        _coachId: "5de3c7d83fd27d2259009574",
+        _coachId: localStorage.userAccountId,
         _clientId: "5de3c7d83fd27d2259009576",
         name: 'scheduleName placeholder',
         sessions: [],
@@ -185,7 +183,7 @@ async function saveInSessionAndSchedule(array, schedFields){
     let day = day_btn.options[day_btn.selectedIndex].text;
 
     let sess = {
-        _coachId: "5de3c7d83fd27d2259009574",
+        _coachId: localStorage.userAccountId,
         _clientId: "5de3c7d83fd27d2259009576",
         weekday: day,
         exercises: array
