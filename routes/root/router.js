@@ -9,10 +9,12 @@ const bcrypt = require('bcrypt');
 require('../../models/Credential.js');
 require('../../models/UserAccount.js');
 require('../../models/ClientInfo.js');
+require('../../models/CoachClients')
 
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
+let CoachClients = mongoose.model('CoachClients');
 
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
@@ -107,6 +109,43 @@ async function renderClientDashboard(res, activeUser) {
     res.render("dashboard_client", menu);
 }
 
+async function clientsDropdown(activeUser) {
+    let clientsArray = [];
+    if (activeUser.id !== undefined && !mongoose.Types.ObjectId.isValid(activeUser.id)) {
+        return [];
+    }
+    try {
+        let result = await CoachClients.find({_coachId: activeUser.id});
+        if (result) {
+            console.log(result);
+            if (result.length > 0) {
+                for (let i = 0; i < result.length; i++) {
+                    try {
+                        let found = await UserAccount.findById(result[i]._clientId);
+                        console.log("AAA" , found);
+                        let clientInfo = {
+                            firstName: found.firstName,
+                            lastName: found.lastName,
+                            photo: found.photo,
+                        };
+                        clientsArray.push(clientInfo);
+                    } catch (e) {
+                        console.log(e);
+                        return [];
+                    }
+                }
+            } else {
+                console.log('No client hired you...');
+                return [];
+            }
+        }
+    }catch(e){
+        console.log(e);
+        return [];
+    }
+    return clientsArray;
+}
+
 async function renderCoachDashboard(res, activeUser) {
     if (activeUser.photo === null || activeUser.photo === ' ') {
         activeUser.photo = '/img/icons/user-pic.png';
@@ -140,7 +179,8 @@ async function renderCoachDashboard(res, activeUser) {
                     {name: "Settings", icon: "settings"},
                 ]
             }
-        ]
+        ],
+        clients : await clientsDropdown(activeUser)
     };
     res.render("dashboard_coach.dust", menu);
 }
