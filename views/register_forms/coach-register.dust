@@ -3,7 +3,7 @@
 <head>
     <title>Coach register</title>
 </head>
-<body onload="findName()">
+<body>
 <h2>Register new Coach</h2>
 <form onsubmit="return mySubmit()" method="post" action="/coaches/new" enctype="application/x-www-form-urlencoded">
     {>"../partials/register"/}

@@ -4,7 +4,7 @@
     <title>Client register</title>
 </head>
 
-<body onload="findName()">
+<body>
 <h2>Register new Client</h2>
 <form onsubmit="return mySubmit();" action="/clients/new"  method="post" enctype="application/x-www-form-urlencoded">
     {>"../partials/register"/}
