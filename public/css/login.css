@@ -1,30 +1,32 @@
-body{
-    background: url("../img/login-img.jpg") !important;
+body {
+    background: url("../img/login-img.original.jpg") !important;
     background-size: cover !important;
 }
 
-.login{
+.login {
     margin-top: 100px;
-    background : white;
+    background: white;
 }
 
-.login .card{
+.login .card {
     position: fixed;
     width: 30vw;
 
     background: linear-gradient(to right, #16bffdd7, #cb3066d0);
 }
 
- /* label color */
+/* label color */
 .form-field label {
     font-size: 1.3rem;
     color: #000;
 }
+
 /* label focus color */
 .form-field input[type=text]:focus {
     color: #000;
     border-color: black;
 }
+
 /* label underline focus color */
 .form-field input[type=text] {
     border-bottom: 1px solid #000;
@@ -35,16 +37,19 @@ body{
     border-bottom: 1px solid #000;
     box-shadow: 0 1px 0 0 #000;
 }
+
 /* valid color */
 .form-field input[type=text].valid {
     border-bottom: 1px solid #000;
     box-shadow: 0 1px 0 0 #000;
 }
+
 /* invalid color */
 .form-field input[type=text].invalid {
     border-bottom: 1px solid #000;
     box-shadow: 0 1px 0 0 #000;
 }
+
 /* icon prefix focus color */
 .form-field .prefix.active {
     color: #000;
@@ -55,6 +60,7 @@ body{
     color: #000;
     border-color: black;
 }
+
 /* label underline focus color */
 .form-field input[type=password] {
     border-bottom: 1px solid #000;
@@ -65,26 +71,29 @@ body{
     border-bottom: 1px solid #000;
     box-shadow: 0 1px 0 0 #000;
 }
+
 /* valid color */
 .form-field input[type=password].valid {
     border-bottom: 1px solid #000;
     box-shadow: 0 1px 0 0 #000;
 }
+
 /* invalid color */
 .form-field input[type=password].invalid {
     border-bottom: 1px solid #000;
     box-shadow: 0 1px 0 0 #000;
 }
+
 /* icon prefix focus color */
 .form-field .prefix.active {
     color: #000;
 }
-       
+
 
 @media only screen and (max-width: 875px) {
-    .login .card{
+    .login .card {
         width: 100vw;
         margin: 0 auto;
-}
+    }
 
 } 

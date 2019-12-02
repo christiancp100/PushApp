@@ -78,8 +78,8 @@ async function renderClientDashboard(res, activeUser) {
     let menu = {
         user:
             {
-              firstName: activeUser.firstName,
-              photo: activeUser.photo
+                firstName: activeUser.firstName,
+                photo: activeUser.photo
             }
         ,
         items: [
@@ -124,7 +124,7 @@ async function clientsDropdown(activeUser) {
                 for (let i = 0; i < result.length; i++) {
                     try {
                         let found = await UserAccount.findById(result[i]._clientId);
-                        console.log("AAA" , found);
+                        console.log("AAA", found);
                         let clientInfo = {
                             firstName: found.firstName,
                             lastName: found.lastName,
@@ -141,7 +141,7 @@ async function clientsDropdown(activeUser) {
                 return [];
             }
         }
-    }catch(e){
+    } catch (e) {
         console.log(e);
         return [];
     }
@@ -177,12 +177,12 @@ async function renderCoachDashboard(res, activeUser) {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Logout", icon: "person", logout : "true"},
+                    {name: "Logout", icon: "person", logout: "true"},
                     {name: "Settings", icon: "settings"},
                 ]
             }
         ],
-        clients : await clientsDropdown(activeUser)
+        clients: await clientsDropdown(activeUser)
     };
     res.render("dashboard_coach.dust", menu);
 }
@@ -349,7 +349,7 @@ router.post('/login', async (req, res) => {
 
         let client = await Credentials.findOne({username: req.body.username});
         console.log(client);
-        if (!client) {
+        if (client !== null) {
             return res.status(400).send('Incorrect username or password!');
         }
         const validPassword = await bcrypt.compare(req.body.password, client.password);
