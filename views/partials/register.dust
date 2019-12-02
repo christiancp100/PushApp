@@ -97,3 +97,5 @@
         <input required value="{email}" type="email" name="email"/>
     </label>
 </div>
+
+<input type="hidden" value="{credentials}" name="credentials">

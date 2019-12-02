@@ -25,6 +25,21 @@ function mySubmit() {
     }
     return true;
 }
+function fetchClient(e) {
+    e.preventDefault();
+    fetch('/register/client', {method: "GET"})
+        .then(res => res.text())
+        .then((text) => {console.log(text);
+            document.getElementById("reg").innerHTML = text});
+}
+function fetchCoach(e) {
+     e.preventDefault();
+     console.log("HERE");
+     fetch('/register/coach', {method: "GET"})
+         .then(res => res.text())
+         .then((text) => {console.log(text);
+             document.getElementById("reg").innerHTML = text});
+}
 
 // function testing(name) {
 //     localStorage.setItem('username', name);

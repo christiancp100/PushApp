@@ -5,13 +5,11 @@
 </head>
 <body>
 <div id="reg">
-<button onclick="testing()" name="coach">1. Coach</button>
-{!does not work with fetch!}
+<input type="submit" onclick="fetchCoach(event)" value="Coach" name="coach">
 
-<button onclick="fetchClient(event)" name="client">2. Client</button>
+<input type="submit" onclick="fetchClient(event)" value="Client" name="client">
 </div>
-
-
+{!TODO error here!}
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/helper.js"></script>

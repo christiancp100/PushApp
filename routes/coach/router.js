@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+let ObjectId = require('mongodb').ObjectID;
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
@@ -54,7 +55,7 @@ router.post('/new', async (req, res) => {
         console.log('Creating new coach...');
         if (req.body.firstName === undefined && req.body.lastName === undefined && req.body.birthday === undefined && req.body.sex === undefined &&
             req.body.email === undefined && req.body.address1 === undefined && req.body.city === undefined && req.body.state === undefined &&
-            req.body.zipCode === undefined && req.body.country === undefined && req.body.currency === undefined && req.body.username === undefined && req.body.password === undefined) {
+            req.body.zipCode === undefined && req.body.country === undefined && req.body.currency === undefined) {
             res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
             res.end();
         } else {
@@ -90,16 +91,9 @@ router.post('/new', async (req, res) => {
                     user.address2 = '';
                 }
                 let savedUser = await user.save();
-                let salt = await bcrypt.genSalt(10);
-                let code = await bcrypt.hash(req.body.password, salt);
-                let credentials = new Credentials({
-                    username: req.body.username.toLowerCase(),
-                    password: code,
-                    _userAccountId: savedUser._id
-                });
-                await credentials.save();
+                console.log(savedUser._id);
                 if (req.accepts("text/html")) {
-                    res.redirect('/login');
+                    res.render('register_forms/register-credentials.dust', {accID : (savedUser._id).toString()});//todo pass ID ad argument
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, savedUser);
                 }
@@ -463,7 +457,7 @@ function setResponse(type, code, res, msg) {
 }
 
 
-router.post('/username', async (req, res) => {
+/*router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json") {
         try {
             let username = await Credentials.find({});
@@ -474,6 +468,6 @@ router.post('/username', async (req, res) => {
     } else {
         res.status(500).end("ERROR")
     }
-});
+});*/
 
 module.exports = router;

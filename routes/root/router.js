@@ -9,7 +9,10 @@ const bcrypt = require('bcrypt');
 require('../../models/Credential.js');
 require('../../models/UserAccount.js');
 require('../../models/ClientInfo.js');
-require('../../models/CoachClients')
+require('../../models/CoachClients');
+require('../../models/Exercise');
+require('../../models/Session');
+require('../../models/Schedule');
 
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
@@ -18,18 +21,41 @@ let CoachClients = mongoose.model('CoachClients');
 
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
-        res.render('index', {title: 'PushApp'});
+        res.render('index', { title: 'PushApp' });
     } else {
         // res.status(500);
         res.end();
     }
 });
+function isLoggedIn(req, res, next) {
+    console.log(req.path);
+    if (!req.user) {
+        res.redirect('/login');
+    }
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated() && ("/" + req.user.username) === req.path) {
+        return next();
+    }
+    // if they aren't render login page
+    res.redirect('/login');
+}
+
+/*router.get('/register', function (req, res) {
+  if (req.accepts("html")) {
+    res.render('register_forms/register_1');
+  } else {
+    res.status(500);
+    res.end();
+  }
+})*/
+
 
 // Dynamic user route according to userAccount type
-router.get('/:username', async (req, res, next) => {
+router.get('/:username', isLoggedIn, async (req, res, next) => {
     try {
         if (req.accepts("html")) {
             const filter = getFilter(req);
+
 
             if (req.path === '/login') {
                 res.render('login.dust')
@@ -45,9 +71,9 @@ router.get('/:username', async (req, res, next) => {
                 console.log();
                 if (credentials === null || credentials.username !== filter.username) {
                     // CHANGE FOR CORRECT 404 PAGE
-                    res = setResponse('json', 401, res, {Error: 'Unauthorized access!'});
+                    res = setResponse('json', 401, res, { Error: 'Unauthorized access!' });
                 } else {
-                    let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
+                    let activeUser = await UserAccount.findById({ _id: credentials._userAccountId });
 
                     if (activeUser.accountType === 'client') {
                         await renderClientDashboard(res, activeUser);
@@ -64,12 +90,12 @@ router.get('/:username', async (req, res, next) => {
         }
         res.end();
     } catch
-        (err) {
+    (err) {
         res.status(500);
         res.end();
     }
 })
-;
+    ;
 
 async function renderClientDashboard(res, activeUser) {
     if (activeUser.photo === null || activeUser.photo === ' ') {
@@ -77,33 +103,33 @@ async function renderClientDashboard(res, activeUser) {
     }
     let menu = {
         user:
-            {
-                firstName: activeUser.firstName,
-                photo: activeUser.photo
-            }
+        {
+            firstName: activeUser.firstName,
+            photo: activeUser.photo
+        }
         ,
         items: [
-            {name: "Dashboard", icon: "web"},
-            {name: "Next Workout", icon: "list"},
-            {name: "Schedule", icon: "dashboard"},
-            {name: "Chat", icon: "chat"},
+            { name: "Dashboard", icon: "web" },
+            { name: "Next Workout", icon: "list" },
+            { name: "Schedule", icon: "dashboard" },
+            { name: "Chat", icon: "chat" },
         ],
         accordions: [
             {
                 title: "Progress",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Weight", icon: "show_chart"},
-                    {name: "Exercises", icon: "equalizer"},
-                    {name: "Volume of Training", icon: "multiline_chart"},
+                    { name: "Weight", icon: "show_chart" },
+                    { name: "Exercises", icon: "equalizer" },
+                    { name: "Volume of Training", icon: "multiline_chart" },
                 ]
             },
             {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Logout", icon: "person", logout: true},
-                    {name: "Settings", icon: "settings"},
+                    { name: "Logout", icon: "person", logout: true },
+                    { name: "Settings", icon: "settings" },
                 ]
             }
         ]
@@ -117,7 +143,7 @@ async function clientsDropdown(activeUser) {
         return [];
     }
     try {
-        let result = await CoachClients.find({_coachId: activeUser.id});
+        let result = await CoachClients.find({ _coachId: activeUser.id });
         if (result) {
             console.log(result);
             if (result.length > 0) {
@@ -129,6 +155,7 @@ async function clientsDropdown(activeUser) {
                             firstName: found.firstName,
                             lastName: found.lastName,
                             photo: found.photo,
+                            _userAccountId: found._id
                         };
                         clientsArray.push(clientInfo);
                     } catch (e) {
@@ -154,31 +181,31 @@ async function renderCoachDashboard(res, activeUser) {
     }
     let menu = {
         user: [
-            {firstName: "Coach " + activeUser.firstName},
-            {photo: activeUser.photo}
+            { firstName: "Coach " + activeUser.firstName },
+            { photo: activeUser.photo }
         ],
         items: [
-            {name: "Dashboard", icon: "web"},
-            {name: "Clients", icon: "list"},
-            {name: "Schedules", icon: "dashboard"},
-            {name: "Chat", icon: "chat"},
+            { name: "Dashboard", icon: "web" },
+            { name: "Clients", icon: "list" },
+            { name: "Schedules", icon: "dashboard" },
+            { name: "Chat", icon: "chat" },
         ],
         accordions: [
             {
                 title: "Accounting",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Revenue", icon: "show_chart"},
-                    {name: "Users", icon: "equalizer"},
-                    {name: "Conversion Rate", icon: "multiline_chart"},
+                    { name: "Revenue", icon: "show_chart" },
+                    { name: "Users", icon: "equalizer" },
+                    { name: "Conversion Rate", icon: "multiline_chart" },
                 ]
             },
             {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Logout", icon: "person", logout: "true"},
-                    {name: "Settings", icon: "settings"},
+                    { name: "Logout", icon: "person", logout: "true" },
+                    { name: "Settings", icon: "settings" },
                 ]
             }
         ],
@@ -187,10 +214,6 @@ async function renderCoachDashboard(res, activeUser) {
     res.render("dashboard_coach.dust", menu);
 }
 
-async function renderAdminDashboard(res) {
-    //  Add render here code for admin
-    res.end();
-}
 
 // Creates filter for searching users on the database
 function getFilter(req) {
@@ -281,27 +304,27 @@ function setResponse(type, code, res, msg) {
 router.get('/coach/dashboard/clients', (req, res) => {
     let menu = {
         items: [
-            {name: "Dashboard", icon: "web"},
-            {name: "Clients", icon: "list"},
-            {name: "Schedules", icon: "dashboard"},
-            {name: "Chat", icon: "chat"},
+            { name: "Dashboard", icon: "web" },
+            { name: "Clients", icon: "list" },
+            { name: "Schedules", icon: "dashboard" },
+            { name: "Chat", icon: "chat" },
         ],
         accordions: [
             {
                 title: "Accounting",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Revenue", icon: "show_chart"},
-                    {name: "Users", icon: "equalizer"},
-                    {name: "Conversion Rate", icon: "multiline_chart"},
+                    { name: "Revenue", icon: "show_chart" },
+                    { name: "Users", icon: "equalizer" },
+                    { name: "Conversion Rate", icon: "multiline_chart" },
                 ]
             },
             {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Logout", icon: "person"},
-                    {name: "Settings", icon: "settings"},
+                    { name: "Logout", icon: "person" },
+                    { name: "Settings", icon: "settings" },
                 ]
             }
         ]
@@ -344,7 +367,7 @@ router.get('/coach/dashboard/clients', (req, res) => {
 //     res.render('login.dust')
 // });
 
-router.post('/login', async (req, res) => {
+/*router.post('/login', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
         let client = await Credentials.findOne({username: req.body.username});
@@ -369,12 +392,8 @@ router.post('/login', async (req, res) => {
             // }
         }
     }
-});
+});*/
 
-router.get('/test', function (req, res) {
-    res.render('register_forms/register_1');
-    res.end();
-});
 
 /** router for /root */
 module.exports = router;
