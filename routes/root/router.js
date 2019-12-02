@@ -20,6 +20,15 @@ router.get('/', function (req, res, next) {
   }
 });
 
+router.get('/register', function (req, res) {
+  if (req.accepts("html")) {
+    res.render('register_forms/register_1');
+  } else {
+    res.status(500);
+    res.end();
+  }
+})
+
 
 router.get('/register-coach', (req, res, next) => {
   res.render('register_forms/coach-register');
@@ -122,9 +131,7 @@ router.get("/client/dashboard", (req, res) => {
   res.render("dashboard_client", menu)
 });
 
-router.get('/auth', function (req, res) {
-  res.render('login.dust')
-})
+
 router.post('/auth', async (req, res) => {
   if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 

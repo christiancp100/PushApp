@@ -23,6 +23,18 @@ function mySubmit() {
     }
     return true;
 }
+function fetchClient(e) {
+    e.preventDefault();
+    dust.render('register_forms/client-register', {}, function (err, out) {
+        document.getElementById("reg").outerHTML = out;
+    })
+}
+function fetchCoach(e) {
+    e.preventDefault();
+    dust.render('register_forms/coach-register', {}, function (err, out) {
+        document.getElementById("reg").outerHTML = out;
+    })
+}
 
 function testing(name) {
     localStorage.setItem('username', name);

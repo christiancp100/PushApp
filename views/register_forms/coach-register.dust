@@ -3,18 +3,11 @@
 <head>
     <title>Coach register</title>
 </head>
-<body onload="findName()">
 <h2>Register new Coach</h2>
-<form onsubmit="return mySubmit()" method="post" action="/coaches/new" enctype="application/x-www-form-urlencoded">
+<form method="post" action="" enctype="application/x-www-form-urlencoded">
     {>"../partials/register"/}
 
-    <label for="username">Username:
-        <input required id="user" name="username" type="text" placeholder="username"/>
-    </label>
-    <label for="password">Password:
-        <input required name="password" type="password" placeholder="pw"/>
-    </label>
-    <input type="submit" value="Create Account"/>
+    <input type="submit" value="Continue"/>
 </form>
 <script src="/js/helper.js"></script>
 <script src="js/resources/dustjs-linkedin/dust-core.min.js"></script>

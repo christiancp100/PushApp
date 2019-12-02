@@ -5,8 +5,7 @@
 </head>
 <body>
 <div id="reg">
-<button onclick="testing()" name="coach">1. Coach</button>
-{!does not work with fetch!}
+<button onclick="fetchCoach(event)" name="coach">1. Coach</button>
 
 <button onclick="fetchClient(event)" name="client">2. Client</button>
 </div>

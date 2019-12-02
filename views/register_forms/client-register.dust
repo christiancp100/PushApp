@@ -4,10 +4,9 @@
     <title>Client register</title>
 </head>
 
-<body onload="findName()">
 <h2>Register new Client</h2>
-<form onsubmit="return mySubmit();" action="/clients/new"  method="post" enctype="application/x-www-form-urlencoded">
-    {>"../partials/register"/}
+<form action=""  method="POST" enctype="application/x-www-form-urlencoded">
+   {>"../partials/register"/}
     <div>
         <label>bmi:
             {?bmi}<input value="{bmi}" type="text" name="bmi"/>
@@ -27,19 +26,7 @@
         </label>
     </div>
     <div>
-        <label>Username:
-            <input required id="user" value="" type="text" name="username"/>
-        </label>
-    </div>
-    <div>
-        <label>Password:
-            <input required type="password"
-                   title="The password should contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
-                   name="password"/>
-        </label>
-    </div>
-    <div>
-        <input type="submit" value="Register"/>
+        <input type="submit" value="Continue"/>
     </div>
 </form>
 <script src="/js/helper.js"></script>
