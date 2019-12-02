@@ -26,7 +26,6 @@ router.get('/', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -45,7 +44,6 @@ router.get('/schedules', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -64,7 +62,6 @@ router.get('/sessions', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -83,8 +80,7 @@ router.get('/exercises', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
-        res.status(500);
+        res.status(400);
         res.end();
     }
 });
@@ -95,8 +91,12 @@ router.get('/schedules/search', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
-            let found = await Schedule.findOne({filter});
-            res = setResponse('json', 200, res, found);
+            let found = await Schedule.findOne(filter);
+            if (found !== null) {
+                res = setResponse('json', 200, res, found);
+            } else {
+                res = setResponse('json', 404, res, {});
+            }
             res.end();
         } catch (err) {
             console.log(err);
@@ -104,7 +104,6 @@ router.get('/schedules/search', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -115,8 +114,12 @@ router.get('/sessions/search', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
-            let found = await Session.findOne({filter});
-            res = setResponse('json', 200, res, found);
+            let found = await Session.findOne(filter);
+            if (found !== null) {
+                res = setResponse('json', 200, res, found);
+            } else {
+                res = setResponse('json', 404, res, {});
+            }
             res.end();
         } catch (err) {
             console.log(err);
@@ -124,7 +127,6 @@ router.get('/sessions/search', async (req, res) => {
             res.end();
         }
     } else {
-        console.log(err);
         res.status(500);
         res.end();
     }
@@ -135,12 +137,16 @@ router.get('/exercises/search', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             let filter = getFilter(req);
-            let found = await Exercise.findOne({filter});
-            res = setResponse('json', 200, res, found);
+            let found = await Exercise.findOne(filter);
+            if (found !== null) {
+                res = setResponse('json', 200, res, found);
+            } else {
+                res = setResponse('json', 404, res, {});
+            }
             res.end();
         } catch (err) {
             console.log(err);
-            res.status(404);
+            res.status(500);
             res.end();
         }
     } else {
@@ -173,7 +179,6 @@ router.post('/schedules/new', async (req, res) => {
                 });
 
                 let savedSchedule = await schedule.save();
-
                 res = setResponse('json', 200, res, savedSchedule);
                 res.end();
             }
@@ -208,8 +213,8 @@ router.post('/sessions/new', async (req, res) => {
                 if (req.body.duration !== undefined) {
                     session.duration = req.body.duration;
                 }
-                let savedSession = await session.save();
 
+                let savedSession = await session.save();
                 res = setResponse('json', 200, res, savedSession);
                 res.end();
             }
@@ -217,8 +222,7 @@ router.post('/sessions/new', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
-    } catch
-        (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).end();
     }
@@ -251,7 +255,6 @@ router.post('/exercises/new', async (req, res) => {
                 });
 
                 let savedExercise = await exercise.save();
-
                 res = setResponse('json', 200, res, savedExercise);
                 res.end();
             }
@@ -259,8 +262,7 @@ router.post('/exercises/new', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
-    } catch
-        (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).end();
     }
@@ -332,8 +334,7 @@ router.put('/sessions/edit/:id', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
-    } catch
-        (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).end();
     }
@@ -368,8 +369,8 @@ router.put('/exercises/edit/:id', async (req, res) => {
                 if (req.body.comment === undefined) {
                     exercise.comment = req.body.comment;
                 }
-                let savedExercise = await exercise.save();
 
+                let savedExercise = await exercise.save();
                 res = setResponse('json', 200, res, savedExercise);
                 res.end();
             }
@@ -377,8 +378,7 @@ router.put('/exercises/edit/:id', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
-    } catch
-        (err) {
+    } catch (err) {
         console.log(err);
         res.status(500).end();
     }
@@ -396,10 +396,11 @@ router.delete('/schedules/delete/:id', async (req, res) => {
                 res = setResponse('html', 200, res);
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Schedule with ID ` + found._id.toString() + ` was successfully deleted!`});
-                res.end();
             }
+            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Schedule not found!'});
+            res.end();
         }
     } catch (err) {
         console.log(err);
@@ -419,10 +420,11 @@ router.delete('/sessions/delete/:id', async (req, res) => {
                 res = setResponse('html', 200, res);
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Session with ID ` + found._id.toString() + ` was successfully deleted!`});
-                res.end();
             }
+            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Session not found!'});
+            res.end();
         }
     } catch (err) {
         console.log(err);
@@ -442,10 +444,11 @@ router.delete('/exercises/delete/:id', async (req, res) => {
                 res = setResponse('html', 200, res);
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Exercise with ID ` + found._id.toString() + ` was successfully deleted!`});
-                res.end();
             }
+            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Exercise not found!'});
+            res.end();
         }
     } catch (err) {
         console.log(err);
@@ -462,7 +465,11 @@ function getFilter(req) {
 
     if (Object.keys(req.body).length > 0) {
         request = req.body;
-    } else if (Object.keys(req.query).length > 0) {
+    }
+    if (Object.keys(req.query).length > 0) {
+        request = req.query;
+    }
+    if (Object.keys(req.params).length > 0) {
         request = req.query;
     }
 
@@ -511,13 +518,6 @@ function getFilter(req) {
         if (request.clientId !== undefined) {
             filter._clientId = request.clientId;
         }
-
-        // Search non deleted
-        if (request.isDeleted === undefined) {
-            filter.isDeleted = false;
-        } else {
-            filter.isDeleted = request.isDeleted;
-        }
         return filter;
     }
 }
@@ -530,14 +530,11 @@ function setResponse(type, code, res, msg) {
             res.set('Content-Type', 'application/json');
             res.json(msg);
             return res;
-            break;
         case 'html':
             return res.set('Content-Type', 'text/html');
-            break;
         case 'error':
             res.json(msg);
             return res;
-            break;
         default:
             break;
     }

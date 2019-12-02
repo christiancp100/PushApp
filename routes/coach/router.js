@@ -99,7 +99,7 @@ router.post('/new', async (req, res) => {
                 });
                 await credentials.save();
                 if (req.accepts("text/html")) {
-                    res.redirect('/auth');
+                    res.redirect('/login');
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, savedUser);
                 }
@@ -121,11 +121,17 @@ function getFilter(req) {
     filter.accountType = 'coach';
     filter.isDeleted = 'false';
     let request;
+
     if (Object.keys(req.body).length > 0) {
         request = req.body;
-    } else if (Object.keys(req.query).length > 0) {
+    }
+    if (Object.keys(req.query).length > 0) {
         request = req.query;
     }
+    if (Object.keys(req.params).length > 0) {
+        request = req.query;
+    }
+
     if (request !== undefined) {
         //Filter based on:
         // ID
@@ -177,6 +183,7 @@ router.get('/search', function (req, res) {
                 let length = coaches.length;
                 console.log(length + " coaches has been found!");
                 if (req.accepts('html')) {
+                    res = setResponse('json', 200, res, coaches);
                     res.status(200);
                     //render
                 } else if (req.accepts('json')) {

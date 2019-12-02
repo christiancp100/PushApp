@@ -100,7 +100,7 @@ router.post('/new', async (req, res) => {
                 let hashedPassword = await bcrypt.hash(req.body.password, await bcrypt.genSalt(10));
 
                 let credentials = new Credentials({
-                    username: req.body.username,
+                    username: req.body.username.toLowerCase(),
                     password: hashedPassword,
                     _userAccountId: savedUserAccount._id
                 });
@@ -124,7 +124,7 @@ router.post('/new', async (req, res) => {
                 let savedClientInfo = await clientInfo.save();
 
                 if (req.accepts("text/html")) {
-                    res.redirect('/auth');
+                    res.redirect('/login');
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
                     res = setResponse('json', 201, res, {
@@ -147,7 +147,7 @@ router.post('/new', async (req, res) => {
 // Search for and users
 router.get('/search', function (req, res) {
     const filter = getFilter(req);
-    ClientInfo.find({})
+    UserAccount.find({})
         .then((clients) => {
             let result = clients.filter((o) => {
                 if (filter._id) {
@@ -195,8 +195,7 @@ router.get('/search', function (req, res) {
             res.status(500);
             res.end();
         });
-})
-;
+});
 
 // Edit an user
 router.put('/edit/:id', async (req, res) => {
@@ -312,6 +311,8 @@ function getFilter(req) {
         request = req.body;
     } else if (Object.keys(req.query).length > 0) {
         request = req.query;
+    } else if (Object.keys(req.params).length > 0) {
+        request = req.params;
     }
 
     if (request !== undefined) {
@@ -357,40 +358,33 @@ function setResponse(type, code, res, msg) {
             res.set('Content-Type', 'application/json');
             res.json(msg);
             return res;
-            break;
         case 'html':
             return res.set('Content-Type', 'text/html');
-            break;
         case 'error':
             res.json(msg);
             return res;
-            break;
         default:
             break;
     }
 }
 
-router.post('/auth', async (req, res) => {
+router.post('/login', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
         let client = await Client.findOne({'access.username': req.body.username});
         console.log(client);
         if (!client) {
-            return res.status(400).send('Incorrect username.');
+            return res.status(400).send('Incorrect username!');
         }
         const validPassword = await bcrypt.compare(req.body.password, client.access.password);
 
         if (!validPassword) {
-            return res.status(400).send('Incorrect email or password.');
+            return res.status(400).send('Incorrect password!');
         }
         //encode the _id of user object in the mongo
         const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));
         return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
     }
 });
-
-router.get('/all', function (req, res) {
-
-})
 
 module.exports = router;

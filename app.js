@@ -20,7 +20,7 @@ require('./models/CoachClients.js');
 
 require('dotenv').config(); //
 // Mongoose connection to MongoDB and Collection name declaration
-mongoose.connect('mongodb://localhost/PushApp', { useNewUrlParser: true , useUnifiedTopology:true});
+mongoose.connect('mongodb://localhost/PushApp', {useNewUrlParser: true, useUnifiedTopology: true});
 
 // Dust views rendering engine
 app.set('view engine', 'dust');
@@ -52,9 +52,9 @@ require('./routes/index.js')(app,passport);
 // Initialize routers here
 const routers = require('./routes/routers');
 app.use('/', routers.root);
+app.use('/auth', routers.auth);
 app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
-app.use('/auth', routers.auth);
 app.use('/workouts', routers.workout);
 
 // Catch 404 and forward to error handler
