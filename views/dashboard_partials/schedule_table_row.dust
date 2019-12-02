@@ -1,10 +1,7 @@
 <tr>
-    <td>Biceps Curl</td>
-    <td>15</td>
-    <td>4</td>
-    <td>10kg</td>
-    <td>Slow!!</td>
-    {?coach}
-    <td><input type="submit" value="-" class="btn-floating btn-small waves-effect waves-light black"></td>
-    {/coach}
+    <td data-field="exercise-body-part">-</td>
+    <td data-field="exercise-name">-</td>
+    <td data-field="exercise-repetitions">-</td>
+    <td data-field="exercise-sets">-</td>
+    <td data-field="Comments">-</td>
 </tr>

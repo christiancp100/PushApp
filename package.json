@@ -8,7 +8,7 @@
     "start": "DEBUG='push-app-server' bin/www",
     "nodemon": "nodemon bin/www",
     "test-mocha": "./node_modules/mocha/bin/mocha -R spec ./test/routes ./test/hypermedia",
-    "dustc": "cd ./views; dustc *.dust partials/*.dust register_forms/*.dust -o ../public/js/views.js"
+    "dustc": "cd ./views; dustc *.dust partials/*.dust register_forms/*.dust dashboard_partials/*.dust -o ../public/js/views.js"
   },
   "keywords": [
     "Node.js",
