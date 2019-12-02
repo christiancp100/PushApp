@@ -65,7 +65,6 @@ async function renderCoachTable(){
                 }
             });
             let x = await exercise.json();
-            // console.log("EX", x);
             exerciseList.push(x);
         }
         for(let i = 0; i < exerciseList.length; i++){
@@ -83,6 +82,39 @@ function resetTable(){
     let table = document.getElementById('scheduleTable');
     let rowCounter = 0;
     while(document.getElementById('row' + rowCounter)){
+        table.removeChild(document.getElementById('row' + rowCounter));
+        rowCounter++;
+    }
+}
+
+async function deleteFromDatabase(){
+    let table = document.getElementById('scheduleTable');
+    let rowCounter = 0;
+    while(document.getElementById('row' + rowCounter)){
+        let filter = {
+            name : document.getElementById('exerciseName' + rowCounter).innerHTML,
+            repetitions : document.getElementById('exerciseReps' + rowCounter).innerHTML,
+            set : document.getElementById('exerciseSets' + rowCounter).innerHTML,
+            pumpWeight : document.getElementById('exerciseWeight' + rowCounter).innerHTML,
+            description : document.getElementById('exerciseComments' + rowCounter).innerHTML,
+        };
+        try{
+
+            let exercise = await fetch('workouts/exercises/delete' + "?_id=" + exerciseIds[i], {
+                method: "DELETE",
+                headers: {
+                    'Content-Type':'application/json',
+                    'Accept':'application/json'
+                }
+            });
+
+
+            let found = await Exercise.find(filter);
+            found.remove();
+            console.log('removed');
+        }catch(e){
+            console.log(e);
+        }
         table.removeChild(document.getElementById('row' + rowCounter));
         rowCounter++;
     }
