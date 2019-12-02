@@ -191,7 +191,7 @@ function cancelAll() {
     console.log(children);
     for (let i = 0; i < children.length; i++) {
         if (children[i].id !== undefined) {
-            table.removeChild(children[i]);
+
         }
     }
 }
