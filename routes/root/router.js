@@ -102,7 +102,7 @@ async function renderClientDashboard(res, activeUser) {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Logout", icon: "person"},
+                    {name: "Logout", icon: "person", logout: true},
                     {name: "Settings", icon: "settings"},
                 ]
             }
