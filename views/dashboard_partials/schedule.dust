@@ -12,7 +12,10 @@
             <select class="icons" id="pickUser" onchange="renderClients()">
                 <option value="" disabled selected>Choose your option</option>
                 {#clients}
-                <option data-icon={photo}" class="left">{firstName} {lastName}</option>
+                <option data-icon={photo}" class="left">{firstName} {lastName}
+                    <label type="hidden" value="{_userAccountId}" id="hiddenId"></label>
+                </option>
+
                 {/clients}
             </select>
             <label>User</label>

@@ -9,7 +9,10 @@ const bcrypt = require('bcrypt');
 require('../../models/Credential.js');
 require('../../models/UserAccount.js');
 require('../../models/ClientInfo.js');
-require('../../models/CoachClients')
+require('../../models/CoachClients');
+require('../../models/Exercise');
+require('../../models/Session');
+require('../../models/Schedule');
 
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
@@ -127,6 +130,7 @@ async function clientsDropdown(activeUser) {
                             firstName: found.firstName,
                             lastName: found.lastName,
                             photo: found.photo,
+                            _userAccountId: found._id
                         };
                         clientsArray.push(clientInfo);
                     } catch (e) {
