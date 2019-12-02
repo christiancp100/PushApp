@@ -8,11 +8,11 @@ const mongoose = require('mongoose');
 
 require('../../models/Exercise.js');
 require('../../models/Schedule.js');
-require('../../models/Routine.js');
+//require('../../models/Routine.js');
 
 let Exercise = mongoose.model('Exercise');
 let Schedule = mongoose.model('Schedule');
-let Routine = mongoose.model('Routine');
+//let Routine = mongoose.model('Routine');
 
 
 router.post("/create-exercise", (req, res) => {
