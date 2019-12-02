@@ -29,24 +29,36 @@ router.get('/:username', async (req, res, next) => {
         if (req.accepts("html")) {
             const filter = getFilter(req);
 
-            let credentials = await Credentials.findOne(filter);
-            console.log();
-            if (credentials === null || credentials.username !== filter.username) {
-                // CHANGE FOR CORRECT 404 PAGE
-                res = setResponse('json', 401, res, {Error: 'Unauthorized access!'});
+            if (req.path === '/login') {
+                res.render('login.dust')
+            } else if (req.path === '/register') {
+                // ADD HERE CORRECT RENDERER!!!
+                // res.render('register_forms/coach-register');
+            } else if (req.path === '/register-coach') {
+                res.render('register_forms/coach-register');
+            } else if (req.path === '/register-client') {
+                res.render('register_forms/client-register');
             } else {
-                let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
+                let credentials = await Credentials.findOne(filter);
+                console.log();
+                if (credentials === null || credentials.username !== filter.username) {
+                    // CHANGE FOR CORRECT 404 PAGE
+                    res = setResponse('json', 401, res, {Error: 'Unauthorized access!'});
+                } else {
+                    let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
 
-                if (activeUser.accountType === 'client') {
-                    await renderClientDashboard(res, activeUser);
-                }
-                if (activeUser.accountType === 'coach') {
-                    await renderCoachDashboard(res, activeUser);
-                }
-                if (activeUser.accountType === 'admin') {
-                    await renderAdminDashboard(res);
+                    if (activeUser.accountType === 'client') {
+                        await renderClientDashboard(res, activeUser);
+                    }
+                    if (activeUser.accountType === 'coach') {
+                        await renderCoachDashboard(res, activeUser);
+                    }
+                    if (activeUser.accountType === 'admin') {
+                        await renderAdminDashboard(res);
+                    }
                 }
             }
+
         }
         res.end();
     } catch
@@ -54,7 +66,8 @@ router.get('/:username', async (req, res, next) => {
         res.status(500);
         res.end();
     }
-});
+})
+;
 
 async function renderClientDashboard(res, activeUser) {
     if (activeUser.photo === null || activeUser.photo === ' ') {
@@ -183,45 +196,45 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-// USER ACCOUNT CREATION AND USER AUTHENTICATION
-router.get('/register-coach', (req, res, next) => {
-    res.render('register_forms/coach-register');
-})
+//// USER ACCOUNT CREATION AND USER AUTHENTICATION
+// router.get('/register-coach', (req, res, next) => {
+//     res.render('register_forms/coach-register');
+// });
 
-router.get('/register-client', (req, res, next) => {
-    res.render('register_forms/client-register');
-})
+// router.get('/register-client', (req, res, next) => {
+//     res.render('register_forms/client-register');
+// });
 
-router.get('/coach/dashboard', (req, res) => {
-    let menu = {
-        items: [
-            {name: "Dashboard", icon: "web"},
-            {name: "Clients", icon: "list"},
-            {name: "Schedules", icon: "dashboard"},
-            {name: "Chat", icon: "chat"},
-        ],
-        accordions: [
-            {
-                title: "Accounting",
-                icon: "chevron_left",
-                subItems: [
-                    {name: "Revenue", icon: "show_chart"},
-                    {name: "Users", icon: "equalizer"},
-                    {name: "Conversion Rate", icon: "multiline_chart"},
-                ]
-            },
-            {
-                title: "Account",
-                icon: "chevron_left",
-                subItems: [
-                    {name: "Logout", icon: "person"},
-                    {name: "Settings", icon: "settings"},
-                ]
-            }
-        ]
-    };
-    res.render("dashboard_coach.dust", menu);
-});
+// router.get('/coach/dashboard', (req, res) => {
+//     let menu = {
+//         items: [
+//             {name: "Dashboard", icon: "web"},
+//             {name: "Clients", icon: "list"},
+//             {name: "Schedules", icon: "dashboard"},
+//             {name: "Chat", icon: "chat"},
+//         ],
+//         accordions: [
+//             {
+//                 title: "Accounting",
+//                 icon: "chevron_left",
+//                 subItems: [
+//                     {name: "Revenue", icon: "show_chart"},
+//                     {name: "Users", icon: "equalizer"},
+//                     {name: "Conversion Rate", icon: "multiline_chart"},
+//                 ]
+//             },
+//             {
+//                 title: "Account",
+//                 icon: "chevron_left",
+//                 subItems: [
+//                     {name: "Logout", icon: "person"},
+//                     {name: "Settings", icon: "settings"},
+//                 ]
+//             }
+//         ]
+//     };
+//     res.render("dashboard_coach.dust", menu);
+// });
 
 router.get('/coach/dashboard/clients', (req, res) => {
     let menu = {
@@ -252,66 +265,69 @@ router.get('/coach/dashboard/clients', (req, res) => {
         ]
     };
     res.render("dashboard_coach_clients.dust", menu);
-})
-
-router.get("/client/dashboard", (req, res) => {
-    let menu = {
-        items: [
-            {name: "Dashboard", icon: "web"},
-            {name: "Next Workout", icon: "list"},
-            {name: "Schedule", icon: "dashboard"},
-            {name: "Chat", icon: "chat"},
-        ],
-        accordions: [
-            {
-                title: "Progress",
-                icon: "chevron_left",
-                subItems: [
-                    {name: "Weight", icon: "show_chart"},
-                    {name: "Exercises", icon: "equalizer"},
-                    {name: "Volume of Training", icon: "multiline_chart"},
-                ]
-            },
-            {
-                title: "Account",
-                icon: "chevron_left",
-                subItems: [
-                    {name: "Logout", icon: "person"},
-                    {name: "Settings", icon: "settings"},
-                ]
-            }
-        ]
-    };
-    res.render("dashboard_client", menu)
 });
 
-router.get('/auth', function (req, res) {
-    res.render('login.dust')
-})
-router.post('/auth', async (req, res) => {
+// router.get("/client/dashboard", (req, res) => {
+//     let menu = {
+//         items: [
+//             {name: "Dashboard", icon: "web"},
+//             {name: "Next Workout", icon: "list"},
+//             {name: "Schedule", icon: "dashboard"},
+//             {name: "Chat", icon: "chat"},
+//         ],
+//         accordions: [
+//             {
+//                 title: "Progress",
+//                 icon: "chevron_left",
+//                 subItems: [
+//                     {name: "Weight", icon: "show_chart"},
+//                     {name: "Exercises", icon: "equalizer"},
+//                     {name: "Volume of Training", icon: "multiline_chart"},
+//                 ]
+//             },
+//             {
+//                 title: "Account",
+//                 icon: "chevron_left",
+//                 subItems: [
+//                     {name: "Logout", icon: "person"},
+//                     {name: "Settings", icon: "settings"},
+//                 ]
+//             }
+//         ]
+//     };
+//     res.render("dashboard_client", menu)
+// });
+
+// router.get('/auth', function (req, res) {
+//     res.render('login.dust')
+// });
+
+router.post('/login', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
         let client = await Credentials.findOne({username: req.body.username});
         console.log(client);
         if (!client) {
-            return res.status(400).send('Incorrect username.');
+            return res.status(400).send('Incorrect username or password!');
         }
         const validPassword = await bcrypt.compare(req.body.password, client.password);
 
 
         if (!validPassword) {
-            return res.status(400).send('Incorrect email or password.');
+            return res.status(400).send('Incorrect username or password.');
         }
         //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
         //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
         let account = await UserAccount.findById(client._userAccountId);
-        if (account.accountType === 'coach') {
-            res.redirect('/coach/dashboard');
-        } else {
-            res.redirect('/client/dashboard');
-        }
+        res.redirect('/' + client.username);
+        // if (account.accountType === 'coach') {
+        //     res.redirect('/coach/dashboard');
+        // } else {
+        //     res.redirect('/client/dashboard');
+        // }
     }
 });
+
 router.get('/test', function (req, res) {
     res.render('register_forms/register_1');
     res.end();

@@ -4,7 +4,7 @@
     <title>LOGIN</title>
 </head>
 <body>
-<form onsubmit="testing(document.getElementById('user').value)" action="/auth" method="post" enctype="application/x-www-form-urlencoded">
+<form onsubmit="getActiveUser(document.getElementById('user').value)" action="/login" method="post" enctype="application/x-www-form-urlencoded">
     <div>
         <label>Username:
             <input required id="user" type="text" name="username"/>
