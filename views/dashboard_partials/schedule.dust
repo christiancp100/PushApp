@@ -9,7 +9,7 @@
         </div>
         <div class="input-field col s12 m6">
 
-            <select class="icons" id="pickUser" onchange="renderClients()">
+            <select class="icons" id="pickUser">
                 <option value="" disabled selected>Choose your option</option>
                 {#clients}
                 <option data-icon={photo}" class="left">{firstName} {lastName}</option>
@@ -47,4 +47,3 @@
     </a>
 </div>
 <script src="/js/schedule.js"></script>
-<script src="/js/scheduleClientsDropdown.js"></script>

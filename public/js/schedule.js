@@ -91,9 +91,7 @@ async function removeRow(){
     // } catch (e) {
     //     console.log(e);
     // }
-
     toRemove.parentNode.removeChild(toRemove);
-
 }
 
 //-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
@@ -105,12 +103,12 @@ async function takeRows(e){
 
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
-    //
+
     // let scheduleName_btn = document.getElementById("last_name");
     // let scheduleName = scheduleName_btn.options[scheduleName_btn.selectedIndex].text;
 
     let sched= {
-        _coachId: "5de3c7d83fd27d2259009574",
+        _coachId: localStorage.userAccountId,
         _clientId: "5de3c7d83fd27d2259009576",
         name: 'scheduleName placeholder',
         sessions: [],
@@ -127,7 +125,6 @@ async function takeRows(e){
     );
 
     let fields = await res.json();
-    console.log(fields);
 
     for(let i = 0; i <children.length; i++){
         if(children[i].tagName === 'TR'){
@@ -174,7 +171,6 @@ async function takeRows(e){
             }
         }
     }
-    console.log(A);
     await saveInSessionAndSchedule(A,fields);
 }
 
@@ -187,11 +183,12 @@ async function saveInSessionAndSchedule(array, schedFields){
     let day = day_btn.options[day_btn.selectedIndex].text;
 
     let sess = {
-        _coachId: "5de3c7d83fd27d2259009574",
+        _coachId: localStorage.userAccountId,
         _clientId: "5de3c7d83fd27d2259009576",
         weekday: day,
         exercises: array
     };
+
     try {
         let res = await fetch("/workouts/sessions/new", {
             method: "POST",
@@ -202,10 +199,11 @@ async function saveInSessionAndSchedule(array, schedFields){
         });
 
         let fields = await res.json();
-
         let sArray = schedFields.sessions;  //puts the new session id into existing schedule
+        let s_id = schedFields._id;
         sArray.push(fields._id);
-
+        // let response = await fetch('/workouts/schedules/edit/'+ s_id, {method: "PUT",
+        //     })
     }catch(err){
         console.log(err);
     }
