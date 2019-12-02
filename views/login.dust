@@ -19,35 +19,10 @@
     <div>
         <input type="submit" value="Login"/>
     </div>
-</form> -->
+</form>
 
-    <div class="col s12 l4 offset-l4">
-        <div class="card">
-            <div class="card-action black white-text">
-                <h4>Login</h4>
-            </div>
-
-            <div class="card-content">
-                <form onsubmit="getActiveUser(document.getElementById('user').value)" action="/login" method="post" enctype="application/x-www-form-urlencoded">
-                    <div class="form-field">
-                        <label class="black-text" for="username">Username</label>
-                        <input class="white-text" required id="user" type="text" name="username">
-                    </div><br>
-
-                    <div class="form-field">
-                        <label class="black-text" for="username">Password</label>
-                        <input class="white-text" required type="password" name="password">
-                    </div><br>
-
-                    <div class="form-field">
-                        <button class="btn btn-large black">LogIn</button>
-                    </div><br>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
+<script src="js/resources/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>
 <script src="/js/helper.js"></script>
 </body>
 </html>

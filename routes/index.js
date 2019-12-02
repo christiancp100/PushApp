@@ -13,7 +13,8 @@ module.exports = function(app,passport){
     })
 
     app.get('/signup', function (req, res) {
-        res.render('register_forms/register-credentials.dust');
+        console.log(req.body);
+        res.render('register_forms/register-credentials.dust', {accID : req.body.id});
     })
 
     app.get('/login',(req,res) => {
@@ -21,10 +22,12 @@ module.exports = function(app,passport){
     });
 
     app.post('/signup', passport.authenticate('local-register', {
-        successRedirect : '/',//todo go to dynamic routes
         failureRedirect : '/signup', // redirect back to the signup page if there is an error
         failureFlash : true // allow flash messages
-    }));
+        }),
+        function (req, res) {
+        res.redirect('/' + req.user.username);
+    });
 
     app.post('/login', passport.authenticate('local-login',{
             failureRedirect : '/login',
@@ -40,8 +43,7 @@ module.exports = function(app,passport){
         res.redirect('/');
     });
 
-    //todo use this middleware function to routes!!!!!
-
+    //todo use this middleware function to routes
     // route middleware to make sure a user is logged in
     function isLoggedIn(req, res, next) {
 
@@ -49,6 +51,6 @@ module.exports = function(app,passport){
         if (req.isAuthenticated())
             return next();
         // if they aren't render login page
-        res.redirect('/signup');
+        res.redirect('/login');
     }
 };

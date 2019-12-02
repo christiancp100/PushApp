@@ -24,7 +24,15 @@ router.get('/', function (req, res, next) {
         res.end();
     }
 });
-
+function isLoggedIn(req, res, next) {
+    console.log(req.path);
+    console.log(req.user.username);
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated() && ("/"+req.user.username) === req.path){
+        return next();}
+    // if they aren't render login page
+    res.redirect('/login');
+}
 
 /*router.get('/register', function (req, res) {
   if (req.accepts("html")) {
@@ -378,14 +386,6 @@ router.get('/coach/dashboard/clients', (req, res) => {
     }
 });*/
 
-function isLoggedIn(req, res, next) {
-
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
-        return next();
-    // if they aren't render login page
-    res.redirect('/login');
-}
 
 /** router for /root */
 module.exports = router;

@@ -2,7 +2,7 @@ const LocalStrategy = require('passport-local').Strategy;
 
 let Credentials = require('../models/Credential');
 let UserAccount = require('../models/UserAccount');
-
+let saveId;
 module.exports = function (passport) {
     passport.serializeUser(function(cred, done) {
         done(null, cred.id);
@@ -29,12 +29,20 @@ module.exports = function (passport) {
                 let found =  await Credentials.findOne({username :  username });
                 // check to see if theres already a user with that email
                 if (found) {//TODO render later on error this message
+                    saveId = req.body.id;
                     return done(null, false, req.flash('signup-Message', 'That username is already taken.'));
                 } else {
+                    let put;
+                    if (typeof saveId != "undefined"){
+                        put = saveId;
+                    } else {
+                        put = req.body.id;
+                    }
+                    console.log(put);
                     let cred = new Credentials();
                         cred.username = username;
                         cred.password = cred.generateHash(password);
-                        cred._userAccountId = req.body.id;
+                        cred._userAccountId = put;
                     let saved = await cred.save();
                     return done(null, saved);
                 }
