@@ -4,5 +4,7 @@
     <td>4</td>
     <td>10kg</td>
     <td>Slow!!</td>
+    {?coach}
     <td><input type="submit" value="-" class="btn-floating btn-small waves-effect waves-light black"></td>
+    {/coach}
 </tr>
