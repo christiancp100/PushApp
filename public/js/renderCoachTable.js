@@ -9,31 +9,28 @@ let Schedule = mongoose.model('Schedule');
 function retrieveDay(){
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
+    return day;
 }
 
-function retrieveClienId(){
-    let da
+function retrieveClientId(){
+    let selectedUser = document.getElementById('pickUser');
+    let _clientId = selectedUser.options[selectedUser.selectedIndex].getAttribute("value");
+    return _clientId;
 }
 
-async function renderCoachTable(activeUser){
+async function renderCoachTable(){
 
-    let filter = {
-        weekday : retrieveDay(),
-        _clientId : '???',
-        _coachId : localStorage.userAccountId
-    };
+    console.log("AAA" + retrieveDay());
 
-    let session = await fetch('workouts/sessions/search', {
+    let session = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
         method: "GET",
-        body: JSON.stringify(filter),
         headers: {
             'Content-Type':'application/json',
-            'Accept' : 'application/x-www-form-urlencoded'
+            'Accept':'application/json'
         },
     });
-
     if(session){
-        console.log(session);
+        console.log(session.url);
     } else {
         console.log("NO");
     }
