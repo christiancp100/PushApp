@@ -172,6 +172,7 @@ async function takeRows(e){
         }
     }
     await saveInSessionAndSchedule(A,fields);
+    resetTable();
 }
 
 //-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
