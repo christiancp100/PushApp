@@ -6,8 +6,11 @@
             <th data-field="sets">Nr. of Sets</th>
             <th data-field="weight">Weight</th>
             <th data-field="description">Description</th>
+            <th>
+            </th>
             {?coach}
-                <th data-field="#">#</th>
+                <th data-field="#">
+                </th>
             {/coach}
         </tr>
     </thead>
