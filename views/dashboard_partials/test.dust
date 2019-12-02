@@ -1,6 +1,0 @@
-{#field}
-<p>{field._clientId}</p>
-{/field}
-
-<script src="/js/schedule.js></script>
-<script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
