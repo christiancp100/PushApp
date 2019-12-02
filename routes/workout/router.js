@@ -510,8 +510,8 @@ function getFilter(req) {
 
     if (request !== undefined) {
         // Filter by ID
-        if (request.id !== undefined && mongoose.Types.ObjectId.isValid(request.id)) {
-            filter._id = request.id;
+        if (request._id !== undefined && mongoose.Types.ObjectId.isValid(request._id)) {
+            filter._id = request._id;
         }
 
         // Filter by name
@@ -545,13 +545,13 @@ function getFilter(req) {
         }
 
         // Search by coachId
-        if (request.coachId !== undefined) {
-            filter._coachId = request.coachId;
+        if (request._coachId !== undefined) {
+            filter._coachId = request._coachId;
         }
 
         // Search by coachId
-        if (request.clientId !== undefined) {
-            filter._clientId = request.clientId;
+        if (request._clientId !== undefined) {
+            filter._clientId = request._clientId;
         }
         return filter;
     }

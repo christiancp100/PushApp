@@ -11,6 +11,9 @@
             </th>
             {?coach}
                 <th data-field="#">
+                <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="deleteFromDatabase()"">
+                    <i class="material-icons">delete</i>
+                </a>
                 </th>
             {/coach}
         </tr>
@@ -24,3 +27,4 @@
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/schedule.js"></script>
+<script src="/js/renderCoachTable.js"></script>
