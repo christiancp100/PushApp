@@ -20,6 +20,7 @@ function retrieveClientId(){
 
 async function renderCoachTable(){
     resetTable();
+    level = 0;
 
     if(retrieveDay() !== 'Session' && retrieveClientId() !== ''){
         let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
@@ -32,6 +33,7 @@ async function renderCoachTable(){
 
         if(foundSession.status === 404){
             resetTable();
+            level = 0;
             return;
         }
 
@@ -40,6 +42,8 @@ async function renderCoachTable(){
         let exerciseIds = await session.exercises;
 
         if(exerciseIds === undefined){
+            resetTable();
+            level = 0;
             return;
         }
 
@@ -51,7 +55,7 @@ async function renderCoachTable(){
         // }
 
         for(let i = 0; i < exerciseIds.length; i++){
-            console.log(i, exerciseIds[i]);
+            // console.log(i, exerciseIds[i]);
 
             let exercise = await fetch('workouts/exercises/search' + "?_id=" + exerciseIds[i], {
                 method: "GET",
@@ -64,7 +68,6 @@ async function renderCoachTable(){
             // console.log("EX", x);
             exerciseList.push(x);
         }
-
         for(let i = 0; i < exerciseList.length; i++){
             addRow();
             document.getElementById('exerciseName' + i).innerHTML = exerciseList[i].name;
