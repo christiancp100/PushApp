@@ -185,37 +185,15 @@ async function saveInSessionAndSchedule(array, schedFields){
     }
 }
 
-async function cancelAll() {
-
-    let day_btn = document.getElementById("day_btn");
-    let day = day_btn.options[day_btn.selectedIndex].text;
-
-    let client_btn = document.getElementById("pickUser");
-    let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
-
-    let searchUrl = "/workouts/sessions/search?_clientId="+client_id + "&_coachId="+localStorage.userAccountId+"&day="+day;
-    let searchInit = {
-        'method': 'GET',
-        'headers':{
-            'Content-Type':'application/json',
-            'Accept':'application/json'
-        }
-    };
-
-    let searchSession = await fetch(searchUrl, searchInit);
-    let session = await searchSession.json();
-    let session_id = session._id;
-
-    let deleteUrl = "/workouts/sessions/delete/"+session_id;
-    let deleteInit = {
-        'method':'DELETE',
-        'headers':{
+function cancelAll() {
+    let table = document.getElementById("scheduleTable");
+    let children = table.childNodes;
+    console.log(children);
+    for (let i = 0; i < children.length; i++) {
+        if (children[i].id !== undefined) {
 
         }
-    };
-
-    await fetch(deleteUrl, deleteInit);
-    resetTable();
+    }
 }
 function removeRow(){
     let toRemove = this.parentNode;
