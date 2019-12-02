@@ -1,7 +1,4 @@
-
 let level = 0;
-
-
 //clicking the add button will call this function that simply creates the row in the table.
 function addRow(e) {
 
@@ -43,14 +40,15 @@ function addRow(e) {
     newExerciseRemoveInput.type = 'submit';
     newExerciseRemoveInput.value = '-';
     newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
+
+    // let newExerciseDeleteAllInput = document.createElement('input');
+    // newExerciseDeleteAllInput.type = 'submit';
+    // newExerciseDeleteAllInput.value = 'cancel';
+    // newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
+
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
-    let newExerciseAddInput = document.createElement('input');
-    newExerciseRemoveInput.type = 'submit';
-    newExerciseRemoveInput.value = '-';
-    newExerciseRemoveInput.style.marginTop = "0.5rem";
-    newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
-    newExerciseRemoveInput.addEventListener('click', removeRow);
+    console.log("Adding a row...");
 
     let icon = document.createElement('i');//just for beauty reason
     icon.className= 'material-icons';
@@ -67,49 +65,23 @@ function addRow(e) {
     level++;
 }
 
-async function removeRow(){
-    let toRemove = this.parentNode;
-
-    // let filter= {
-    //     exerciseName : toRemove.childNodes[0].innerHTML,
-    //     rep : toRemove.childNodes[1].innerHTML,
-    //     sets : toRemove.childNodes[2].innerHTML,
-    //     weight : toRemove.childNodes[3].innerHTML,
-    //     comment : toRemove.childNodes[4].innerHTML
-    // };
-
-    console.log('Looking for the exercise to remove...');
-    // try {
-    //     let found = await fetch('/workouts/exercises/search', {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Accept':'application/x-www-urlencoded'
-    //         },
-    //     });
-    //     console.log(found);
-    // } catch (e) {
-    //     console.log(e);
-    // }
-    toRemove.parentNode.removeChild(toRemove);
-}
-
 //-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
 //CREATES new "empty" Schedule and Takes the rows to work with them to create new exercise
 
 async function takeRows(e){
+
 
     let A = [];
 
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
 
-    // let scheduleName_btn = document.getElementById("last_name");
-    // let scheduleName = scheduleName_btn.options[scheduleName_btn.selectedIndex].text;
+    let client_btn = document.getElementById("pickUser");
+    let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
 
     let sched= {
         _coachId: localStorage.userAccountId,
-        _clientId: "5de3c7d83fd27d2259009576",
+        _clientId: client_id,
         name: 'scheduleName placeholder',
         sessions: [],
         startDate: Date.now(),
@@ -183,9 +155,12 @@ async function saveInSessionAndSchedule(array, schedFields){
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
 
+    let client_btn = document.getElementById("pickUser");
+    let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
+
     let sess = {
         _coachId: localStorage.userAccountId,
-        _clientId: "5de3c7d83fd27d2259009576",
+        _clientId: client_id,
         weekday: day,
         exercises: array
     };
@@ -208,5 +183,20 @@ async function saveInSessionAndSchedule(array, schedFields){
     }catch(err){
         console.log(err);
     }
+}
 
+function cancelAll() {
+    let table = document.getElementById("scheduleTable");
+    let children = table.childNodes;
+    console.log(children);
+    for (let i = 0; i < children.length; i++) {
+        if (children[i].id !== undefined) {
+            table.removeChild(children[i]);
+        }
+    }
+}
+function removeRow(){
+    let toRemove = this.parentNode;
+    console.log('Looking for the exercise to remove...');
+    toRemove.parentNode.removeChild(toRemove);
 }
