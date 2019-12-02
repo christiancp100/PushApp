@@ -27,12 +27,34 @@ router.get('/', function (req, res, next) {
         res.end();
     }
 });
+function isLoggedIn(req, res, next) {
+    console.log(req.path);
+    if (!req.user){
+        res.redirect('/login');
+    }
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated() && ("/"+req.user.username) === req.path){
+        return next();}
+    // if they aren't render login page
+    res.redirect('/login');
+}
+
+/*router.get('/register', function (req, res) {
+  if (req.accepts("html")) {
+    res.render('register_forms/register_1');
+  } else {
+    res.status(500);
+    res.end();
+  }
+})*/
+
 
 // Dynamic user route according to userAccount type
-router.get('/:username', async (req, res, next) => {
+router.get('/:username', isLoggedIn, async (req, res, next) => {
     try {
         if (req.accepts("html")) {
             const filter = getFilter(req);
+
 
             if (req.path === '/login') {
                 res.render('login.dust')
@@ -190,10 +212,6 @@ async function renderCoachDashboard(res, activeUser) {
     res.render("dashboard_coach.dust", menu);
 }
 
-async function renderAdminDashboard(res) {
-    //  Add render here code for admin
-    res.end();
-}
 
 // Creates filter for searching users on the database
 function getFilter(req) {
@@ -347,7 +365,7 @@ router.get('/coach/dashboard/clients', (req, res) => {
 //     res.render('login.dust')
 // });
 
-router.post('/login', async (req, res) => {
+/*router.post('/login', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
         let client = await Credentials.findOne({username: req.body.username});
@@ -371,12 +389,8 @@ router.post('/login', async (req, res) => {
         //     res.redirect('/client/dashboard');
         // }
     }
-});
+});*/
 
-router.get('/test', function (req, res) {
-    res.render('register_forms/register_1');
-    res.end();
-});
 
 /** router for /root */
 module.exports = router;
