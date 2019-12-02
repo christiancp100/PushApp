@@ -26,5 +26,7 @@
 <script src="/js/schedule.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/helper.js"></script>
+</body>
+
 
 </html>
