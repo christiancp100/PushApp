@@ -1,9 +1,9 @@
 
+let level = 0;
 
 
 //clicking the add button will call this function that simply creates the row in the table.
 function addRow(e) {
-    let level = 0;
 
     let table = document.getElementById('scheduleTable');
     let rows =  table.querySelectorAll("tr");
@@ -32,7 +32,7 @@ function addRow(e) {
     newExerciseSets.innerHTML = exSets.value;
 
     let newExerciseWeight = document.createElement('td');
-    newExerciseWeight.id = 'exerciseReps' + level;
+    newExerciseWeight.id = 'exerciseWeight' + level;
     newExerciseWeight.innerHTML = exWeight.value;
 
     let newExerciseComments = document.createElement('td');

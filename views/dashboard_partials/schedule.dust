@@ -9,7 +9,7 @@
         </div>
         <div class="input-field col s12 m6">
 
-            <select class="icons" id="pickUser" onchange="renderCoachTable()">
+            <select class="icons" id="pickUser">
                 <option value="" disabled selected>Choose your option</option>
                 {#clients}
                 <option data-icon="{photo}" value="{_userAccountId}" class="left">{firstName} {lastName}</option>

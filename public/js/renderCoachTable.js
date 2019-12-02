@@ -20,29 +20,51 @@ function retrieveClientId(){
 
 async function renderCoachTable(){
 
-    console.log("AAA" + retrieveDay());
+    if(retrieveDay() !== 'Session' && retrieveClientId() !== ''){
+        let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
+            method: "GET",
+            headers: {
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            },
+        });
 
-    let session = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
-        method: "GET",
-        headers: {
-            'Content-Type':'application/json',
-            'Accept':'application/json'
-        },
-    });
-    if(session){
-        console.log(session.url);
-    } else {
-        console.log("NO");
+        if(foundSession.status === 404){
+            return;
+        }
+
+        let session = await foundSession.json();
+
+        let exerciseIds = await session.exercises;
+
+        if(exerciseIds === undefined){
+            return;
+        }
+
+        let exerciseList = [];
+
+        for(let i = 0; i < exerciseIds.length; i++){
+            let exercise = await fetch('workouts/exercises/search' + "?_id=" + exerciseIds[i], {
+                method: "GET",
+                headers: {
+                    'Content-Type':'application/json',
+                    'Accept':'application/json'
+                },
+            });
+            let x = await exercise.json();
+            console.log("x ", x);
+            exerciseList.push(x);
+        }
+
+        console.log("PRCDD " , exerciseList);
+        for(let i = 0; i < exerciseList.length; i++){
+            addRow();
+            document.getElementById('exerciseName' + i).innerHTML = exerciseList[i].name;
+            document.getElementById('exerciseReps' + i).innerHTML = exerciseList[i].name;
+            document.getElementById('exerciseSets' + i).innerHTML = exerciseList[i].name;
+            document.getElementById('exerciseWeight' + i).innerHTML = exerciseList[i].name;
+            document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].name;
+
+        }
     }
-
-    // let exercises = [];
-    // let found = await Session.find(filter);
-    // if(found){
-    //     for(let i = 0; i < found.exercises.length; i++){
-    //         exercises.push(found.exercise[i]);
-    //     }
-    //     return exercises;
-    // }else{
-    //     return [];
-    // }
 }
