@@ -349,24 +349,25 @@ router.post('/login', async (req, res) => {
 
         let client = await Credentials.findOne({username: req.body.username});
         console.log(client);
-        if (client !== null) {
+        if (client === null) {
             return res.status(400).send('Incorrect username or password!');
-        }
-        const validPassword = await bcrypt.compare(req.body.password, client.password);
+        } else {
+            const validPassword = await bcrypt.compare(req.body.password, client.password);
 
 
-        if (!validPassword) {
-            return res.status(400).send('Incorrect username or password.');
+            if (!validPassword) {
+                return res.status(400).send('Incorrect username or password.');
+            }
+            //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
+            //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
+            let account = await UserAccount.findById(client._userAccountId);
+            res.redirect('/' + client.username);
+            // if (account.accountType === 'coach') {
+            //     res.redirect('/coach/dashboard');
+            // } else {
+            //     res.redirect('/client/dashboard');
+            // }
         }
-        //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
-        //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-        let account = await UserAccount.findById(client._userAccountId);
-        res.redirect('/' + client.username);
-        // if (account.accountType === 'coach') {
-        //     res.redirect('/coach/dashboard');
-        // } else {
-        //     res.redirect('/client/dashboard');
-        // }
     }
 });
 
