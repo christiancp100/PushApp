@@ -34,6 +34,7 @@ module.exports = function (passport) {
                     let cred = new Credentials();
                         cred.username = username;
                         cred.password = cred.generateHash(password);
+                        cred._userAccountId = req.body.id;
                     let saved = await cred.save();
                     return done(null, saved);
                 }

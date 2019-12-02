@@ -24,18 +24,18 @@ router.get('/', function (req, res, next) {
 });
 
 
-router.get('/register', function (req, res) {
+/*router.get('/register', function (req, res) {
   if (req.accepts("html")) {
     res.render('register_forms/register_1');
   } else {
     res.status(500);
     res.end();
   }
-})
+})*/
 
 
 // Dynamic user route according to userAccount type
-router.get('/:username', async (req, res, next) => {
+router.get('/:username', isLoggedIn, async (req, res, next) => {
     try {
         if (req.accepts("html")) {
             const filter = getFilter(req);
@@ -158,20 +158,10 @@ async function renderCoachDashboard(res, activeUser) {
 }
 
 
-
-router.post('/auth', async (req, res) => {
-  if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
- 
-async function renderAdminDashboard(res) {
-    //  Add render here code for admin
-    res.end();
-}
-
 // Creates filter for searching users on the database
 function getFilter(req) {
     const filter = {};
     let request;
->>>>>> dev
 
     if (Object.keys(req.body).length > 0) {
         request = req.body;
@@ -320,7 +310,7 @@ router.get('/coach/dashboard/clients', (req, res) => {
 //     res.render('login.dust')
 // });
 
-router.post('/login', async (req, res) => {
+/*router.post('/login', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
         let client = await Credentials.findOne({username: req.body.username});
@@ -344,12 +334,16 @@ router.post('/login', async (req, res) => {
         //     res.redirect('/client/dashboard');
         // }
     }
-});
+});*/
 
-router.get('/test', function (req, res) {
-    res.render('register_forms/register_1');
-    res.end();
-});
+function isLoggedIn(req, res, next) {
+
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+        return next();
+    // if they aren't render login page
+    res.redirect('/login');
+}
 
 /** router for /root */
 module.exports = router;

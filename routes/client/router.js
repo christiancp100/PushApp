@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+let ObjectId = require('mongodb').ObjectID;
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
@@ -97,16 +98,6 @@ router.post('/new', async (req, res) => {
 
                 let savedUserAccount = await userAccount.save();
 
-                let hashedPassword = await bcrypt.hash(req.body.password, await bcrypt.genSalt(10));
-
-                let credentials = new Credentials({
-                    username: req.body.username.toLowerCase(),
-                    password: hashedPassword,
-                    _userAccountId: savedUserAccount._id
-                });
-
-                await credentials.save();
-
                 let clientInfo = new ClientInfo({
                     _clientId: savedUserAccount._id,
                     height: req.body.height,
@@ -124,7 +115,7 @@ router.post('/new', async (req, res) => {
                 let savedClientInfo = await clientInfo.save();
 
                 if (req.accepts("text/html")) {
-                    res.redirect('/login');
+                    res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});//todo pass ID ad argument
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
                     res = setResponse('json', 201, res, {

@@ -3,11 +3,12 @@
 <head>
     <title>Coach register</title>
 </head>
+<body>
 <h2>Register new Coach</h2>
-<form method="post" action="" enctype="application/x-www-form-urlencoded">
+<form method="post" action="/coaches/new" enctype="application/x-www-form-urlencoded">
     {>"../partials/register"/}
 
-    <input type="submit" value="Continue"/>
+    <input type="submit" value="Register"/>
 </form>
 <script src="/js/helper.js"></script>
 <script src="js/resources/dustjs-linkedin/dust-core.min.js"></script>

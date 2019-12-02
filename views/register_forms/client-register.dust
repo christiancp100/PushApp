@@ -3,9 +3,9 @@
 <head>
     <title>Client register</title>
 </head>
-
+<body>
 <h2>Register new Client</h2>
-<form action=""  method="POST" enctype="application/x-www-form-urlencoded">
+<form action="/clients/new"  method="POST" enctype="application/x-www-form-urlencoded">
    {>"../partials/register"/}
     <div>
         <label>bmi:
@@ -26,7 +26,7 @@
         </label>
     </div>
     <div>
-        <input type="submit" value="Continue"/>
+        <input type="submit" value="Register"/>
     </div>
 </form>
 <script src="/js/helper.js"></script>

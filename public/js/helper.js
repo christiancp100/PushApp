@@ -27,15 +27,18 @@ function mySubmit() {
 }
 function fetchClient(e) {
     e.preventDefault();
-    dust.render('register_forms/client-register', {}, function (err, out) {
-        document.getElementById("reg").outerHTML = out;
-    })
+    fetch('/register/client', {method: "GET"})
+        .then(res => res.text())
+        .then((text) => {console.log(text);
+            document.getElementById("reg").innerHTML = text});
 }
 function fetchCoach(e) {
-    e.preventDefault();
-    dust.render('register_forms/coach-register', {}, function (err, out) {
-        document.getElementById("reg").outerHTML = out;
-    })
+     e.preventDefault();
+     console.log("HERE");
+     fetch('/register/coach', {method: "GET"})
+         .then(res => res.text())
+         .then((text) => {console.log(text);
+             document.getElementById("reg").innerHTML = text});
 }
 
 // function testing(name) {
