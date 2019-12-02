@@ -60,6 +60,7 @@ async function getActiveUser(name) {
 }
 
 function logOut() {
+    debugger
     localStorage.removeItem('userAccountId');
     localStorage.removeItem('username');
     window.location.replace("/login");

@@ -14,7 +14,11 @@
                             <div class="collapsible-body">
                                 <ul>
                                     {#subItems}
-                                        <li><a href="/pages/admin-calendar" class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>        
+                                        {?logout}
+                                        <li><a onclick="logOut()" class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
+                                        {:else}
+                                        <li><a class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
+                                        {/logout}
                                     {/subItems}
                                 </ul>
                             </div>

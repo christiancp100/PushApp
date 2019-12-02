@@ -20,6 +20,18 @@ require('./models/CoachClients.js');
 
 require('dotenv').config(); //
 // Mongoose connection to MongoDB and Collection name declaration
+
+/*const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://christiancp:pushapp123@pushapp-yvfjb.mongodb.net/PushApp?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});*/
+
+
+
 mongoose.connect('mongodb://localhost/PushApp', {useNewUrlParser: true, useUnifiedTopology: true});
 
 // Dust views rendering engine

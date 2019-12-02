@@ -7,7 +7,6 @@
   "scripts": {
     "start": "DEBUG='push-app-server' bin/www",
     "nodemon": "nodemon bin/www",
-    "test": "npm run test-mocha",
     "test-mocha": "./node_modules/mocha/bin/mocha -R spec ./test/routes ./test/hypermedia",
     "dustc": "cd ./views; dustc *.dust partials/*.dust register_forms/*.dust -o ../public/js/views.js"
   },
@@ -41,9 +40,11 @@
     "klei-dust": "^1.0.0",
     "loadash": "^1.0.0",
     "method-override": "^3.0.0",
+    "mongodb": "latest",
     "mongoose": "^5.7.12",
     "morgan": "^1.9.1",
     "node": "^13.1.0",
+    "nodemon": "^2.0.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "process": "^0.11.10",

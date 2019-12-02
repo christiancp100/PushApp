@@ -200,14 +200,17 @@ router.post('/sessions/new', async (req, res) => {
 
             if (req.body._coachId === undefined &&
                 req.body._clientId === undefined &&
-                req.body.weekday === undefined) {
+                req.body.weekday === undefined &&
+                req.body.exercises === undefined) {
                 res = setResponse('json', 400, res, {Error: "Coach ID, Client ID and weekday must be provided"});
                 res.end();
             } else {
+
                 let session = new Session({
                     _coachId: req.body._coachId,
                     _clientId: req.body._clientId,
-                    weekday: req.body.weekday
+                    weekday: req.body.weekday,
+                    exercises: req.body.exercises,
                 });
 
                 if (req.body.duration !== undefined) {

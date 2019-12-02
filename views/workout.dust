@@ -3,8 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="description" content="">
@@ -13,8 +12,7 @@
     <link href="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/admin-materialize.min.css?0" rel="stylesheet">
     <!-- Material Icons-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <link rel="stylesheet" href="css/workout.css">
+    <link rel="stylesheet" href="/css/workout.css">
 
 </head>
 
@@ -22,8 +20,7 @@
     <div class="container center-content">
         <div class="row">
             <div class="col l2 m3 s3">
-                <a id="pause-continue" onclick="chronoPauseOrContinue()" class="btn-huge left"><i
-                        class="material-icons">pause</i></a>
+                <a id="pause-continue" onclick="chronoPauseOrContinue()" class="btn-huge left"><i class="material-icons">pause</i></a>
             </div>
             <div class="col l8 m6 s6">
                 <h1 onload="chronoStart()" id="chronometer" class="white-text">00:00:00</h1>
@@ -50,7 +47,7 @@
     </div>
 
 
-    <script src="./js/chronometer.js"></script>
+    <script src="/js/chronometer.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
