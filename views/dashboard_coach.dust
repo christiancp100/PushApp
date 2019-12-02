@@ -20,11 +20,11 @@
     </div>
   </main>
   {>"dashboard_partials/footer"/}
-
-</body>
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/schedule.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/helper.js"></script>
+</body>
+
 
 </html>
