@@ -26,7 +26,9 @@ router.get('/', function (req, res, next) {
 });
 function isLoggedIn(req, res, next) {
     console.log(req.path);
-    console.log(req.user.username);
+    if (!req.user){
+        res.redirect('/login');
+    }
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated() && ("/"+req.user.username) === req.path){
         return next();}

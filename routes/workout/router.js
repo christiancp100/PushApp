@@ -13,6 +13,15 @@ let Schedule = mongoose.model('Schedule');
 let Session = mongoose.model('Session');
 let Exercise = mongoose.model('Exercise');
 
+function isLoggedIn(req, res, next) {
+    console.log(req);
+
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+        return next();
+    // if they aren't render login page
+    res.redirect('/login');
+}
 /* GETS */
 // Get ALL at /workouts root, not serving data
 router.get('/',isLoggedIn,  async (req, res) => {
@@ -543,14 +552,6 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-function isLoggedIn(req, res, next) {
-    console.log(req);
 
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
-        return next();
-    // if they aren't render login page
-    res.redirect('/login');
-}
 
 module.exports = router;

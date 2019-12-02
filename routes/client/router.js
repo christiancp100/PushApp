@@ -16,6 +16,10 @@ let ClientInfo = mongoose.model('ClientInfo');
 let Credentials = mongoose.model('Credentials');
 
 // GET all
+router.get('/test', isLoggedIn, function (req, res) {
+    console.log(req.user);
+    res.end();
+})
 router.get('/', async (req, res) => {
     try {
         let clients = await UserAccount.find({});
@@ -357,6 +361,18 @@ function setResponse(type, code, res, msg) {
         default:
             break;
     }
+}
+
+function isLoggedIn(req, res, next) {
+    console.log(req.path);
+    if (!req.user){
+        res.redirect('/login');
+    }
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated()){
+        return next();}
+    // if they aren't render login page
+    res.redirect('/login');
 }
 
 router.post('/login', async (req, res) => {

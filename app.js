@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 
 //for passport js
-app.use(require('express-session')({ secret: 'secretcode', resave: true, saveUninitialized: true }));
+app.use(require('express-session')({ secret: 'secretcode', resave: true, saveUninitialized: true, maxAge: 24*60*60*1000/*a day long*/ }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());

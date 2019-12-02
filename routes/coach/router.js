@@ -457,7 +457,7 @@ function setResponse(type, code, res, msg) {
 }
 
 
-router.post('/username', async (req, res) => {
+/*router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json") {
         try {
             let username = await Credentials.find({});
@@ -468,6 +468,6 @@ router.post('/username', async (req, res) => {
     } else {
         res.status(500).end("ERROR")
     }
-});
+});*/
 
 module.exports = router;
