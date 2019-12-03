@@ -64,11 +64,12 @@ async function renderCoachTable(){
             document.getElementById('exerciseReps' + i).innerHTML = exerciseList[i].repetitions;
             document.getElementById('exerciseSets' + i).innerHTML = exerciseList[i].set;
             document.getElementById('exerciseWeight' + i).innerHTML = exerciseList[i].pumpWeight;
-            document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].description;
+            document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].comment;
             level++;
         }
+        level = 0;
     }
-    level = 0;
+
 }
 
 function resetTable(){
@@ -89,7 +90,7 @@ async function deleteFromDatabase(){
             repetitions : document.getElementById('exerciseReps' + rowCounter).innerHTML,
             set : document.getElementById('exerciseSets' + rowCounter).innerHTML,
             pumpWeight : document.getElementById('exerciseWeight' + rowCounter).innerHTML,
-            description : document.getElementById('exerciseComments' + rowCounter).innerHTML,
+            comment : document.getElementById('exerciseComments' + rowCounter).innerHTML,
         };
 
         try{
@@ -124,6 +125,7 @@ async function deleteFromDatabase(){
                         },
                     });
                     await removeExercise;
+                    resetTable();
                 }catch(e){
                     console.log(e);
                 }

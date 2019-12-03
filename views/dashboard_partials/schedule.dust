@@ -9,7 +9,7 @@
         </div>
         <div class="input-field col s12 m6">
 
-            <select class="icons" id="pickUser">
+            <select class="icons" id="pickUser" onchange="renderCoachTable()">
                 <option value="" disabled selected>Choose your option</option>
                 {#clients}
                 <option data-icon="{photo}" value="{_userAccountId}" class="left">{firstName} {lastName}</option>
@@ -18,7 +18,7 @@
             <label>User</label>
         </div>
         <div class="input-field col m6 s12" >
-            <select id="day_btn">
+            <select id="day_btn" onchange="renderCoachTable()">
                 <option value="" disabled selected>Session</option>
                 <option value="1">Monday</option>
                 <option value="2">Tuesday</option>
