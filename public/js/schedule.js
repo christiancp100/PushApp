@@ -45,10 +45,13 @@ function modifyScheduleName(scheduleName, h2){
     h2.innerHTML = string;
 }
 //clicking the add button will call this function that simply creates the row in the table.
-function addRow(e) {
+function addRow() {
 
-    console.log("Adding a row...");
 
+    //?check the required fields
+    if(exName.value === ''){
+        console.log("NOMEEEEE");
+    }
 
     let newExerciseRow = document.createElement('tr');
     newExerciseRow.id = 'row' + level;
@@ -85,7 +88,6 @@ function addRow(e) {
     icon.id = "rem_btn"+ level;
     newExerciseRemoveInput.appendChild(icon);
 
-
     table.insertBefore(newExerciseRow, table.childNodes[rows.length-1]);
     newExerciseRow.appendChild(newExerciseName);
     newExerciseRow.appendChild(newExerciseReps);
@@ -94,9 +96,6 @@ function addRow(e) {
     newExerciseRow.appendChild(newExerciseComments);
     newExerciseRow.appendChild(newExerciseRemoveInput);
     this.level++;
-
-
-
 }
 
 //-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
@@ -110,7 +109,6 @@ function resetFields(){
 }
 
 async function takeRows(e) {
-
 
     let sessionFound = await fetch('/workouts/sessions/search?_coachId=' + await retrieveCoachId() + '&_clientId=' + retrieveClientId() + '&weekday=' + retrieveDay(), {
         method: 'GET',
@@ -173,6 +171,7 @@ async function takeRows(e) {
                 };
 
                 try{
+                    console.log("A");
                     let createdExercise = await fetch('/workouts/exercises/new',
                         {
                             method: 'POST',
@@ -198,7 +197,7 @@ async function takeRows(e) {
     };
 
     try {
-
+        console.log("B");
         let res = await fetch("/workouts/sessions/new", {
             method: "POST",
             body: JSON.stringify(bodySession),
@@ -211,6 +210,34 @@ async function takeRows(e) {
     }catch(e) {
         console.log(e);
     }
+}
+
+// //-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
+// //Creates a new Session taking the exercises of the previous function, push them into an array of exercises and
+// //In schedule pushes into the array of sessions the newly created session
+async function saveInSessionAndSchedule(array){
+
+    let day_btn = document.getElementById("day_btn");
+    let day = day_btn.options[day_btn.selectedIndex].text;
+
+    let client_btn = document.getElementById("pickUser");
+    let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
+
+    let sess = {
+        _coachId: await retrieveCoachId(),
+        _clientId: client_id,
+        weekday: day,
+        exercises: array
+    };
+    try {
+            console.log("C");
+            let res = await fetch("/workouts/sessions/new", {
+                method: "POST",
+                body: JSON.stringify(sess),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
 
     // await saveSchedule(sessionsArray);
 }

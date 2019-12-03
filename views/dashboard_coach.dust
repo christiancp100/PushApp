@@ -2,7 +2,7 @@
 <html lang="en">
 {>"dashboard_partials/head" css="/css/coach.css"/}
 
-<body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onchange="renderCoachTable()">
+<body class="has-fixed-sidenav" data-gr-c-s-loaded="true">
   {>"dashboard_partials/header" name="{user.firstName}" profile-picture="/img/icons/user-pic.png"/}
   <main>
     <div class="container">
