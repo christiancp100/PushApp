@@ -2,6 +2,8 @@ let level = 0;
 //clicking the add button will call this function that simply creates the row in the table.
 function addRow(e) {
 
+    console.log("Adding a row...");
+
     let table = document.getElementById('scheduleTable');
     let rows =  table.querySelectorAll("tr");
 
@@ -40,18 +42,12 @@ function addRow(e) {
     newExerciseRemoveInput.type = 'submit';
     newExerciseRemoveInput.value = '-';
     newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
-
-    // let newExerciseDeleteAllInput = document.createElement('input');
-    // newExerciseDeleteAllInput.type = 'submit';
-    // newExerciseDeleteAllInput.value = 'cancel';
-    // newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
-
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
-    console.log("Adding a row...");
 
     let icon = document.createElement('i');//just for beauty reason
-    icon.className= 'material-icons';
+    icon.className = 'material-icons';
+    icon.id= "rem_btn"+ level;
     newExerciseRemoveInput.appendChild(icon);
 
 
@@ -62,14 +58,13 @@ function addRow(e) {
     newExerciseRow.appendChild(newExerciseWeight);
     newExerciseRow.appendChild(newExerciseComments);
     newExerciseRow.appendChild(newExerciseRemoveInput);
-    level++;
+    this.level++;
 }
 
 //-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
 //CREATES new "empty" Schedule and Takes the rows to work with them to create new exercise
 
 async function takeRows(e){
-
 
     let A = [];
 
@@ -88,25 +83,17 @@ async function takeRows(e){
         endDate: Date.now(),
     };
 
-    let res = await fetch(
-        "/workouts/schedules/new", {
-            method: "POST",
-            headers:{'Content-Type': 'application/json'},
-            body: JSON.stringify(sched)
-        }
-    );
 
-    let fields = await res.json();
+    let ex;
+    let ex_id;
 
-    for(let i = 0; i <children.length; i++){
-        if(children[i].tagName === 'TR'){
+    for (let i = 0; i < children.length; i++) {
+        if (children[i].tagName === 'TR') {
             // console.log(children[i], " is a tr for me!");
-            let ex;
-            let ex_id;
 
             this.count++;
 
-            if(children[i].id){
+            if (children[i].id) {
 
                 let exerciseName = children[i].childNodes[0].innerHTML;
                 let rep = children[i].childNodes[1].innerHTML;
@@ -114,7 +101,7 @@ async function takeRows(e){
                 let weight = children[i].childNodes[3].innerHTML;
                 let comment = children[i].childNodes[4].innerHTML;
 
-                try{
+                try {
                     ex = {
                         name: exerciseName,
                         description: 'description placeholder',
@@ -128,23 +115,34 @@ async function takeRows(e){
 
                     let res = await fetch(
                         '/workouts/exercises/new',
-                        {method : 'POST',
+                        {
+                            method: 'POST',
                             body: JSON.stringify(ex),
-                            headers: {'Content-Type':'application/json'}
+                            headers: {'Content-Type': 'application/json'}
                         });
 
                     let fields = await res.json();
                     ex_id = fields._id;
                     A.push(ex_id);
-
                 } catch (e) {
                     console.log(e);
                 }
             }
         }
     }
-    await saveInSessionAndSchedule(A,fields);
-    resetTable();
+
+    if(!await itExistAlready()){
+        let scheduleRes = await fetch("/workouts/schedules/new", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(sched)}
+        );
+        let fields = await scheduleRes.json();
+        await saveInSessionAndSchedule(A, fields);
+    }else{
+        await modifyTable();
+    }
+
 }
 
 //-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
@@ -166,27 +164,27 @@ async function saveInSessionAndSchedule(array, schedFields){
     };
 
     try {
-        let res = await fetch("/workouts/sessions/new", {
-            method: "POST",
-            body: JSON.stringify(sess),
-            headers: {
-                'Content-Type':'application/json'
-            },
-        });
 
-        let fields = await res.json();
-        let sArray = schedFields.sessions;  //puts the new session id into existing schedule
-        let s_id = schedFields._id;
-        sArray.push(fields._id);
-        // let response = await fetch('/workouts/schedules/edit/'+ s_id, {method: "PUT",
-        //     })
-    }catch(err){
+            let res = await fetch("/workouts/sessions/new", {
+                method: "POST",
+                body: JSON.stringify(sess),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            let fields = await res.json();
+            let sArray = schedFields.sessions;  //puts the new session id into existing schedule
+            let s_id = schedFields._id;
+            sArray.push(fields._id);
+
+        }catch(err){
         console.log(err);
     }
 }
 
-async function cancelAll() {
-    confirm('SICURO BRO?');
+async function itExistAlready() {
+
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
 
@@ -204,15 +202,21 @@ async function cancelAll() {
 
     let searchSession = await fetch(searchUrl, searchInit);
     let session = await searchSession.json();
-    let session_id = session._id;
 
-    let deleteUrl = "/workouts/sessions/delete/"+session_id;
-    let deleteInit = {
-        'method':'DELETE',
-        'headers':{
-
-        }
+    if(session._id) {
+        return 1;
+    }else {
+        return 0;
     }
+
+}
+
+async function modifyTable(session){
+    await fetch("/workouts/sessions/edit/"+session._id,
+        {
+            method: 'PUT',
+            headers: {"Content-Type": 'application/json', 'Accept': 'application/x-www-urlencoded'}
+            })
 }
 
 function removeRow(){
