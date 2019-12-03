@@ -47,7 +47,6 @@ async function renderCoachTable(){
         let exerciseList = [];
 
         for(let i = 0; i < exerciseIds.length; i++){
-            // console.log(i, exerciseIds[i]);
 
             let exercise = await fetch('workouts/exercises/search' + "?_id=" + exerciseIds[i], {
                 method: "GET",
@@ -139,7 +138,6 @@ async function deleteFromDatabase(){
 
 async function removeSingleExerciseFromDatabase(rowId){
     let rowToBeRemovedFromDatabase = document.getElementById(rowId);
-    console.log('ROW: ', rowToBeRemovedFromDatabase);
 
     try{
         let exerciseName = rowToBeRemovedFromDatabase.childNodes[0].innerHTML;
@@ -147,12 +145,6 @@ async function removeSingleExerciseFromDatabase(rowId){
         let exerciseSets = rowToBeRemovedFromDatabase.childNodes[2].innerHTML;
         let exerciseWeight = rowToBeRemovedFromDatabase.childNodes[3].innerHTML;
         let exerciseDescription = rowToBeRemovedFromDatabase.childNodes[4].innerHTML;
-
-        console.log(exerciseName);
-        console.log(exerciseReps);
-        console.log(exerciseSets);
-        console.log(exerciseWeight);
-        console.log(exerciseDescription);
 
         let foundExercise = await fetch('workouts/exercises/search'
             + "?name=" + exerciseName
@@ -209,8 +201,6 @@ async function removeSingleExerciseFromDatabase(rowId){
             },
         });
         await removeExercise;
-
-        console.log('Session Updated Succesfully');
 
     }catch(e){
         console.log(e);
