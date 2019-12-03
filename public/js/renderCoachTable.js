@@ -5,14 +5,15 @@ async function retrieveCoachId() {
 }
 function retrieveDay(){
     let day_btn = document.getElementById("day_btn");
-    let day = day_btn.options[day_btn.selectedIndex].text;
-    return day;
+    return day_btn.options[day_btn.selectedIndex].text;
 }
 
 function retrieveClientId(){
     let selectedUser = document.getElementById('pickUser');
-    let _clientId = selectedUser.options[selectedUser.selectedIndex].getAttribute("value");
-    return _clientId;
+    return selectedUser.options[selectedUser.selectedIndex].getAttribute("value");
+}
+function retrieveScheduleName(){
+    return document.getElementById("last_name").value;
 }
 
 async function renderCoachTable(){

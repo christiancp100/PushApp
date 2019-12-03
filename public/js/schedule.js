@@ -1,19 +1,54 @@
 let level = 0;
+
+const table = document.getElementById('scheduleTable');
+const rows =  table.querySelectorAll("tr");
+const lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
+//last row inputs
+let exName = lastRow.querySelectorAll('td input')[0];
+let exReps = lastRow.querySelectorAll('td input')[1];
+let exSets = lastRow.querySelectorAll('td input')[2];
+let exWeight = lastRow.querySelectorAll('td input')[3];
+let exComments = lastRow.querySelectorAll('td input')[4];
+
+function doneScheduleName(){
+    let title = document.getElementById("title")
+    let scheduleName = retrieveScheduleName();
+    let schedName = document.getElementById("schedName");
+    schedName.remove();
+    //fetch post
+    let h2 = document.createElement("h2");
+    h2.innerHTML = scheduleName;
+    h2.id = "title";
+    h2.className = "center";
+
+    title.insertAdjacentElement("afterend",h2);
+    title.remove();
+    console.log(h2);
+
+    let modify_a = document.createElement("a");
+    modify_a.className = "valign-wrapper btn-floating btn-small waves-effect waves-light black";
+    let  modify_i = document.createElement("i");
+    modify_i.className = "material-icons";
+    modify_i.innerHTML = "create";
+    modify_a.appendChild(modify_i);
+    h2.appendChild(modify_a);
+
+    modify_a.addEventListener("click", ()=>{
+        modifyScheduleName(scheduleName, h2);
+    });
+}
+
+function modifyScheduleName(scheduleName, h2){
+    //fetch put
+    let string = '<div class="input-field col s6" id="schedName"><input id="last_name" type="text" class="validate"><label for="last_name">Schedule Name</label><a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()"><i class="material-icons" id="done_outline" >done_outline</i> </a> </div> </div>';
+    h2.innerHTML = string;
+}
 //clicking the add button will call this function that simply creates the row in the table.
 function addRow(e) {
 
     console.log("Adding a row...");
 
-    let table = document.getElementById('scheduleTable');
-    let rows =  table.querySelectorAll("tr");
-
-    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
-
-    let exName = lastRow.querySelectorAll('td input')[0];
-    let exReps = lastRow.querySelectorAll('td input')[1];
-    let exSets = lastRow.querySelectorAll('td input')[2];
-    let exWeight = lastRow.querySelectorAll('td input')[3];
-    let exComments = lastRow.querySelectorAll('td input')[4];
 
     let newExerciseRow = document.createElement('tr');
     newExerciseRow.id = 'row' + level;
@@ -67,26 +102,14 @@ function addRow(e) {
 //-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
 //CREATES new "empty" Schedule and Takes the rows to work with them to create new exercise
 function resetFields(){
-
-    let table = document.getElementById('scheduleTable');
-    let rows =  table.querySelectorAll("tr");
-
-    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
-
-    let exName = lastRow.querySelectorAll('td input')[0];
-    let exReps = lastRow.querySelectorAll('td input')[1];
-    let exSets = lastRow.querySelectorAll('td input')[2];
-    let exWeight = lastRow.querySelectorAll('td input')[3];
-    let exComments = lastRow.querySelectorAll('td input')[4];
-
     exName.value ='';
     exReps.value = '';
     exSets.value = '';
     exWeight.value = '';
     exComments.value ='';
 }
-async function takeRows(e) {
 
+async function takeRows(e) {
 
 
     let sessionFound = await fetch('/workouts/sessions/search?_coachId=' + await retrieveCoachId() + '&_clientId=' + retrieveClientId() + '&weekday=' + retrieveDay(), {
@@ -96,9 +119,9 @@ async function takeRows(e) {
             'Accept':'application/json'
         }
     });
-    console.log("SES", sessionFound);
-    let sessionx = await sessionFound.json();
-    let sessionExercisesToRemove = sessionx.exercises;
+
+    let sessionFields = await sessionFound.json();
+    let sessionExercisesToRemove = sessionFields.exercises;
 
     if(sessionFound.status === 200) {
 
@@ -112,7 +135,7 @@ async function takeRows(e) {
             await removeExercise;
         }
 
-        let sessionId = sessionx._id;
+        let sessionId = sessionFields._id;
         let deleteSession = await fetch('workouts/sessions/delete/' + sessionId, {
             method: 'DELETE',
             headers: {
@@ -123,6 +146,7 @@ async function takeRows(e) {
     }
 
     let exerciseArray = [];
+    let sessionsArray = [];
 
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
@@ -165,6 +189,7 @@ async function takeRows(e) {
             }
         }
     }
+
     let bodySession = {
         _coachId: await retrieveCoachId(),
         _clientId: retrieveClientId(),
@@ -181,49 +206,27 @@ async function takeRows(e) {
                 'Content-Type': 'application/json'
             },
         });
-        await res.json();
+        sessionsArray.push(await res.json());
 
     }catch(e) {
         console.log(e);
     }
+
+    // await saveSchedule(sessionsArray);
 }
-// //-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
-// //Creates a new Session taking the exercises of the previous function, push them into an array of exercises and
-// //In schedule pushes into the array of sessions the newly created session
-async function saveInSessionAndSchedule(array){
 
-    let day_btn = document.getElementById("day_btn");
-    let day = day_btn.options[day_btn.selectedIndex].text;
-
-    let client_btn = document.getElementById("pickUser");
-    let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
-
-    let sess = {
-        _coachId: await retrieveCoachId(),
-        _clientId: client_id,
-        weekday: day,
-        exercises: array
-    };
-
-    try {
-
-            let res = await fetch("/workouts/sessions/new", {
-                method: "POST",
-                body: JSON.stringify(sess),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-
-            let fields = await res.json();
-            let sArray = schedFields.sessions;  //puts the new session id into existing schedule
-            let s_id = schedFields._id;
-            sArray.push(fields._id);
-
-        }catch(err){
-        console.log(err);
-    }
-}
+// //-----------  SCHEDULE UPDATING-------------------------------
+// //pushes into the array of sessions the newly created session.
+// async function saveSchedule(array){
+//     let body = {
+//         _clientId: retrieveClientId(),
+//         _coachId: retrieveCoachId().userAccountId,
+//         name: retrieveScheduleName(),
+//         sessions:array,
+//         startDate: Date.now,
+//         endDate: Date.now,
+//     };
+// }
 
 function removeRow(){
     let toRemove = this.parentNode;

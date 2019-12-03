@@ -1,12 +1,19 @@
 <div class="masonry row">
-    <div class="col s12">
-        <h2 class="center">Create New Schedule</h2>
-    </div>
-    <div class="col s12">
-        <div class="input-field col s6">
-            <input id="last_name" type="text" class="validate">
-            <label for="last_name">Schedule Name</label>
+    <div class="col s12" id="divtitle">
+        <h2 id="title" class="center">Create New Schedule</h2>
+        <div class="input-field col s6" id="schedName">
+                    <input id="last_name" type="text" class="validate">
+
+                    <label for="last_name">Schedule Name</label>
+
+    <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()">
+      <i class="material-icons" id="done_outline" >done_outline</i>
+      </a>
         </div>
+
+    </div>
+
+    <div class="col s12">
         <div class="input-field col s12 m6">
 
             <select class="icons" id="pickUser">
@@ -57,3 +64,4 @@
 </div>
 <script src="/js/schedule.js"></script>
 <script src="/js/renderCoachTable.js"></script>
+<script src="/js/schedule.js"></script>
