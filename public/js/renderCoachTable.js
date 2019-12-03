@@ -11,6 +11,12 @@ function retrieveClientId(){
 }
 
 async function renderCoachTable(){
+
+    //todo fetch to router to get id
+    let obj = await fetch('/auth/getuser');
+    let x = await obj.json();
+    let id = x._userAccountId;
+
     resetTable();
 
     if(retrieveDay() !== 'Session' && retrieveClientId() !== ''){

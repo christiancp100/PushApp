@@ -78,4 +78,8 @@ function setResponse(type, code, res, msg) {
     }
 }
 
+router.get('/getuser', function (req, res) {
+    res.send(req.user);
+});
+
 module.exports = router;
