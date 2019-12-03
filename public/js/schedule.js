@@ -89,18 +89,13 @@ async function takeRows(e){
 
     for (let i = 0; i < children.length; i++) {
         if (children[i].tagName === 'TR') {
-            // console.log(children[i], " is a tr for me!");
-
             this.count++;
-
             if (children[i].id) {
-
                 let exerciseName = children[i].childNodes[0].innerHTML;
                 let rep = children[i].childNodes[1].innerHTML;
                 let sets = children[i].childNodes[2].innerHTML;
                 let weight = children[i].childNodes[3].innerHTML;
                 let comment = children[i].childNodes[4].innerHTML;
-
                 try {
                     ex = {
                         name: exerciseName,
@@ -131,7 +126,64 @@ async function takeRows(e){
         }
     }
 
-    if(!await itExistAlready()){
+    let exists = await itExistAlready();
+    console.log("EXISTS: ", exists);
+
+    if(exists !== 0){
+
+        let day_btn = document.getElementById("day_btn");
+        let day = day_btn.options[day_btn.selectedIndex].text;
+
+        let searchUrl = "/workouts/sessions/search?_clientId="+client_id + "&_coachId="+localStorage.userAccountId+"&day="+day;
+        let searchInit = {
+            'method': 'GET',
+            'headers':{
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }
+        };
+
+        let searchSession = await fetch(searchUrl, searchInit);
+
+        let session = await searchSession.json();
+
+        let sessionFields = {
+            _coachId : localStorage.userAccountId,
+            _clientId: client_id,
+            exercises: A,
+            weekday: day
+        };
+
+        let sessionModify = await fetch("/workouts/sessions/edit/"+session._id,
+            {
+                method: 'PUT',
+                headers: {"Content-Type": 'application/json'},
+                body: JSON.stringify(sessionFields),
+            });
+
+        let newSession = await sessionModify.json();
+        
+        // let scheduleSear = await fetch("/workouts/schedules/search?_coachId="+localStorage.userAccountId+"&_clientId="+client_id, {
+        //     method: "GET",
+        //     headers: {'Content-Type': 'application/json'},
+        //     });
+        //
+        // let fields = await scheduleSear.json();
+        //
+        // let SessionArray = fields.sessions;
+        //
+        // SessionArray.push(newSession._id);
+        //
+        // let newBodySchedule = {
+        //     _coachId : localStorage.userAccountId,
+        //     _clientId: client_id,
+        //     session: SessionArray,
+        // };
+
+        // let schedulePut = await fetch("/workouts/schedules/edit"+fields._id, {method:"PUT", body: newBodySchedule, headers:{"Content-Type":"application/json"},
+        // });
+
+    }else{
         let scheduleRes = await fetch("/workouts/schedules/new", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -139,10 +191,7 @@ async function takeRows(e){
         );
         let fields = await scheduleRes.json();
         await saveInSessionAndSchedule(A, fields);
-    }else{
-        await modifyTable();
     }
-
 }
 
 //-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
@@ -204,19 +253,11 @@ async function itExistAlready() {
     let session = await searchSession.json();
 
     if(session._id) {
-        return 1;
+        return session._id;
     }else {
         return 0;
     }
 
-}
-
-async function modifyTable(session){
-    await fetch("/workouts/sessions/edit/"+session._id,
-        {
-            method: 'PUT',
-            headers: {"Content-Type": 'application/json', 'Accept': 'application/x-www-urlencoded'}
-            })
 }
 
 function removeRow(){
