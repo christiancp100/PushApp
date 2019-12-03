@@ -1,3 +1,8 @@
+async function retrieveCoachId() {
+    let obj = await fetch('/auth/getuser');
+    obj = await obj.json();
+    return obj._userAccountId;
+}
 function retrieveDay(){
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
@@ -12,15 +17,10 @@ function retrieveClientId(){
 
 async function renderCoachTable(){
 
-    //todo fetch to router to get id
-    let obj = await fetch('/auth/getuser');
-    let x = await obj.json();
-    let id = x._userAccountId;
-
     resetTable();
 
     if(retrieveDay() !== 'Session' && retrieveClientId() !== ''){
-        let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
+        let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + await retrieveCoachId(), {
             method: "GET",
             headers: {
                 'Content-Type':'application/json',
@@ -99,7 +99,7 @@ async function deleteFromDatabase(){
         };
 
         try{
-            let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
+            let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + await retrieveCoachId(), {
                 method: "GET",
                 headers: {
                     'Content-Type':'application/json',
@@ -175,7 +175,7 @@ async function removeSingleExerciseFromDatabase(rowId){
 
         let exId = exercise._id;
 
-        let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
+        let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + await retrieveCoachId(), {
             method: "GET",
             headers: {
                 'Content-Type':'application/json',
@@ -195,7 +195,7 @@ async function removeSingleExerciseFromDatabase(rowId){
         console.log('OLD', sessionOldExercises);
 
         let body = {
-            _coachId: localStorage.userAccountId,
+            _coachId: await retrieveCoachId(),
             _clientId: retrieveClientId(),
             weekday: retrieveDay(),
             exercises: sessionOldExercises

@@ -75,7 +75,7 @@ async function takeRows(e){
     let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
 
     let sched= {
-        _coachId: localStorage.userAccountId,
+        _coachId: await retrieveCoachId(),
         _clientId: client_id,
         name: 'scheduleName placeholder',
         sessions: [],
@@ -134,7 +134,7 @@ async function takeRows(e){
         let day_btn = document.getElementById("day_btn");
         let day = day_btn.options[day_btn.selectedIndex].text;
 
-        let searchUrl = "/workouts/sessions/search?_clientId="+client_id + "&_coachId="+localStorage.userAccountId+"&day="+day;
+        let searchUrl = "/workouts/sessions/search?_clientId="+client_id + "&_coachId="+await retrieveCoachId()+"&day="+day;
         let searchInit = {
             'method': 'GET',
             'headers':{
@@ -148,7 +148,7 @@ async function takeRows(e){
         let session = await searchSession.json();
 
         let sessionFields = {
-            _coachId : localStorage.userAccountId,
+            _coachId : await retrieveCoachId(),
             _clientId: client_id,
             exercises: A,
             weekday: day
@@ -163,7 +163,7 @@ async function takeRows(e){
 
         let newSession = await sessionModify.json();
         
-        // let scheduleSear = await fetch("/workouts/schedules/search?_coachId="+localStorage.userAccountId+"&_clientId="+client_id, {
+        // let scheduleSear = await fetch("/workouts/schedules/search?_coachId="+await retrieveCoachId()+"&_clientId="+client_id, {
         //     method: "GET",
         //     headers: {'Content-Type': 'application/json'},
         //     });
@@ -175,7 +175,7 @@ async function takeRows(e){
         // SessionArray.push(newSession._id);
         //
         // let newBodySchedule = {
-        //     _coachId : localStorage.userAccountId,
+        //     _coachId : await retrieveCoachId(),
         //     _clientId: client_id,
         //     session: SessionArray,
         // };
@@ -206,7 +206,7 @@ async function saveInSessionAndSchedule(array, schedFields){
     let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
 
     let sess = {
-        _coachId: localStorage.userAccountId,
+        _coachId: await retrieveCoachId(),
         _clientId: client_id,
         weekday: day,
         exercises: array
@@ -240,7 +240,7 @@ async function itExistAlready() {
     let client_btn = document.getElementById("pickUser");
     let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
 
-    let searchUrl = "/workouts/sessions/search?_clientId="+client_id + "&_coachId="+localStorage.userAccountId+"&day="+day;
+    let searchUrl = "/workouts/sessions/search?_clientId="+client_id + "&_coachId="+await retrieveCoachId()+"&day="+day;
     let searchInit = {
         'method': 'GET',
         'headers':{
