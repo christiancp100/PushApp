@@ -113,6 +113,7 @@ async function renderClientDashboard(res, activeUser) {
             {name: "Next Workout", icon: "list"},
             {name: "Schedule", icon: "dashboard"},
             {name: "Chat", icon: "chat"},
+            {name: "Coaches", icon: "group"},
         ],
         accordions: [
             {
@@ -308,6 +309,7 @@ router.get('/coach/dashboard/clients', (req, res) => {
             {name: "Clients", icon: "list"},
             {name: "Schedules", icon: "dashboard"},
             {name: "Chat", icon: "chat"},
+            {name: "Coaches", icon: "group"},
         ],
         accordions: [
             {
@@ -332,6 +334,38 @@ router.get('/coach/dashboard/clients', (req, res) => {
     res.render("dashboard_coach_clients.dust", menu);
 });
 
+router.get('/client/coaches', (req, res) => {
+    let menu = {
+        items: [
+            {name: "Dashboard", icon: "web"},
+            {name: "Next Workout", icon: "list"},
+            {name: "Schedule", icon: "dashboard"},
+            {name: "Chat", icon: "chat"},
+            {name: "Coaches", icon: "group"},
+        ],
+        accordions: [
+            {
+                title: "Progress",
+                icon: "chevron_left",
+                subItems: [
+                    {name: "Weight", icon: "show_chart"},
+                    {name: "Exercises", icon: "equalizer"},
+                    {name: "Volume of Training", icon: "multiline_chart"},
+                ]
+            },
+            {
+                title: "Account",
+                icon: "chevron_left",
+                subItems: [
+                    {name: "Logout", icon: "person", logout: true},
+                    {name: "Settings", icon: "settings"},
+                ]
+            }
+        ]
+    };
+
+    res.render("coachesList_dashboard_client.dust", menu);
+});
 // router.get("/client/dashboard", (req, res) => {
 //     let menu = {
 //         items: [
