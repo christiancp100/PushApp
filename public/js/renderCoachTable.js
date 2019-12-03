@@ -1,11 +1,8 @@
-require('../../models/Exercise');
-require('../../models/Session');
-require('../../models/Schedule');
-
-let Exercise = mongoose.model('Exercise');
-let Session = mongoose.model('Session');
-let Schedule = mongoose.model('Schedule');
-
+async function retrieveCoachId() {
+    let obj = await fetch('/auth/getuserinfo');
+    obj = await obj.json();
+    return obj.userAccountId;
+}
 function retrieveDay(){
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
@@ -19,11 +16,11 @@ function retrieveClientId(){
 }
 
 async function renderCoachTable(){
+
     resetTable();
-    level = 0;
 
     if(retrieveDay() !== 'Session' && retrieveClientId() !== ''){
-        let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
+        let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + await retrieveCoachId(), {
             method: "GET",
             headers: {
                 'Content-Type':'application/json',
@@ -33,7 +30,7 @@ async function renderCoachTable(){
 
         if(foundSession.status === 404){
             resetTable();
-            level = 0;
+            // level = 0;
             return;
         }
 
@@ -43,7 +40,7 @@ async function renderCoachTable(){
 
         if(exerciseIds === undefined){
             resetTable();
-            level = 0;
+            // level = 0;
             return;
         }
 
@@ -74,8 +71,10 @@ async function renderCoachTable(){
             document.getElementById('exerciseSets' + i).innerHTML = exerciseList[i].set;
             document.getElementById('exerciseWeight' + i).innerHTML = exerciseList[i].pumpWeight;
             document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].description;
+            level++;
         }
     }
+    level = 0;
 }
 
 function resetTable(){
@@ -100,7 +99,7 @@ async function deleteFromDatabase(){
         };
 
         try{
-            let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
+            let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + await retrieveCoachId(), {
                 method: "GET",
                 headers: {
                     'Content-Type':'application/json',
@@ -110,8 +109,6 @@ async function deleteFromDatabase(){
             let session = await foundSession.json();
 
             let exerciseIds = await session.exercises;
-
-            console.log("SESSION ID: ", session._id);
 
             //remove session
             let removeSession = await fetch('workouts/sessions/delete/' + session._id, {
@@ -142,5 +139,85 @@ async function deleteFromDatabase(){
         }
         table.removeChild(document.getElementById('row' + rowCounter));
         rowCounter++;
+    }
+}
+
+async function removeSingleExerciseFromDatabase(rowId){
+    let rowToBeRemovedFromDatabase = document.getElementById(rowId);
+    console.log('ROW: ', rowToBeRemovedFromDatabase);
+
+    try{
+        let exerciseName = rowToBeRemovedFromDatabase.childNodes[0].innerHTML;
+        let exerciseReps = rowToBeRemovedFromDatabase.childNodes[1].innerHTML;
+        let exerciseSets = rowToBeRemovedFromDatabase.childNodes[2].innerHTML;
+        let exerciseWeight = rowToBeRemovedFromDatabase.childNodes[3].innerHTML;
+        let exerciseDescription = rowToBeRemovedFromDatabase.childNodes[4].innerHTML;
+
+        console.log(exerciseName);
+        console.log(exerciseReps);
+        console.log(exerciseSets);
+        console.log(exerciseWeight);
+        console.log(exerciseDescription);
+
+        let foundExercise = await fetch('workouts/exercises/search'
+            + "?name=" + exerciseName
+            + "&repetitions=" + exerciseReps
+            + "&set=" + exerciseSets
+            + "&pumpWeight=" + exerciseWeight
+            + "&description=" + exerciseDescription, {
+            method: "GET",
+            headers: {
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            },
+        });
+        let exercise = await foundExercise.json();
+
+        let exId = exercise._id;
+
+        let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + await retrieveCoachId(), {
+            method: "GET",
+            headers: {
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            },
+        });
+        let session = await foundSession.json();
+        let sessionOldExercises = session.exercises;
+
+        let sessionId = session._id;
+
+        sessionOldExercises.splice(sessionOldExercises.indexOf(exId), 1);
+
+        let body = {
+            _coachId: await retrieveCoachId(),
+            _clientId: retrieveClientId(),
+            weekday: retrieveDay(),
+            exercises: sessionOldExercises
+        };
+
+        let updatingSession = await fetch('workouts/sessions/edit/' + sessionId, {
+            method: "PUT",
+            headers: {
+                'Content-Type':'application/json',
+            },
+            body: JSON.stringify(body)
+        });
+        await updatingSession.json();
+
+
+        let removeExercise = await fetch('workouts/exercises/delete/' + exId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+        });
+        await removeExercise;
+
+        console.log('Session Updated Succesfully');
+
+    }catch(e){
+        console.log(e);
     }
 }

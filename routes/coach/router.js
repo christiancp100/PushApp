@@ -200,6 +200,7 @@ router.get('/setting', function (req, res) {
     //todo check headers
 });
 
+
 // Edit a coach
 // It works only with all the required information provided
 router.put('/edit/:id', async (req, res) => {

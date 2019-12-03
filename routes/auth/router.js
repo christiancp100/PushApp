@@ -12,7 +12,7 @@ let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
 
 // Searches by username for userID and accountType
-router.post('/getuserinfo', async (req, res) => {
+router.get('/getuserinfo', async (req, res) => {
     const filter = getFilter(req);
 
     try {
@@ -77,5 +77,9 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
+
+router.get('/getuser', function (req, res) {
+    res.send(req.user);
+});
 
 module.exports = router;
