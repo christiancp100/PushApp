@@ -45,11 +45,6 @@ async function renderCoachTable(){
         }
 
         let exerciseList = [];
-        // console.log('LENGTH', exerciseIds.length);
-        // console.log('exerciseIds', exerciseIds);
-        // for(let i = 0; i < exerciseIds.length; i++){
-        //     console.log(i, exerciseIds[i]);
-        // }
 
         for(let i = 0; i < exerciseIds.length; i++){
             // console.log(i, exerciseIds[i]);

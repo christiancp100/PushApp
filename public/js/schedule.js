@@ -64,29 +64,46 @@ function addRow(e) {
 //-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
 //CREATES new "empty" Schedule and Takes the rows to work with them to create new exercise
 
-async function takeRows(e){
+async function takeRows(e) {
+    let sessionFound = await fetch('/workouts/sessions/search?_coachId=' + await retrieveCoachId() + '&_clientId=' + retrieveClientId() + '&weekday=' + retrieveDay(), {
+        method: 'GET',
+        headers:{
+            'Content-Type':'application/json',
+            'Accept':'application/json'
+        }
+    });
+    console.log("SES", sessionFound);
+    let sessionx = await sessionFound.json();
+    let sessionExercisesToRemove = sessionx.exercises;
 
-    let A = [];
+    if(sessionFound.status === 200) {
+
+        for(let i = 0; i < sessionExercisesToRemove.length; i++){
+            let removeExercise = await fetch('workouts/exercises/delete/' + sessionExercisesToRemove[i], {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type':'Application/json',
+                }
+            });
+            await removeExercise;
+        }
+
+        let sessionId = sessionx._id;
+        let deleteSession = await fetch('workouts/sessions/delete/' + sessionId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type':'Application/json',
+            }
+        });
+        await deleteSession;
+    }
+
+    let exerciseArray = [];
 
     let table = document.getElementById("scheduleTable");
     let children = table.childNodes;
 
-    let client_btn = document.getElementById("pickUser");
-    let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
-
-    let sched= {
-        _coachId: await retrieveCoachId(),
-        _clientId: client_id,
-        name: 'scheduleName placeholder',
-        sessions: [],
-        startDate: Date.now(),
-        endDate: Date.now(),
-    };
-
-
-    let ex;
-    let ex_id;
-
+    let body;
     for (let i = 0; i < children.length; i++) {
         if (children[i].tagName === 'TR') {
             this.count++;
@@ -96,108 +113,62 @@ async function takeRows(e){
                 let sets = children[i].childNodes[2].innerHTML;
                 let weight = children[i].childNodes[3].innerHTML;
                 let comment = children[i].childNodes[4].innerHTML;
-                try {
-                    ex = {
-                        name: exerciseName,
-                        description: 'description placeholder',
-                        repetitions: rep,
-                        set: sets,
-                        comment: comment,
-                        pumpWeight: weight,
-                        weightUnit: 'weightUnit placeholder',
-                        bodyPart: 'body part placeholder'
-                    };
+                body = {
+                    name: exerciseName,
+                    description: 'description placeholder',
+                    repetitions: rep,
+                    set: sets,
+                    comment: comment,
+                    pumpWeight: weight,
+                    weightUnit: 'weightUnit placeholder',
+                    bodyPart: 'body part placeholder'
+                };
 
-                    let res = await fetch(
-                        '/workouts/exercises/new',
+                try{
+
+                    let createdExercise = await fetch('/workouts/exercises/new',
                         {
                             method: 'POST',
-                            body: JSON.stringify(ex),
+                            body: JSON.stringify(body),
                             headers: {'Content-Type': 'application/json'}
                         });
 
-                    let fields = await res.json();
-                    ex_id = fields._id;
-                    A.push(ex_id);
+                    let exercise = await createdExercise.json();
+                    let exId = exercise._id;
+                    exerciseArray.push(exId);
+
                 } catch (e) {
                     console.log(e);
                 }
             }
         }
     }
+    let bodySession = {
+        _coachId: await retrieveCoachId(),
+        _clientId: retrieveClientId(),
+        weekday: retrieveDay(),
+        exercises: exerciseArray
+    };
 
-    let exists = await itExistAlready();
-    console.log("EXISTS: ", exists);
+    try {
 
-    if(exists !== 0){
-
-        let day_btn = document.getElementById("day_btn");
-        let day = day_btn.options[day_btn.selectedIndex].text;
-
-        let searchUrl = "/workouts/sessions/search?_clientId="+client_id + "&_coachId="+await retrieveCoachId()+"&day="+day;
-        let searchInit = {
-            'method': 'GET',
-            'headers':{
-                'Content-Type':'application/json',
-                'Accept':'application/json'
-            }
-        };
-
-        let searchSession = await fetch(searchUrl, searchInit);
-
-        let session = await searchSession.json();
-
-        let sessionFields = {
-            _coachId : await retrieveCoachId(),
-            _clientId: client_id,
-            exercises: A,
-            weekday: day
-        };
-
-        let sessionModify = await fetch("/workouts/sessions/edit/"+session._id,
-            {
-                method: 'PUT',
-                headers: {"Content-Type": 'application/json'},
-                body: JSON.stringify(sessionFields),
-            });
-
-        let newSession = await sessionModify.json();
-        
-        // let scheduleSear = await fetch("/workouts/schedules/search?_coachId="+await retrieveCoachId()+"&_clientId="+client_id, {
-        //     method: "GET",
-        //     headers: {'Content-Type': 'application/json'},
-        //     });
-        //
-        // let fields = await scheduleSear.json();
-        //
-        // let SessionArray = fields.sessions;
-        //
-        // SessionArray.push(newSession._id);
-        //
-        // let newBodySchedule = {
-        //     _coachId : await retrieveCoachId(),
-        //     _clientId: client_id,
-        //     session: SessionArray,
-        // };
-
-        // let schedulePut = await fetch("/workouts/schedules/edit"+fields._id, {method:"PUT", body: newBodySchedule, headers:{"Content-Type":"application/json"},
-        // });
-
-    }else{
-        let scheduleRes = await fetch("/workouts/schedules/new", {
+        let res = await fetch("/workouts/sessions/new", {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(sched)}
-        );
-        let fields = await scheduleRes.json();
-        await saveInSessionAndSchedule(A, fields);
+            body: JSON.stringify(bodySession),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        await res.json();
+
+    }catch(e) {
+        console.log(e);
     }
 }
-
-//-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
-//Creates a new Session taking the exercises of the previous function, push them into an array of exercises and
-//In schedule pushes into the array of sessions the newly created session
-async function saveInSessionAndSchedule(array, schedFields){
+// //-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
+// //Creates a new Session taking the exercises of the previous function, push them into an array of exercises and
+// //In schedule pushes into the array of sessions the newly created session
+async function saveInSessionAndSchedule(array){
 
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
@@ -230,34 +201,6 @@ async function saveInSessionAndSchedule(array, schedFields){
         }catch(err){
         console.log(err);
     }
-}
-
-async function itExistAlready() {
-
-    let day_btn = document.getElementById("day_btn");
-    let day = day_btn.options[day_btn.selectedIndex].text;
-
-    let client_btn = document.getElementById("pickUser");
-    let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
-
-    let searchUrl = "/workouts/sessions/search?_clientId="+client_id + "&_coachId="+await retrieveCoachId()+"&day="+day;
-    let searchInit = {
-        'method': 'GET',
-        'headers':{
-            'Content-Type':'application/json',
-            'Accept':'application/json'
-        }
-    };
-
-    let searchSession = await fetch(searchUrl, searchInit);
-    let session = await searchSession.json();
-
-    if(session._id) {
-        return session._id;
-    }else {
-        return 0;
-    }
-
 }
 
 function removeRow(){
