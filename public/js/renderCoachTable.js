@@ -1,7 +1,7 @@
 async function retrieveCoachId() {
-    let obj = await fetch('/auth/getuser');
+    let obj = await fetch('/auth/getuserinfo');
     obj = await obj.json();
-    return obj._userAccountId;
+    return obj.userAccountId;
 }
 function retrieveDay(){
     let day_btn = document.getElementById("day_btn");
@@ -184,15 +184,10 @@ async function removeSingleExerciseFromDatabase(rowId){
         });
         let session = await foundSession.json();
         let sessionOldExercises = session.exercises;
-        console.log("LIST", sessionOldExercises);
-        console.log("LIST", session.exercises);
 
         let sessionId = session._id;
-        console.log("ID", sessionId);
 
         sessionOldExercises.splice(sessionOldExercises.indexOf(exId), 1);
-
-        console.log('OLD', sessionOldExercises);
 
         let body = {
             _coachId: await retrieveCoachId(),
@@ -205,7 +200,6 @@ async function removeSingleExerciseFromDatabase(rowId){
             method: "PUT",
             headers: {
                 'Content-Type':'application/json',
-                // 'Accept':'application/json'
             },
             body: JSON.stringify(body)
         });
