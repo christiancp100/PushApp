@@ -11,12 +11,12 @@ let exSets = lastRow.querySelectorAll('td input')[2];
 let exWeight = lastRow.querySelectorAll('td input')[3];
 let exComments = lastRow.querySelectorAll('td input')[4];
 
-function doneScheduleName(){
+async function doneScheduleName(){
     let title = document.getElementById("title")
     let scheduleName = retrieveScheduleName();
     let schedName = document.getElementById("schedName");
     schedName.remove();
-    //fetch post
+    // let creatingSchedule =
     let h2 = document.createElement("h2");
     h2.innerHTML = scheduleName;
     h2.id = "title";
@@ -41,7 +41,7 @@ function doneScheduleName(){
 
 function modifyScheduleName(scheduleName, h2){
     //fetch put
-    let string = '<div class="input-field col s6" id="schedName"><input id="last_name" type="text" class="validate"><label for="last_name">Schedule Name</label><a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()"><i class="material-icons" id="done_outline" >done_outline</i> </a> </div> </div>';
+    let string = '<div class="input-field col s6" id="schedName"><input id="last_name" type="text" class="validate" value='+scheduleName+'><label for="last_name">Schedule Name</label><a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()"><i class="material-icons" id="done_outline" >done_outline</i> </a> </div> </div>';
     h2.innerHTML = string;
 }
 //clicking the add button will call this function that simply creates the row in the table.
@@ -215,7 +215,7 @@ async function takeRows(e) {
 // //-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
 // //Creates a new Session taking the exercises of the previous function, push them into an array of exercises and
 // //In schedule pushes into the array of sessions the newly created session
-async function saveInSessionAndSchedule(array){
+async function saveInSessionAndSchedule(array) {
 
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
@@ -230,18 +230,20 @@ async function saveInSessionAndSchedule(array){
         exercises: array
     };
     try {
-            console.log("C");
-            let res = await fetch("/workouts/sessions/new", {
-                method: "POST",
-                body: JSON.stringify(sess),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
+        console.log("C");
+        let res = await fetch("/workouts/sessions/new", {
+            method: "POST",
+            body: JSON.stringify(sess),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
 
-    // await saveSchedule(sessionsArray);
+        // await saveSchedule(sessionsArray);
+    }catch(err){
+        console.log(err);
+    }
 }
-
 // //-----------  SCHEDULE UPDATING-------------------------------
 // //pushes into the array of sessions the newly created session.
 // async function saveSchedule(array){
