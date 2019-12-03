@@ -4,16 +4,17 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 let ObjectId = require('mongodb').ObjectID;
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
 require('../../models/CoachClients.js');
+require('../../models/Rating.js');
 
 let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
 let CoachClients = mongoose.model('CoachClients');
+let Rating = mongoose.model('Rating');
 
 // GET all coach
 router.get('/', async (req, res) => {
@@ -324,7 +325,6 @@ router.put('/delete/:id', async (req, res) => {
     }
 });
 
-
 // POST a new coach-client relation
 router.post('/hire', (req, res) => {
     if (req.accepts("json")) {
@@ -436,6 +436,21 @@ router.delete('/hire/:id', async (req, res) => {
     }
 });
 
+router.post('/rating', (req, res) =>{
+    console.log("body",req.body);
+    console.log("user", req.user);
+    let rate = new Rating({
+        _clientId: req.user._userAccountId,
+        _coachId: req.body.id,
+        score : req.body.score,
+        comment: req.body.comment,
+        title: req.body.title
+    });
+    rate.save()
+        .then(() => res.status(201).end())//todo rerender the page of client
+        .catch(() => res.status(500).end());
+})
+
 // Customized response
 function setResponse(type, code, res, msg) {
     res.status(code);
@@ -457,7 +472,7 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-
+//todo delete this root /username
 /*router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json") {
         try {

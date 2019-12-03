@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Rating the coach</title>
+</head>
+<body>
+{!TODO show previous rating but with disabled fields!}
+<h5>You have already rated {name}, do you want to change your rating?</h5>
+<button type="button"></button>
+</body>
+</html>

@@ -4,22 +4,21 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 let ObjectId = require('mongodb').ObjectID;
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
 require('../../models/ClientInfo.js');
+require('../../models/CoachClients.js');
+require('../../models/Rating.js');
 
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
 let Credentials = mongoose.model('Credentials');
+let CoachClients = mongoose.model('CoachClients');
+let Rating = mongoose.model('Rating');
 
 // GET all
-router.get('/test', isLoggedIn, function (req, res) {
-    console.log(req.user);
-    res.end();
-})
 router.get('/', async (req, res) => {
     try {
         let clients = await UserAccount.find({});
@@ -279,7 +278,6 @@ router.put('/edit/:id', async (req, res) => {
     }
 });
 
-
 // Wipes client's userAccount and info without deleting the objects.
 router.delete('/delete/:id', async (req, res) => {
     try {
@@ -323,6 +321,25 @@ router.delete('/delete/:id', async (req, res) => {
         res.end();
     }
 });
+
+router.post('/rating', async (req, res) => {
+    let thisCoachId = (req.body.coach._id).toString();
+    let found = await UserAccount.findById(req.user._userAccountId);
+
+    //find all ratings have every been given (done for coach id)
+    let rating = await Rating.find({_clientId: found._id});
+
+    //new rating object was not created yet
+    //ask if user want to rate the coach again
+    for (let i = 0; i < rating.length; i++) {
+        if (thisCoachId === (rating[i]._coachId).toString()){
+            res.render('rating-again.dust')
+        }
+    }
+    //render the rating page
+    res.render('rating-first.dust', {id: thisCoachId})
+
+})
 
 // Creates filter for searching users on the database
 function getFilter(req) {

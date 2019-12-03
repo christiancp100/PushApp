@@ -19,6 +19,9 @@ let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
 let CoachClients = mongoose.model('CoachClients');
 
+router.get('/test', function (req, res) {
+    res.render('rating/rating-first.dust', {name: 'Moreno'});
+})
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
         res.render('index', { title: 'PushApp' });
