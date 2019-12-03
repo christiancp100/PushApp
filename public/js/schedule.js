@@ -47,7 +47,7 @@ function addRow(e) {
 
     let icon = document.createElement('i');//just for beauty reason
     icon.className = 'material-icons';
-    icon.id= "rem_btn"+ level;
+    icon.id = "rem_btn"+ level;
     newExerciseRemoveInput.appendChild(icon);
 
 
@@ -221,6 +221,7 @@ async function modifyTable(session){
 
 function removeRow(){
     let toRemove = this.parentNode;
+    removeSingleExerciseFromDatabase(toRemove.id);
     console.log('Looking for the exercise to remove...');
     toRemove.parentNode.removeChild(toRemove);
 }
