@@ -22,9 +22,10 @@ function isLoggedIn(req, res, next) {
     // if they aren't render login page
     res.redirect('/login');
 }
+
 /* GETS */
 // Get ALL at /workouts root, not serving data
-router.get('/',isLoggedIn,  async (req, res) => {
+router.get('/', isLoggedIn, async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
             res = setResponse('json', 400, res, {Message: 'Nothing here. Go exercise!'});
@@ -147,6 +148,28 @@ router.get('/exercises/search', async (req, res) => {
         try {
             let filter = getFilter(req);
             let found = await Exercise.findOne(filter);
+            if (found !== null) {
+                res = setResponse('json', 200, res, found);
+            } else {
+                res = setResponse('json', 404, res, {});
+            }
+            res.end();
+        } catch (err) {
+            console.log(err);
+            res.status(500);
+            res.end();
+        }
+    } else {
+        res.status(500);
+        res.end();
+    }
+});
+
+router.get('/exercises/findById', async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
+        try {
+            let filter = getFilter(req);
+            let found = await Exercise.findById(filter);
             if (found !== null) {
                 res = setResponse('json', 200, res, found);
             } else {
@@ -551,7 +574,6 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
-
 
 
 module.exports = router;
