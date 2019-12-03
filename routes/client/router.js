@@ -20,6 +20,7 @@ router.get('/test', isLoggedIn, function (req, res) {
     console.log(req.user);
     res.end();
 })
+
 router.get('/', async (req, res) => {
     try {
         let clients = await UserAccount.find({});
@@ -33,7 +34,6 @@ router.get('/', async (req, res) => {
             //   title: "My Canvas"
             // };
             // res.render("result", usersModel);
-            res.end();
         } else if (req.accepts("application/json")) {
             res = setResponse('json', 200, res, result);
         } else {
@@ -119,7 +119,7 @@ router.post('/new', async (req, res) => {
                 let savedClientInfo = await clientInfo.save();
 
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});//todo pass ID ad argument
+                    res.render('register_forms/register-credentials.dust', {accID: (savedUserAccount._id).toString()});//todo pass ID ad argument
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
                     res = setResponse('json', 201, res, {
@@ -241,6 +241,7 @@ router.put('/edit/:id', async (req, res) => {
                     }
                 } else {
                     res = setResponse('error', 404, res, {Error: 'Client not found!'});
+                    res.end();
                 }
             } catch
                 (err) {
@@ -285,9 +286,11 @@ router.delete('/delete/:id', async (req, res) => {
                 }
             } else {
                 res = setResponse('error', 404, res, {Error: 'Client not found!'});
+                res.end();
             }
         } else {
             res = setResponse('error', 400, res);
+            res.end();
         }
     } catch
         (err) {
@@ -365,12 +368,13 @@ function setResponse(type, code, res, msg) {
 
 function isLoggedIn(req, res, next) {
     console.log(req.path);
-    if (!req.user){
+    if (!req.user) {
         res.redirect('/login');
     }
     // if user is authenticated in the session, carry on
-    if (req.isAuthenticated()){
-        return next();}
+    if (req.isAuthenticated()) {
+        return next();
+    }
     // if they aren't render login page
     res.redirect('/login');
 }
