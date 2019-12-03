@@ -98,20 +98,45 @@ async function deleteFromDatabase(){
             pumpWeight : document.getElementById('exerciseWeight' + rowCounter).innerHTML,
             description : document.getElementById('exerciseComments' + rowCounter).innerHTML,
         };
-        try{
 
-            let exercise = await fetch('workouts/exercises/delete' + "?_id=" + exerciseIds[i], {
-                method: "DELETE",
+        try{
+            let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
+                method: "GET",
                 headers: {
                     'Content-Type':'application/json',
                     'Accept':'application/json'
-                }
+                },
             });
+            let session = await foundSession.json();
 
+            let exerciseIds = await session.exercises;
 
-            let found = await Exercise.find(filter);
-            found.remove();
-            console.log('removed');
+            console.log("SESSION ID: ", session._id);
+
+            //remove session
+            let removeSession = await fetch('workouts/sessions/delete/' + session._id, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type':'application/json',
+                    'Accept':'application/json'
+                },
+            });
+            await removeSession;
+
+            for(let i = 0; i < exerciseIds.length; i++){
+                try {
+                    let removeExercise = await fetch('workouts/exercises/delete/' + exerciseIds[i], {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                    });
+                    await removeExercise;
+                }catch(e){
+                    console.log(e);
+                }
+            }
         }catch(e){
             console.log(e);
         }

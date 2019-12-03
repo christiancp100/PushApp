@@ -10,7 +10,7 @@
             </th>
             {?coach}
                 <th data-field="#">
-                <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="deleteFromDatabase()"">
+                <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black">
                     <i class="material-icons">delete</i>
                 </a>
                 </th>

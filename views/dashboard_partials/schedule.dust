@@ -36,7 +36,7 @@
             <a class="btn-floating btn-small waves-effect waves-light black" onclick="takeRows(event)">
                 <i id="done_btn" class="material-icons" >done_outline</i></a>
 
-            <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="cancelAll()"">
+            <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="deleteFromDatabase()">
                  <i class="material-icons">delete_forever</i>
             </a>
         </div>
