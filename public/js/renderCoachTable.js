@@ -1,11 +1,3 @@
-require('../../models/Exercise');
-require('../../models/Session');
-require('../../models/Schedule');
-
-let Exercise = mongoose.model('Exercise');
-let Session = mongoose.model('Session');
-let Schedule = mongoose.model('Schedule');
-
 function retrieveDay(){
     let day_btn = document.getElementById("day_btn");
     let day = day_btn.options[day_btn.selectedIndex].text;
@@ -20,7 +12,6 @@ function retrieveClientId(){
 
 async function renderCoachTable(){
     resetTable();
-    level = 0;
 
     if(retrieveDay() !== 'Session' && retrieveClientId() !== ''){
         let foundSession = await fetch('workouts/sessions/search' + "?weekday=" + retrieveDay() + "&_clientId=" + retrieveClientId() + "&_coachId=" + localStorage.userAccountId, {
@@ -33,7 +24,7 @@ async function renderCoachTable(){
 
         if(foundSession.status === 404){
             resetTable();
-            level = 0;
+            // level = 0;
             return;
         }
 
@@ -43,7 +34,7 @@ async function renderCoachTable(){
 
         if(exerciseIds === undefined){
             resetTable();
-            level = 0;
+            // level = 0;
             return;
         }
 
@@ -74,8 +65,10 @@ async function renderCoachTable(){
             document.getElementById('exerciseSets' + i).innerHTML = exerciseList[i].set;
             document.getElementById('exerciseWeight' + i).innerHTML = exerciseList[i].pumpWeight;
             document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].description;
+            level++;
         }
     }
+    level = 0;
 }
 
 function resetTable(){
