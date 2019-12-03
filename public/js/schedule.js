@@ -59,12 +59,36 @@ function addRow(e) {
     newExerciseRow.appendChild(newExerciseComments);
     newExerciseRow.appendChild(newExerciseRemoveInput);
     this.level++;
+
+
+
 }
 
 //-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
 //CREATES new "empty" Schedule and Takes the rows to work with them to create new exercise
+function resetFields(){
 
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+
+    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
+    let exName = lastRow.querySelectorAll('td input')[0];
+    let exReps = lastRow.querySelectorAll('td input')[1];
+    let exSets = lastRow.querySelectorAll('td input')[2];
+    let exWeight = lastRow.querySelectorAll('td input')[3];
+    let exComments = lastRow.querySelectorAll('td input')[4];
+
+    exName.value ='';
+    exReps.value = '';
+    exSets.value = '';
+    exWeight.value = '';
+    exComments.value ='';
+}
 async function takeRows(e) {
+
+
+
     let sessionFound = await fetch('/workouts/sessions/search?_coachId=' + await retrieveCoachId() + '&_clientId=' + retrieveClientId() + '&weekday=' + retrieveDay(), {
         method: 'GET',
         headers:{
@@ -125,7 +149,6 @@ async function takeRows(e) {
                 };
 
                 try{
-
                     let createdExercise = await fetch('/workouts/exercises/new',
                         {
                             method: 'POST',
@@ -136,7 +159,6 @@ async function takeRows(e) {
                     let exercise = await createdExercise.json();
                     let exId = exercise._id;
                     exerciseArray.push(exId);
-
                 } catch (e) {
                     console.log(e);
                 }
