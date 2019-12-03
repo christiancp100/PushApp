@@ -20,22 +20,17 @@
     </label>
 </div>
 <div>
-    <label>Birthday:
-        <input required value="{birthday}" min="1900-01-01" max="{maxDate}" type="date" name="birthday"/>
-    </label>
-</div>
-<div>
     <label>Sex:<br>
-        <input type="radio" name="sex" value="male" required> Male<br>
-        <input type="radio" name="sex" value="female"> Female<br>
-        <input type="radio" name="sex" value="other"> Other
+    <input type="radio" name="sex" value="male" {@eq key="sex" value="male"}checked{/eq}required> Male<br>
+    <input type="radio" name="sex" value="female" {@eq key="sex" value="female"}checked{/eq}>Female<br>
+    <input type="radio" name="sex" {@eq key="sex" value="other"}checked {/eq}value="other"> Other
     </label>
 </div>
 <div>
-    <label>unit system:<br>
-        <input type="radio" name="unitSystem" value="metric"> Metric<br>
-        <input type="radio" name="unitSystem" value="imperial"> Imperial<br>
-        <input type="radio" name="unitSystem" value="other"> Other
+    <label>unit system:<br>{!TODO change to select!}
+        <input {@eq key="unitSystem" value="metric"}checked{/eq}  type="radio" name="unitSystem" value="metric"> Metric<br>
+        <input {@eq key="unitSystem" value="imperial"}checked{/eq}  type="radio" name="unitSystem" value="imperial"> Imperial<br>
+        <input {@eq key="unitSystem" value="other"}checked{/eq}  type="radio" name="unitSystem" value="other"> Other
     </label>
 </div>
 <div>
@@ -76,9 +71,9 @@
 <div>
     <label>Currency:
         <select required id="currency" name="currency">
-            <option value="Euro">€</option>
-            <option value="CHF">CHF</option>
-            <option value="USD">$</option>
+            <option {@eq key=currency value="Euro"} selected {/eq} value="Euro">€</option>
+            <option {@eq key=currency value="CHF"} selected {/eq}value="CHF">CHF</option>
+            <option {@eq key=currency value="USD"} selected {/eq}value="USD">$</option>
             <option value="AUS">AU$</option>
             <option value="CAN">$CAN</option>
             <option value="Yen">¥</option>

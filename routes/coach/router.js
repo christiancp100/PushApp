@@ -93,7 +93,7 @@ router.post('/new', async (req, res) => {
                 let savedUser = await user.save();
                 console.log(savedUser._id);
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', {accID : (savedUser._id).toString()});//todo pass ID ad argument
+                    res.render('register_forms/register-credentials.dust', {accID : (savedUser._id).toString()});
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, savedUser);
                 }

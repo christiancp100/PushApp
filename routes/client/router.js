@@ -63,9 +63,7 @@ router.post('/new', async (req, res) => {
                 req.body.state === undefined &&
                 req.body.zipCode === undefined &&
                 req.body.country === undefined &&
-                req.body.currency === undefined &&
-                req.body.username === undefined &&
-                req.body.password === undefined) {
+                req.body.currency === undefined) {
                 res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
                 res.end();
             } else {
@@ -90,15 +88,6 @@ router.post('/new', async (req, res) => {
                     creationDate: Date.now()
                 });
 
-                if (req.body.description === undefined) {
-                    userAccount.description = '';
-                }
-                if (req.body.photo === undefined) {
-                    userAccount.photo = '';
-                }
-                if (req.body.address2 === undefined) {
-                    userAccount.address2 = '';
-                }
 
                 let savedUserAccount = await userAccount.save();
 
@@ -109,17 +98,10 @@ router.post('/new', async (req, res) => {
                     unitSystem: req.body.unitSystem
                 });
 
-                if (req.body.height === undefined) {
-                    clientInfo.height = '';
-                }
-                if (req.body.weight === undefined) {
-                    clientInfo.height = '';
-                }
-
                 let savedClientInfo = await clientInfo.save();
 
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});//todo pass ID ad argument
+                    res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
                     res = setResponse('json', 201, res, {
@@ -139,6 +121,51 @@ router.post('/new', async (req, res) => {
     }
 });
 
+router.get('/edit', isLoggedIn, async (req, res) => {
+    let found = await UserAccount.findById(req.user._userAccountId);
+    let oldAccount = {
+        firstName: found.firstName,
+        lastName: found.lastName,
+        birthday: found.birthday,
+        sex: found.sex,
+        email: found.email,
+        phone: found.phone,
+        address1: found.address1,
+        city: found.city,
+        state: found.state,
+        zipCode: found.zipCode,
+        country: found.country,
+        currency: found.currency,
+        localization: found.localization
+    };
+    console.log("OLD", oldAccount);
+    if (typeof found.description != "undefined") {
+        oldAccount.description = found.description;
+    }
+    if (typeof found.photo != "undefined") {
+        oldAccount.photo = found.photo;
+    }
+    if (typeof found.address2 != "undefined") {
+        oldAccount.address2 = found.address2;
+    }
+    let foundInfo = await ClientInfo.findOne({_clientId : found._id});
+    console.log("INFO", foundInfo);
+
+    if (foundInfo.height !== undefined) {
+        oldAccount.height = foundInfo.height;
+    }
+    if (typeof foundInfo.weight != "undefined") {
+        oldAccount.weight = foundInfo.weight;
+    }
+    if (typeof foundInfo.unitSystem != "undefined") {
+        oldAccount.unitSystem = foundInfo.unitSystem;
+    }
+    oldAccount.thisId = found._id;
+    console.log("to print", oldAccount);
+    if (req.accepts("text/html")) {
+        res.render('register_forms/client-settings.dust', oldAccount);
+    }
+})
 // Search for and users
 router.get('/search', function (req, res) {
     const filter = getFilter(req);
@@ -206,7 +233,6 @@ router.put('/edit/:id', async (req, res) => {
                     foundClient.lastName = req.body.lastName;
                     foundClient.description = req.body.description;
                     foundClient.photo = req.body.photo;
-                    foundClient.birthday = req.body.birthday;
                     foundClient.sex = req.body.sex;
                     foundClient.email = req.body.email;
                     foundClient.phone = req.body.phone;
@@ -231,6 +257,7 @@ router.put('/edit/:id', async (req, res) => {
                     console.log('User with ID: ' + req.params.id + ' updated!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
+                        res.end()
                     } else if (req.accepts("application/json")) {
                         // delete savedClient._doc['_credentials'];
                         res = setResponse('json', 201, res, {
@@ -364,7 +391,6 @@ function setResponse(type, code, res, msg) {
 }
 
 function isLoggedIn(req, res, next) {
-    console.log(req.path);
     if (!req.user){
         res.redirect('/login');
     }
@@ -374,8 +400,8 @@ function isLoggedIn(req, res, next) {
     // if they aren't render login page
     res.redirect('/login');
 }
-
-router.post('/login', async (req, res) => {
+//todo delete this root /login post
+/*router.post('/login', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
 
         let client = await Client.findOne({'access.username': req.body.username});
@@ -390,8 +416,8 @@ router.post('/login', async (req, res) => {
         }
         //encode the _id of user object in the mongo
         const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));
-        return res.header('x-auth-token', token).redirect('/client'); //todo store on the client side
+        return res.header('x-auth-token', token).redirect('/client');
     }
-});
+});*/
 
 module.exports = router;
