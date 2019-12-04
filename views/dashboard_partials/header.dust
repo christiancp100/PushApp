@@ -9,7 +9,7 @@
                             {>"dashboard_partials/notification"/}
                         </div>
                     </li>
-                    <li><a href="#!"><i class="material-icons white-text">settings</i></a>
+                    <li><a href="/{field}/edit"><i class="material-icons white-text">settings</i></a>
                     </li>
                 </ul><a href="#!" data-target="sidenav-left" class="sidenav-trigger left"><i
                         class="material-icons white-text">menu</i></a>

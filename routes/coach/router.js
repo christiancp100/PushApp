@@ -4,16 +4,17 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 let ObjectId = require('mongodb').ObjectID;
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
 require('../../models/CoachClients.js');
+require('../../models/Rating.js');
 
 let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
 let CoachClients = mongoose.model('CoachClients');
+let Rating = mongoose.model('Rating');
 
 // GET all coach
 router.get('/', async (req, res) => {
@@ -39,16 +40,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-// router.get('/', function (req, res) {
-//     res.type("html");
-//     res.render('coach-board');
-//     /*if (req.header('accept') == "text/html") {
-//
-//     } else {
-//         res.status(400).end()
-//     }*/
-// });
 // Create a new coach
 router.post('/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
@@ -93,7 +84,7 @@ router.post('/new', async (req, res) => {
                 let savedUser = await user.save();
                 console.log(savedUser._id);
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', {accID : (savedUser._id).toString()});//todo pass ID ad argument
+                    res.render('register_forms/register-credentials.dust', {accID : (savedUser._id).toString()});
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, savedUser);
                 }
@@ -324,6 +315,40 @@ router.put('/delete/:id', async (req, res) => {
     }
 });
 
+// GET all the information of a coach and render the setting page so that he can modify his data
+router.get('/edit', isLoggedIn, async (req, res) => {
+    let found = await UserAccount.findById(req.user._userAccountId);
+    let accountToModify = {
+        firstName: found.firstName,
+        lastName: found.lastName,
+        birthday: found.birthday,
+        sex: found.sex,
+        email: found.email,
+        phone: found.phone,
+        address1: found.address1,
+        city: found.city,
+        state: found.state,
+        zipCode: found.zipCode,
+        country: found.country,
+        currency: found.currency,
+        localization: found.localization
+    };
+    console.log("OLD", accountToModify);
+    if (typeof found.description != "undefined") {
+        accountToModify.description = found.description;
+    }
+    if (typeof found.photo != "undefined") {
+        accountToModify.photo = found.photo;
+    }
+    if (typeof found.address2 != "undefined") {
+        accountToModify.address2 = found.address2;
+    }
+    accountToModify.thisId = found._id;
+    console.log("to print", accountToModify);
+    if (req.accepts("text/html")) {
+        res.render('register_forms/coach-settings.dust', accountToModify);
+    }
+});
 
 // POST a new coach-client relation
 router.post('/hire', (req, res) => {
@@ -436,6 +461,21 @@ router.delete('/hire/:id', async (req, res) => {
     }
 });
 
+router.post('/rating', (req, res) =>{
+    console.log("body",req.body);
+    console.log("user", req.user);
+    let rate = new Rating({
+        _clientId: req.user._userAccountId,
+        _coachId: req.body.id,
+        score : req.body.score,
+        comment: req.body.comment,
+        title: req.body.title
+    });
+    rate.save()
+        .then(() => res.status(201).end())//todo rerender the page of client
+        .catch(() => res.status(500).end());
+});
+
 // Customized response
 function setResponse(type, code, res, msg) {
     res.status(code);
@@ -457,7 +497,20 @@ function setResponse(type, code, res, msg) {
     }
 }
 
+function isLoggedIn(req, res, next) {
+    // redirect if coach isn't not authenticated
+    if (!req.user){
+        res.redirect('/login');
+    }
+    // go on if coach is authenticated
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    // if they aren't render login page
+    res.redirect('/login');
+}
 
+//todo delete this root /username
 /*router.post('/username', async (req, res) => {
     if (req.get('Content-Type') === "application/json") {
         try {

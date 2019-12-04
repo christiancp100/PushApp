@@ -65,7 +65,7 @@ async function renderCoachTable(){
             document.getElementById('exerciseReps' + i).innerHTML = exerciseList[i].repetitions;
             document.getElementById('exerciseSets' + i).innerHTML = exerciseList[i].set;
             document.getElementById('exerciseWeight' + i).innerHTML = exerciseList[i].pumpWeight;
-            document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].comment;
+            document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].description;
             level++;
         }
         level = 0;
