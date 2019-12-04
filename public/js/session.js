@@ -5,35 +5,92 @@ getUserId = async() => {
     return obj.userAccountId;
 };
 // let A = [];
+function prettyPrinterDate(src){
+    let partial ='';
+    for(let i=0; i<src.length; i++){
+        let x = src.charAt(i);
+        if(x === 'T'){
+            return partial;
+        }else if(x === '-'){
+            x = '/';
+            partial+=x;
+        }else{
+            partial +=x;
+        }
+    }
+}
+
+checkIfHiredAlready = async(id)=>{
+    let getting = await fetch("/coaches/hire/coach/"+id, {method:"GET", headers: {'Content-Type':'application/json'}});
+    let clientsArray = await getting.json();
+    console.log("AAA", clientsArray);
+
+    for(let i = 0; i < clientsArray.length;i++){
+        console.log(await getUserId());
+        console.log(clientsArray[i]._clientId);
+        if(clientsArray[i]._clientId.localeCompare("5de65d6c34b8d99f3f2aaf71") === 0){
+            console.log("FOUND!");
+            return 1;
+        }
+    }
+    return 0;
+};
 async function getCoaches(){
 
     let everyone = await fetch("/coaches/search?accountType=coach");
     let coachesArray = await everyone.json();
     console.log("all coaches: ", coachesArray);
-    for(let i = 0; i<coachesArray.length; i++){
-
+    for(let i = 0; i<coachesArray.length; i++) {
+        // if (checkIfHiredAlready(coachesArray[i]._id)) {
+        //
         let div = document.getElementById("grid");
 
         let card = document.createElement("div");
-        card.className = "card col-lg-4 col-xs-12";
+        card.className = " card-image-bg col-lg-4 col-xs-12";
         div.appendChild(card);
 
         let img = document.createElement("img");
-        img.src= coachesArray[i].photo;
+        img.src = coachesArray[i].photo;
         card.appendChild(img);
 
         let h2 = document.createElement("h2");
-        h2.innerHTML = coachesArray[i].firstName +" "+ coachesArray[i].lastName;
+        h2.innerHTML = coachesArray[i].firstName + " " + coachesArray[i].lastName;
         img.insertAdjacentElement("afterend", h2);
 
         let p_description = document.createElement("p");
-        p_description.innerHTML = coachesArray[i].description;
+        p_description.innerHTML = coachesArray[i].description + "<br>" + prettyPrinterDate(coachesArray[i].birthday) + "<br>" + coachesArray[i].state + " " + coachesArray[i].city;
+
         h2.insertAdjacentElement("afterend", p_description);
 
-        let p = document.createElement("p");
-        p.innerHTML = coachesArray[i].birthday + coachesArray[i].state + coachesArray[i].city;
-        p_description.insertAdjacentElement("afterend", p);
+        let row_div = document.createElement("div");
+        if (await checkIfHiredAlready(coachesArray[i]._id) === 0) {
+            row_div.className = "row";
+            p_description.insertAdjacentElement("afterend", row_div);
 
+            let a = document.createElement("a");
+            a.className = 'col-xs-12 col-lg-12 mb-center btn btn--gradient mt-1';
+            a.addEventListener("click", async () => {
+                //FETCH NEW HIRING
+                // let coachId = coachesArray[i]._id;
+                // let userId = await getUserId();
+                // let body = {
+                //     _coachId: coachId,
+                //     _clientId: userId
+                // // };
+                // // let hiring = await fetch("/coaches/hire/new",
+                // //     {
+                // //         method: "POST",
+                // //         body: body,
+                // //         headers: {},
+                // //     });
+            });
+            row_div.appendChild(a);
+            a.innerHTML = "HIRE ME!";
+        }else{
+            let a = document.createElement('h1');
+            a.innerHTML = "Already Hired";
+            h2.appendChild(a);
+        }
     }
 }
 
