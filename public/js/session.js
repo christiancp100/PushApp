@@ -19,17 +19,30 @@ function prettyPrinterDate(src){
         }
     }
 }
+searchCoaches = async()=>{
+    let txt = document.getElementById("last_name").value;
+    if(txt === ''|| txt === " "){
+        getCoaches();
+    }
+    let found = await fetch("/coaches/search?accountType=coach&firstName="+txt);
+    let foundArray = await found.json();
+    cleanCards();
+    await displayCoaches(foundArray);
+};
 
+cleanCards = ()=>{
+    let children = document.getElementById("grid").childNodes;
+    for(let i =0;i<children.length;i++) {
+        children[i].remove();
+    }
+
+};
 checkIfHiredAlready = async(id)=>{
     let getting = await fetch("/coaches/hire/coach/"+id, {method:"GET", headers: {'Content-Type':'application/json'}});
     let clientsArray = await getting.json();
-    console.log("AAA", clientsArray);
-
     for(let i = 0; i < clientsArray.length;i++){
-        console.log(await getUserId());
-        console.log(clientsArray[i]._clientId);
         if(clientsArray[i]._clientId.localeCompare("5de65d6c34b8d99f3f2aaf71") === 0){
-            console.log("FOUND!");
+
             return 1;
         }
     }
@@ -39,10 +52,12 @@ async function getCoaches(){
 
     let everyone = await fetch("/coaches/search?accountType=coach");
     let coachesArray = await everyone.json();
-    console.log("all coaches: ", coachesArray);
+    await displayCoaches(coachesArray);
+}
+
+displayCoaches = async(coachesArray)=>{
+    cleanCards();
     for(let i = 0; i<coachesArray.length; i++) {
-        // if (checkIfHiredAlready(coachesArray[i]._id)) {
-        //
         let div = document.getElementById("grid");
 
         let card = document.createElement("div");
@@ -70,6 +85,7 @@ async function getCoaches(){
             let a = document.createElement("a");
             a.className = 'col-xs-12 col-lg-12 mb-center btn btn--gradient mt-1';
             a.addEventListener("click", async () => {
+
                 //FETCH NEW HIRING
                 // let coachId = coachesArray[i]._id;
                 // let userId = await getUserId();
@@ -92,7 +108,7 @@ async function getCoaches(){
             h2.appendChild(a);
         }
     }
-}
+};
 
 
 
