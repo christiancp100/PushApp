@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-{>"dashboard_partials/head" css="/css/client.css"/}
-
-<body class="has-fixed-sidenav" data-gr-c-s-loaded="true">
-    {>"dashboard_partials/header" name="John Doe" profile-picture="https://randomuser.me/api/portraits/men/61.jpg"/}
-    {!{>"dashboard_partials/coaches"}!}
+<!-- Fullcalendar-->
+                    <!-- Materialize-->
+                    <link href="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/admin-materialize.min.css?0" rel="stylesheet">
+                    <!-- Material Icons-->
+                    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/index_style.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/footer.css">
+<body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="getCoaches()">
+    {>"dashboard_partials/header" name="John Doe" /}
+<main>
+        <div class="container">
+                {>"dashboard_partials/coaches"/}
+        </div>
 </main>
-    {"dashboard_partials/footer"/}
+    {>"dashboard_partials/footer"/}
+</body>
     <script src="/js/fetch.js"></script>
     <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
     <script src="/js/session.js"></script>
-    <script src="/js/schedule.js"></script>
     <script src="/js/views.js"></script>
     <script src="/js/helper.js"></script>
-</body>
 
 </html>

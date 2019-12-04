@@ -9,6 +9,7 @@
     <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="createSched(); doneScheduleName();">
       <i class="material-icons" id="done_outline" >done_outline</i>
       </a>
+
         </div>
 
     </div>
