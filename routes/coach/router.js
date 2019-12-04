@@ -503,7 +503,6 @@ router.get('/services/:id', (res, req) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         if (req.params.id === undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res = setResponse('json', 400, res, {Error: "To retrieve services of a coach provide a valid coachId."});
-            res.end();
         }
         console.log("Looking for services of the coach with ID " + req.params.id);
         Service.find({_coachId: req.params.id})
@@ -558,86 +557,78 @@ router.post('/services/new', (req,res) => {
 });
 
 // PUT update an existing service
-router.put('/services/edit/:id', (req, res) => {
+router.put('/services/edit/:id', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
         if (req.params.id === undefined || !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res = setResponse('json', 400, res, {Error: "To create a new Service provide a valid serviceId."});
-            res.end();
         }
         if(req.body.name === undefined && req.body.fee === undefined && req.body.description === undefined && req.body.duration === undefined){
             res = setResponse('json', 404, res, {Error: 'The field you want to update does not exist in Service'});
-            res.end();
         }
         console.log('Editing service...');
         console.log('Searching for service with ID: ' + req.params.id + '.');
-        Service.findById({_id: req.params.id})
-            .then((found) => {
-                if(found !== null){
-                    if(req.body.name){
-                        found.name = req.body.name;
-                    }
-                    if(req.body.description){
-                        found.description = req.body.description;
-                    }
-                    if(req.body.duration){
-                        found.duration = req.body.duration;
-                    }
-                    if(req.body.fee){
-                        found.fee = req.body.fee;
-                    }
-                    found.save()
-                        .then((saved) => {
-                            res = setResponse('json', 200, res, saved);
-                            res.end();
-                        })
-                        .catch((e) => {
-                            console.log(e);
-                            res.status(500);
-                            res.end();
-                        });
-                } else {
-                    res = setResponse('json', 404, res, {Error: 'Cannot find the service for the given Id.'});
-                    res.end();
-                }
-            })
-            .catch((e) => {
-                res = setResponse('json', 404, res, {Error: 'Cannot find the service for the given Id.'});
+        try {
+            let found = await Service.findById(req.params.id);
+            if (found === null) {
+                res = setResponse('json', 404, res, {Error: 'No service for the given id'});
                 res.end();
-            });
+            } else {
+                if(req.body.name){
+                    found.name = req.body.name;
+                }
+                if(req.body.description){
+                    found.description = req.body.description;
+                }
+                if(req.body.duration){
+                    found.duration = req.body.duration;
+                }
+                if(req.body.fee){
+                    found.fee = req.body.fee;
+                }
+                let saved = await found.save();
+                res = setResponse('json', 200, res, saved);
+                res.end();
+            }
+        } catch(e) {
+            console.log(e);
+            res.status(500);
+            res.end();
+        }
     } else {
         res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
         res.end();
     }
-    res.end();
 });
 
 // DELETE an existing service
-router.delete('/services/delete/:id', (req, res) => {
+router.delete('/services/delete/:id', async (req, res) => {
     if (req.accepts("json")) {
-        console.log('Looking for the service to be removed');
-        Service.findById({_id: req.params.id})
-            .then((found) => {
-                found.remove()
-                    .then((removed) => {
-                        if (req.accepts("text/html")) {
-                            res = setResponse('html', 200, res);
-                        } else if (req.accepts("application/json")) {
-                            res = setResponse('json', 200, res, {Result: 'Service with ID ' + req.params.id + ' was successfully deleted!'});
-                        }
-                    })
-                    .catch((e) => {
-                        console.log(e);
-                        res.status(500);
+        console.log('ID', req.params.id);
+        if (req.params.id === undefined || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            try {
+                console.log('Searching for service with ID: ' + req.params.id + '.');
+                let found = await Service.findById(req.params.id);
+                if (found === null) {
+                    res = setResponse('json', 404, res, {Error: 'No service for the given id'});
+                    res.end();
+                } else {
+                    try {
+                        let removed = await Service.remove(found);
+                        console.log('The hire-relation has been deleted!');
+                        res = setResponse('json', 200, res, removed);
                         res.end();
-                    })
-            })
-            .catch((e) => {
-                res = setResponse('json', 404, res, {Error: 'Cannot find the service for the given Id.'});
+                    } catch (e) {
+                        res = setResponse('json', 500, res, {Error: e});
+                        res.end();
+                    }
+                }
+            } catch (e) {
+                res = setResponse('json', 500, res, {Error: e});
                 res.end();
-            });
-    } else {
-        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
-        res.end();
+            }
+        }
     }
 });
 
