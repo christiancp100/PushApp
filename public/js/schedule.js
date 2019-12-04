@@ -11,20 +11,49 @@ let exSets = lastRow.querySelectorAll('td input')[2];
 let exWeight = lastRow.querySelectorAll('td input')[3];
 let exComments = lastRow.querySelectorAll('td input')[4];
 
+let scheduleName;
+let created_id;
+let sessionsArray;
+
+async function createSched(){
+    let body={
+        _coachId: await retrieveCoachId(),
+        _clientId: await retrieveClientId(),
+        name: scheduleName,
+        sessions: [],
+        startDate: Date.now(),
+        endDate: Date.now(),
+    };
+
+    let creation = await fetch("/workouts/schedules/new", {method:"POST", headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    let created = await creation.json();
+    created_id = created._id;
+    console.log("SCHEDULE CREATED ID: "+ created_id);
+}
+
 async function doneScheduleName(){
+
+
     let title = document.getElementById("title")
-    let scheduleName = retrieveScheduleName();
+    scheduleName = retrieveScheduleName();
     let schedName = document.getElementById("schedName");
     schedName.remove();
-    // let creatingSchedule =
     let h2 = document.createElement("h2");
     h2.innerHTML = scheduleName;
     h2.id = "title";
     h2.className = "center";
 
+    if(created_id) {
+        await fetch("/workouts/schedules/delete/" + created_id, {
+            method: "DELETE",
+            headers: {'Content-Type': 'application/json'}
+        });
+        await createSched();
+        console.log("SCHEDULE MODIFIED ID: " + created_id);
+    }
+
     title.insertAdjacentElement("afterend",h2);
     title.remove();
-    console.log(h2);
 
     let modify_a = document.createElement("a");
     modify_a.className = "valign-wrapper btn-floating btn-small waves-effect waves-light black";
@@ -35,18 +64,17 @@ async function doneScheduleName(){
     h2.appendChild(modify_a);
 
     modify_a.addEventListener("click", ()=>{
-        modifyScheduleName(scheduleName, h2);
+        modifyScheduleName(h2);
     });
 }
 
-function modifyScheduleName(scheduleName, h2){
+function modifyScheduleName(h2){
     //fetch put
     let string = '<div class="input-field col s6" id="schedName"><input id="last_name" type="text" class="validate" value='+scheduleName+'><label for="last_name">Schedule Name</label><a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()"><i class="material-icons" id="done_outline" >done_outline</i> </a> </div> </div>';
     h2.innerHTML = string;
 }
 //clicking the add button will call this function that simply creates the row in the table.
 function addRow() {
-
 
     //?check the required fields
     if(exName.value === ''){
@@ -230,7 +258,6 @@ async function saveInSessionAndSchedule(array) {
         exercises: array
     };
     try {
-        console.log("C");
         let res = await fetch("/workouts/sessions/new", {
             method: "POST",
             body: JSON.stringify(sess),
@@ -238,8 +265,22 @@ async function saveInSessionAndSchedule(array) {
                 'Content-Type': 'application/json'
             },
         });
-
-        // await saveSchedule(sessionsArray);
+        let session = await res.json();
+        sessionsArray.push(session._id);
+        let body = {
+            _coachId: await retrieveCoachId(),
+            _clientId: await retrieveClientId(),
+            sessions: sessionsArray,
+        };
+        let adding = await fetch("/workouts/schedules/edit/"+created_id, {
+            method:"PUT",
+            headers:{
+                "Content-Type":'application/json'
+            },
+            body:JSON.stringify(body),
+        });
+        let added = await adding.json();
+        console.log(added);
     }catch(err){
         console.log(err);
     }
