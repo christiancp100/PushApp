@@ -5,14 +5,15 @@ async function retrieveCoachId() {
 }
 function retrieveDay(){
     let day_btn = document.getElementById("day_btn");
-    let day = day_btn.options[day_btn.selectedIndex].text;
-    return day;
+    return day_btn.options[day_btn.selectedIndex].text;
 }
 
 function retrieveClientId(){
     let selectedUser = document.getElementById('pickUser');
-    let _clientId = selectedUser.options[selectedUser.selectedIndex].getAttribute("value");
-    return _clientId;
+    return selectedUser.options[selectedUser.selectedIndex].getAttribute("value");
+}
+function retrieveScheduleName(){
+    return document.getElementById("last_name").value;
 }
 
 async function renderCoachTable(){
@@ -45,14 +46,8 @@ async function renderCoachTable(){
         }
 
         let exerciseList = [];
-        // console.log('LENGTH', exerciseIds.length);
-        // console.log('exerciseIds', exerciseIds);
-        // for(let i = 0; i < exerciseIds.length; i++){
-        //     console.log(i, exerciseIds[i]);
-        // }
 
         for(let i = 0; i < exerciseIds.length; i++){
-            // console.log(i, exerciseIds[i]);
 
             let exercise = await fetch('workouts/exercises/search' + "?_id=" + exerciseIds[i], {
                 method: "GET",
@@ -70,11 +65,12 @@ async function renderCoachTable(){
             document.getElementById('exerciseReps' + i).innerHTML = exerciseList[i].repetitions;
             document.getElementById('exerciseSets' + i).innerHTML = exerciseList[i].set;
             document.getElementById('exerciseWeight' + i).innerHTML = exerciseList[i].pumpWeight;
-            document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].description;
+            document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].comment;
             level++;
         }
+        level = 0;
     }
-    level = 0;
+
 }
 
 function resetTable(){
@@ -95,7 +91,7 @@ async function deleteFromDatabase(){
             repetitions : document.getElementById('exerciseReps' + rowCounter).innerHTML,
             set : document.getElementById('exerciseSets' + rowCounter).innerHTML,
             pumpWeight : document.getElementById('exerciseWeight' + rowCounter).innerHTML,
-            description : document.getElementById('exerciseComments' + rowCounter).innerHTML,
+            comment : document.getElementById('exerciseComments' + rowCounter).innerHTML,
         };
 
         try{
@@ -130,6 +126,7 @@ async function deleteFromDatabase(){
                         },
                     });
                     await removeExercise;
+                    resetTable();
                 }catch(e){
                     console.log(e);
                 }
@@ -144,7 +141,6 @@ async function deleteFromDatabase(){
 
 async function removeSingleExerciseFromDatabase(rowId){
     let rowToBeRemovedFromDatabase = document.getElementById(rowId);
-    console.log('ROW: ', rowToBeRemovedFromDatabase);
 
     try{
         let exerciseName = rowToBeRemovedFromDatabase.childNodes[0].innerHTML;
@@ -152,12 +148,6 @@ async function removeSingleExerciseFromDatabase(rowId){
         let exerciseSets = rowToBeRemovedFromDatabase.childNodes[2].innerHTML;
         let exerciseWeight = rowToBeRemovedFromDatabase.childNodes[3].innerHTML;
         let exerciseDescription = rowToBeRemovedFromDatabase.childNodes[4].innerHTML;
-
-        console.log(exerciseName);
-        console.log(exerciseReps);
-        console.log(exerciseSets);
-        console.log(exerciseWeight);
-        console.log(exerciseDescription);
 
         let foundExercise = await fetch('workouts/exercises/search'
             + "?name=" + exerciseName
@@ -214,8 +204,6 @@ async function removeSingleExerciseFromDatabase(rowId){
             },
         });
         await removeExercise;
-
-        console.log('Session Updated Succesfully');
 
     }catch(e){
         console.log(e);

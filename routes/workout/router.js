@@ -200,7 +200,6 @@ router.post('/schedules/new', async (req, res) => {
                 req.body.startDate === undefined &&
                 req.body.endDate === undefined) {
                 res = setResponse('json', 400, res, {Error: "Coach ID, Client ID, schedule name, start date and final date must be provided"});
-                res.end();
             } else {
                 let schedule = new Schedule({
                     _coachId: req.body._coachId,
@@ -212,12 +211,11 @@ router.post('/schedules/new', async (req, res) => {
 
                 let savedSchedule = await schedule.save();
                 res = setResponse('json', 200, res, savedSchedule);
-                res.end();
             }
         } else {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500).end();
@@ -235,9 +233,7 @@ router.post('/sessions/new', async (req, res) => {
                 req.body.weekday === undefined &&
                 req.body.exercises === undefined) {
                 res = setResponse('json', 400, res, {Error: "Coach ID, Client ID and weekday must be provided"});
-                res.end();
             } else {
-
                 let session = new Session({
                     _coachId: req.body._coachId,
                     _clientId: req.body._clientId,
@@ -251,12 +247,11 @@ router.post('/sessions/new', async (req, res) => {
 
                 let savedSession = await session.save();
                 res = setResponse('json', 200, res, savedSession);
-                res.end();
             }
         } else {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500).end();
@@ -277,7 +272,6 @@ router.post('/exercises/new', async (req, res) => {
                 req.body.set === undefined &&
                 req.body.repetitions === undefined) {
                 res = setResponse('json', 400, res, {Error: "Exercise sequence number, name, description, weight units, pump weight, body part, set and repetitions must be provided."});
-                res.end();
             } else {
                 let exercise = new Exercise({
                     name: req.body.name,
@@ -291,12 +285,11 @@ router.post('/exercises/new', async (req, res) => {
 
                 let savedExercise = await exercise.save();
                 res = setResponse('json', 200, res, savedExercise);
-                res.end();
             }
         } else {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500).end();
@@ -330,11 +323,10 @@ router.put('/schedules/edit/:id', async (req, res) => {
             } else {
                 res = setResponse('json', 404, res);
             }
-            res.end();
         } else {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500).end();
@@ -364,11 +356,10 @@ router.put('/sessions/edit/:id', async (req, res) => {
             } else {
                 res = setResponse('json', 404, res);
             }
-            res.end();
         } else {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500).end();
@@ -389,7 +380,6 @@ router.put('/exercises/edit/:id', async (req, res) => {
                 req.body.set === undefined &&
                 req.body.repetitions === undefined) {
                 res = setResponse('json', 400, res, {Error: "Exercise name, description, weight units, pump weight, body part, set and repetitions must be provided."});
-                res.end();
             } else {
                 let exercise = new Exercise({
                     name: req.body.name,
@@ -407,12 +397,11 @@ router.put('/exercises/edit/:id', async (req, res) => {
 
                 let savedExercise = await exercise.save();
                 res = setResponse('json', 200, res, savedExercise);
-                res.end();
             }
         } else {
             res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500).end();
@@ -432,11 +421,10 @@ router.delete('/schedules/delete/:id', async (req, res) => {
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Schedule with ID ` + found._id.toString() + ` was successfully deleted!`});
             }
-            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Schedule not found!'});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500);
@@ -456,11 +444,10 @@ router.delete('/sessions/delete/:id', async (req, res) => {
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Session with ID ` + found._id.toString() + ` was successfully deleted!`});
             }
-            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Session not found!'});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500);
@@ -480,11 +467,10 @@ router.delete('/exercises/delete/:id', async (req, res) => {
             } else if (req.accepts("application/json")) {
                 res = setResponse('json', 200, res, {Result: `Exercise with ID ` + found._id.toString() + ` was successfully deleted!`});
             }
-            res.end();
         } else {
             res = setResponse('error', 404, res, {Error: 'Exercise not found!'});
-            res.end();
         }
+        res.end();
     } catch (err) {
         console.log(err);
         res.status(500);

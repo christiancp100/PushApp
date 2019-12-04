@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+{>"dashboard_partials/head" css="/css/client.css"/}
+
+<body class="has-fixed-sidenav" data-gr-c-s-loaded="true">
+    {>"dashboard_partials/header" name="John Doe" profile-picture="https://randomuser.me/api/portraits/men/61.jpg"/}
+    {!{>"dashboard_partials/coaches"}!}
+</main>
+    {"dashboard_partials/footer"/}
+    <script src="/js/fetch.js"></script>
+    <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+    <script src="/js/session.js"></script>
+    <script src="/js/schedule.js"></script>
+    <script src="/js/views.js"></script>
+    <script src="/js/helper.js"></script>
+</body>
+
+</html>

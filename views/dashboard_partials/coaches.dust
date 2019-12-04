@@ -1,0 +1,7 @@
+
+{#A}
+    <ul>
+        <li>{firstName} {lastName}<li>
+        <input type="button" value="Hire Me!">
+    </ul>
+{/A}

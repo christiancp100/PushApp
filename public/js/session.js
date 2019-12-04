@@ -1,19 +1,23 @@
-async function getExercises(userId) {
+async function getExercises() {
     try {
         let headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         };
 
-        let session = await fetch("/workouts/sessions/search?_clientId=" + userId + "&weekday=" + getWeekDay(), {
+        let userId = await fetch("/auth/getuserinfo");
+        userId = await userId.json();
+
+        let session = await fetch("/workouts/sessions/search?_clientId=" + userId.userAccountId + "&weekday=" + getWeekDay(), {
             method: 'GET',
             headers: headers,
         });
+
         session = await session.json();
 
         let exercises = [];
         for (let i = 0; i < session.exercises.length; i++) {
-            let exercise = await fetch("/workouts/exercises/findById?id=" + session.exercises[i], {
+            let exercise = await fetch("/workouts/exercises/search?id=" + session.exercises[i], {
                 method: 'GET',
                 headers: headers
             });
@@ -34,4 +38,4 @@ function getWeekDay() {
     return weekdays[new Date().getDay()];
 }
 
-getExercises(localStorage.userAccountId);
+getExercises();
