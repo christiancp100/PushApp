@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 require('../../models/Credential.js');
 require('../../models/UserAccount.js');
 require('../../models/ClientInfo.js');
-require('../../models/CoachClients')
+require('../../models/CoachClients');
 
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
@@ -34,13 +34,15 @@ router.get('/:username', async (req, res, next) => {
             if (req.path === '/login') {
                 res.render('login.dust')
             } else if (req.path === '/register') {
-                // ADD HERE CORRECT RENDERER!!!
-                // res.render('register_forms/coach-register');
+                res.render('register_forms/choose_register');
             } else if (req.path === '/register-coach') {
                 res.render('register_forms/coach-register');
             } else if (req.path === '/register-client') {
                 res.render('register_forms/client-register');
-            } else {
+            } else if(req.path === '/workout'){
+                res.render('workout');
+            }
+            else {
                 let credentials = await Credentials.findOne(filter);
                 console.log();
                 if (credentials === null || credentials.username !== filter.username) {
