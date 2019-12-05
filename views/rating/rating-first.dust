@@ -16,7 +16,10 @@
         }
     </style>
 </head>
-<body>
+<body onload="function f() {
+    document.getElementById('titleReview').validity.valid;
+    document.getElementById('commentReview').validity.valid;
+}">
 <h2>Rate your coach {name}</h2>{!name of coach!}
 <span id="firstStar" onclick="starsRating(event)" class="fa fa-star checked"></span>
 <span onclick="starsRating(event)" class="unchecked fa fa-star"></span>
@@ -29,7 +32,7 @@
 <p>Add Comment:</p>
 <textarea id="commentReview" rows="5" cols="58" placeholder="Add your comment..."></textarea>
 <br>
-<button onclick="addReview(event, {id})" type="button">Rate</button>
+<button onclick="addReview(event, '{id}')" type="button">Rate</button>
 <script src="/js/helper.js"></script>
 </body>
 

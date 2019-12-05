@@ -3,11 +3,35 @@
 
 <head>
     <title>Rating the coach</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .checked {
+            color: orange;
+        }
+        /*.checked:hover {
+            color: darkgray;
+        }*/
+        .unchecked:hover {
+            color: sandybrown;
+        }
+    </style>
 </head>
-<body>
-<p>You have already rated {name}, do you want to change your rating?</p>
-    {!TODO show previous rating but with disabled fields!}
-<button type="button">Yes</button>
-<button type="button">No</button>
+<body onload="starColor({score})">
+<h2>You have already rated {name}, do you want to change your rating?</h2>
+<span id="firstStar" class="fa fa-star"></span>
+<span class="fa fa-star"></span>
+<span class="fa fa-star"></span>
+<span class="fa fa-star"></span>
+<span class="fa fa-star"></span><br>
+<label>Title of review:
+    <input disabled id="titleReview" value="{title}" type="text" name="title" placeholder="Title">
+</label><br>
+<p>Add Comment:</p>
+<textarea disabled id="commentReview" rows="5" cols="58" placeholder="Add your comment...">{comment}</textarea>
+<div id="buttons">
+<button onclick="changeReview(event, '{objId}')" type="button">Yes</button>
+<button type="button">No</button> {!TODO go on!}
+</div>
+<script src="/js/helper.js"></script>
 </body>
 </html>
