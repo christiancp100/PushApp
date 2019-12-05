@@ -44,9 +44,6 @@ async function addRow() {
     let exWeight = lastRow.querySelectorAll('td input')[3];
     let exComments = lastRow.querySelectorAll('td input')[4];
 
-    if(isNullOrWhiteSpace(exName.value) || isNullOrWhiteSpace(exReps.value) || isNullOrWhiteSpace(exSets.value) || isNullOrWhiteSpace(exWeight.value)){
-        return;
-    }
     let newExerciseRow = document.createElement('tr');
     newExerciseRow.id = 'row' + level;
 
@@ -74,6 +71,7 @@ async function addRow() {
     newExerciseRemoveInput.type = 'submit';
     newExerciseRemoveInput.value = '-';
     newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
+    newExerciseRemoveInput.id = "remove_btn";
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
     let icon = document.createElement('i');//just for beauty reason
@@ -247,6 +245,7 @@ async function newExercise() {
         repetitions: exReps.value,
     };
     let exercise = await postExercise(body);
+
     createAndModifySession(exercise._id);
 
     exName.value ='';
@@ -325,38 +324,18 @@ async function renderTable(){
 }
 
 async function removeSingleExerciseFromDatabase(rowId){
-    let rowToBeRemovedFromDatabase = document.getElementById(rowId);
-
+    // let rowToBeRemovedFromDatabase = document.getElementById(rowId);
     try{
-        let exerciseName = rowToBeRemovedFromDatabase.childNodes[0].innerHTML;
-        let exerciseReps = rowToBeRemovedFromDatabase.childNodes[1].innerHTML;
-        let exerciseSets = rowToBeRemovedFromDatabase.childNodes[2].innerHTML;
-        let exerciseWeight = rowToBeRemovedFromDatabase.childNodes[3].innerHTML;
-        let exerciseDescription = rowToBeRemovedFromDatabase.childNodes[4].innerHTML;
-
-        let foundExercise = await fetch('workouts/exercises/search'
-            + "?name=" + exerciseName
-            + "&repetitions=" + exerciseReps
-            + "&set=" + exerciseSets
-            + "&pumpWeight=" + exerciseWeight
-            + "&description=" + exerciseDescription, {
-            method: "GET",
-            headers: {
-                'Content-Type':'application/json',
-                'Accept':'application/json'
-            },
-        });
-        let exercise = await foundExercise.json();
-
-        let exId = exercise._id;
-        console.log("ID", exId);
+        let string = rowId.slice(3, rowId.length);
+        let position = parseInt(string, 10);
 
         let foundSession = await searchSession();
         let session = await foundSession.json();
 
         let sessionExercises = session.exercises;
-
         let sessionId = session._id;
+
+        let exId = session.exercises[position];
 
         sessionExercises.splice(sessionExercises.indexOf(exId), 1);
 
@@ -378,7 +357,6 @@ async function removeSingleExerciseFromDatabase(rowId){
 }
 
 async function deleteFromDatabase(){
-    let table = document.getElementById('scheduleTable');
     let rowCounter = 0;
     while(document.getElementById('row' + rowCounter)){
 
