@@ -21,7 +21,7 @@
 </div>
 <div>
     <label>Birthday:
-        <input required value="{bday}" min="1900-01-01" max="{maxDate}" type="date" name="birthday"/>
+        <input required value="{birthday}" min="1900-01-01" max="{maxDate}" type="date" name="birthday"/>
     </label>
 </div>
 <div>
@@ -34,7 +34,7 @@
 <div>
     <label>unit system:<br>
         <input type="radio" name="unitSystem" value="metric"> Metric<br>
-        <input type="radio" name="unitSystem" value="other"> other<br>
+        <input type="radio" name="unitSystem" value="imperial"> Imperial<br>
         <input type="radio" name="unitSystem" value="other"> Other
     </label>
 </div>
@@ -97,3 +97,5 @@
         <input required value="{email}" type="email" name="email"/>
     </label>
 </div>
+
+<input type="hidden" value="{credentials}" name="credentials">

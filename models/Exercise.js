@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const ExerciseSchema = exports.ExerciseSchema = new Schema({
     name: {type: String, required: true},
     description: {type: String, required: true}, // TODO description taken from the API
-    comment: {type: [String]},
+    comment: {type: String},
     weightUnit: {type: String, required: true},
     pumpWeight: {type: Number, required: true},
     bodyPart: {type: String, required: true},    //taken from the API(?)

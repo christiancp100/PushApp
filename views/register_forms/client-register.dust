@@ -3,11 +3,10 @@
 <head>
     <title>Client register</title>
 </head>
-
 <body>
 <h2>Register new Client</h2>
-<form onsubmit="return mySubmit();" action="/clients/new"  method="post" enctype="application/x-www-form-urlencoded">
-    {>"../partials/register"/}
+<form action="/clients/new"  method="POST" enctype="application/x-www-form-urlencoded">
+   {>"../partials/register"/}
     <div>
         <label>bmi:
             {?bmi}<input value="{bmi}" type="text" name="bmi"/>
@@ -24,18 +23,6 @@
         <label>weight (in kg):
             {?weight}<input pattern="[0-9]{3}" value="{weight}" type="text" name="weight"/>
             {:else} <input pattern="[0-9]{3}" type="text" name="weight"/>{/weight}
-        </label>
-    </div>
-    <div>
-        <label>Username:
-            <input required id="user" value="" type="text" name="username"/>
-        </label>
-    </div>
-    <div>
-        <label>Password:
-            <input required type="password"
-                   title="The password should contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
-                   name="password"/>
         </label>
     </div>
     <div>
