@@ -67,11 +67,15 @@ router.post('/new', async (req, res) => {
                 res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
                 res.end();
             } else {
+                console.log(req.body.photo);
+                let pic = req.body.photo;
+                let photo = await pic.arrayBuffer();
+                console.log("PHOTOOOOOO", photo);
                 let userAccount = new UserAccount({
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     description: req.body.description,
-                    photo: req.body.photo,
+                    photo: photo,
                     birthday: req.body.birthday,
                     sex: req.body.sex,
                     email: req.body.email,
