@@ -1,0 +1,14 @@
+<div class="col s12 m4">
+    <div class="card">
+        <div class="card-image">
+            <img src="/img/trainers/trainer-img-2.png">
+            <span class="card-title">{coach.firstName} {coach.lastName}</span>
+        </div>
+        <div class="card-content">
+            <p>{coach.description}</p>
+        </div>
+        <div class="card-action">
+            <a class="red-text" href="#">Hire me</a>
+        </div>
+    </div>
+</div>

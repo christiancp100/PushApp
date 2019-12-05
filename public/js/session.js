@@ -55,7 +55,19 @@ async function getCoaches(){
     await displayCoaches(coachesArray);
 }
 
-displayCoaches = async(coachesArray)=>{
+
+displayCoaches = async(coachesArray) => {
+  console.log(coachesArray);
+  coachesArray.forEach(coach => {
+    coach.description = coach.description.slice(0, 50) + "...";
+    dust.render("dashboard_partials/coach_card_for_list", { coach: coach }, function(err, out) {
+      console.log(out);
+      document.getElementById("grid").innerHTML += out;
+    });
+  })
+};
+
+displayCoaches_2 = async(coachesArray)=>{
     cleanCards();
     for(let i = 0; i<coachesArray.length; i++) {
         let div = document.getElementById("grid");
