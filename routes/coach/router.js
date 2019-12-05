@@ -163,6 +163,7 @@ function getFilter(req) {
 
 // Search for coach
 router.get('/search', function (req, res) {
+    console.log("ENTRATO");
     let filter = getFilter(req);
     UserAccount.find(filter)
         .then((coaches) => {
