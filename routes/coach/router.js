@@ -436,26 +436,6 @@ router.delete('/hire/:id', async (req, res) => {
     }
 });
 
-router.post('/newrating', async (req, res) =>{
-    let body = await JSON.parse(req.body);
-    console.log("body", body);
-    console.log("user", req.user);
-    console.log(req.body.id);
-    let rate = new Rating({
-        _clientId: ObjectId("5de66a9ef671d50d31c8b936"),
-        _coachId: ObjectId(body.id),
-        score : body.score,
-        comment: body.comment,
-        title: body.title
-    });
-    try {
-        let saved = await rate.save();
-        res.status(201).end()/*todo whatever needed*/
-    } catch (e) {
-        res.status(500).end()
-    }
-});
-
 router.put('/rating', async (req, res) =>{
     let body = await JSON.parse(req.body);
     console.log(body);
@@ -479,6 +459,26 @@ router.post('/ratings', async (req, res) => {
     media = Math.floor(media/(found.length-1));
     res.render('rating/stars.dust', {media : media}); //send media of rating
 })
+
+router.post('/newrating', async (req, res) =>{
+    let body = await JSON.parse(req.body);
+    console.log("body", body);
+    console.log("user", req.user);
+    console.log(req.body.id);
+    let rate = new Rating({
+        _clientId: ObjectId("5de66a9ef671d50d31c8b936"),
+        _coachId: ObjectId(body.id),
+        score : body.score,
+        comment: body.comment,
+        title: body.title
+    });
+    try {
+        let saved = await rate.save();
+        res.status(201).end()/*todo whatever needed*/
+    } catch (e) {
+        res.status(500).end()
+    }
+});
 
 // Customized response
 function setResponse(type, code, res, msg) {
