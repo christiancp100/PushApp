@@ -1,20 +1,52 @@
-let level = 0;
-//clicking the add button will call this function that simply creates the row in the table.
-function addRow(e) {
+function countRow(){
+    let level = 0;
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+    level = rows.length - 1;
+    return level;
+}
 
-    console.log("Adding a row...");
+async function retrieveCoachId() {
+    let obj = await fetch('/auth/getuserinfo');
+    obj = await obj.json();
+    return obj.userAccountId;
+}
+function retrieveDay(){
+    let day_btn = document.getElementById("day_btn");
+    return day_btn.options[day_btn.selectedIndex].text;
+}
+
+function retrieveClientId(){
+    let selectedUser = document.getElementById('pickUser');
+    return selectedUser.options[selectedUser.selectedIndex].getAttribute("value");
+}
+
+function isNullOrWhiteSpace(input){
+    if(typeof input === undefined || input === null){
+        return true;
+    }
+    return input.replace(/\s/g,'').length < 1;
+}
+
+async function addRow() {
+
+    let level = countRow();
+    console.log('LEVEL', level);
 
     let table = document.getElementById('scheduleTable');
     let rows =  table.querySelectorAll("tr");
-
     let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
 
+    //last row inputs
     let exName = lastRow.querySelectorAll('td input')[0];
     let exReps = lastRow.querySelectorAll('td input')[1];
     let exSets = lastRow.querySelectorAll('td input')[2];
     let exWeight = lastRow.querySelectorAll('td input')[3];
     let exComments = lastRow.querySelectorAll('td input')[4];
 
+    if(isNullOrWhiteSpace(exName.value) || isNullOrWhiteSpace(exReps.value) || isNullOrWhiteSpace(exSets.value) || isNullOrWhiteSpace(exWeight.value)){
+        return;
+    }
     let newExerciseRow = document.createElement('tr');
     newExerciseRow.id = 'row' + level;
 
@@ -44,12 +76,10 @@ function addRow(e) {
     newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
-
     let icon = document.createElement('i');//just for beauty reason
     icon.className = 'material-icons';
     icon.id = "rem_btn"+ level;
     newExerciseRemoveInput.appendChild(icon);
-
 
     table.insertBefore(newExerciseRow, table.childNodes[rows.length-1]);
     newExerciseRow.appendChild(newExerciseName);
@@ -58,170 +88,121 @@ function addRow(e) {
     newExerciseRow.appendChild(newExerciseWeight);
     newExerciseRow.appendChild(newExerciseComments);
     newExerciseRow.appendChild(newExerciseRemoveInput);
-    this.level++;
-
 
 
 }
 
-//-----------  SCHEDULE INIT AND EXERCISE CREATION----------------------------------------
-//CREATES new "empty" Schedule and Takes the rows to work with them to create new exercise
-function resetFields(){
-
-    let table = document.getElementById('scheduleTable');
-    let rows =  table.querySelectorAll("tr");
-
-    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
-
-    let exName = lastRow.querySelectorAll('td input')[0];
-    let exReps = lastRow.querySelectorAll('td input')[1];
-    let exSets = lastRow.querySelectorAll('td input')[2];
-    let exWeight = lastRow.querySelectorAll('td input')[3];
-    let exComments = lastRow.querySelectorAll('td input')[4];
-
-    exName.value ='';
-    exReps.value = '';
-    exSets.value = '';
-    exWeight.value = '';
-    exComments.value ='';
+async function searchSession(){
+    try{
+        let sessionFound = await fetch('/workouts/sessions/search?_coachId=' + await retrieveCoachId() + '&_clientId=' + retrieveClientId() + '&weekday=' + retrieveDay(), {
+            method: 'GET',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }
+        });
+        return sessionFound;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
 }
-async function takeRows(e) {
 
+async function postSession(body){
+    try{
+        let createSession = await fetch("/workouts/sessions/new", {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        let session = await createSession.json();
+        return session;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
 
+async function putSession(_id, body){
+    try{
+        let updatingSession = await fetch('workouts/sessions/edit/' + _id, {
+            method: "PUT",
+            headers: {
+                'Content-Type':'application/json',
+            },
+            body: JSON.stringify(body)
+        });
+        let session = await updatingSession.json();
+        return session;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
 
-    let sessionFound = await fetch('/workouts/sessions/search?_coachId=' + await retrieveCoachId() + '&_clientId=' + retrieveClientId() + '&weekday=' + retrieveDay(), {
-        method: 'GET',
-        headers:{
-            'Content-Type':'application/json',
-            'Accept':'application/json'
-        }
-    });
-    console.log("SES", sessionFound);
-    let sessionx = await sessionFound.json();
-    let sessionExercisesToRemove = sessionx.exercises;
-
-    if(sessionFound.status === 200) {
-
-        for(let i = 0; i < sessionExercisesToRemove.length; i++){
-            let removeExercise = await fetch('workouts/exercises/delete/' + sessionExercisesToRemove[i], {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type':'Application/json',
-                }
-            });
-            await removeExercise;
-        }
-
-        let sessionId = sessionx._id;
-        let deleteSession = await fetch('workouts/sessions/delete/' + sessionId, {
+async function deleteSession(_id){
+    try{
+        let deleteSession = await fetch('workouts/sessions/delete/' + _id, {
             method: 'DELETE',
             headers: {
                 'Content-Type':'Application/json',
             }
         });
         await deleteSession;
-    }
-
-    let exerciseArray = [];
-
-    let table = document.getElementById("scheduleTable");
-    let children = table.childNodes;
-
-    let body;
-    for (let i = 0; i < children.length; i++) {
-        if (children[i].tagName === 'TR') {
-            this.count++;
-            if (children[i].id) {
-                let exerciseName = children[i].childNodes[0].innerHTML;
-                let rep = children[i].childNodes[1].innerHTML;
-                let sets = children[i].childNodes[2].innerHTML;
-                let weight = children[i].childNodes[3].innerHTML;
-                let comment = children[i].childNodes[4].innerHTML;
-                body = {
-                    name: exerciseName,
-                    description: 'description placeholder',
-                    repetitions: rep,
-                    set: sets,
-                    comment: comment,
-                    pumpWeight: weight,
-                    weightUnit: 'weightUnit placeholder',
-                    bodyPart: 'body part placeholder'
-                };
-
-                try{
-                    let createdExercise = await fetch('/workouts/exercises/new',
-                        {
-                            method: 'POST',
-                            body: JSON.stringify(body),
-                            headers: {'Content-Type': 'application/json'}
-                        });
-
-                    let exercise = await createdExercise.json();
-                    let exId = exercise._id;
-                    exerciseArray.push(exId);
-                } catch (e) {
-                    console.log(e);
-                }
-            }
-        }
-    }
-    let bodySession = {
-        _coachId: await retrieveCoachId(),
-        _clientId: retrieveClientId(),
-        weekday: retrieveDay(),
-        exercises: exerciseArray
-    };
-
-    try {
-
-        let res = await fetch("/workouts/sessions/new", {
-            method: "POST",
-            body: JSON.stringify(bodySession),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-        await res.json();
-
-    }catch(e) {
+    }catch(e){
         console.log(e);
+        return undefined;
     }
 }
-// //-----------  SESSION CREATION AND SCHEDULE UPDATING----------------------------------------
-// //Creates a new Session taking the exercises of the previous function, push them into an array of exercises and
-// //In schedule pushes into the array of sessions the newly created session
-async function saveInSessionAndSchedule(array){
 
-    let day_btn = document.getElementById("day_btn");
-    let day = day_btn.options[day_btn.selectedIndex].text;
-
-    let client_btn = document.getElementById("pickUser");
-    let client_id = client_btn.options[client_btn.selectedIndex].getAttribute("value");
-
-    let sess = {
-        _coachId: await retrieveCoachId(),
-        _clientId: client_id,
-        weekday: day,
-        exercises: array
-    };
-
-    try {
-
-            let res = await fetch("/workouts/sessions/new", {
-                method: "POST",
-                body: JSON.stringify(sess),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+async function postExercise(body){
+    try{
+        let createdExercise = await fetch('/workouts/exercises/new',
+            {
+                method: 'POST',
+                body: JSON.stringify(body),
+                headers: {'Content-Type': 'application/json'}
             });
+        let exercise = await createdExercise.json();
+        return exercise;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
 
-            let fields = await res.json();
-            let sArray = schedFields.sessions;  //puts the new session id into existing schedule
-            let s_id = schedFields._id;
-            sArray.push(fields._id);
+async function deleteExercise(_id){
+    try{
+        let removeExercise = await fetch('workouts/exercises/delete/' + _id, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type':'Application/json',
+            }
+        });
+        let removedExercise = await removeExercise;
+        return removedExercise;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
 
-        }catch(err){
-        console.log(err);
+async function searchExercise(_id){
+    try{
+        let exerciseFound = await fetch('/workouts/exercises/search?_id=' + _id, {
+            method: 'GET',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }
+        });
+        let exercises = await exerciseFound.json();
+        return exercises;
+    }catch(e){
+        console.log(e);
+        return undefined;
     }
 }
 
@@ -230,4 +211,199 @@ function removeRow(){
     removeSingleExerciseFromDatabase(toRemove.id);
     console.log('Looking for the exercise to remove...');
     toRemove.parentNode.removeChild(toRemove);
+    let level = countRow();
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+    for(let i = 0; i < level; i++){
+        rows[i].id = 'row' + i;
+        let child = rows[i].children;
+        child[0].id = 'exerciseName' + i;
+        child[1].id = 'exerciseReps' + i;
+        child[2].id = 'exerciseSets' + i;
+        child[3].id = 'exerciseWeight' + i;
+        child[4].id = 'exerciseComments' + i;
+    }
+}
+async function newExercise() {
+
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
+    //last row inputs
+    let exName = lastRow.querySelectorAll('td input')[0];
+    let exReps = lastRow.querySelectorAll('td input')[1];
+    let exSets = lastRow.querySelectorAll('td input')[2];
+    let exWeight = lastRow.querySelectorAll('td input')[3];
+    let exComments = lastRow.querySelectorAll('td input')[4];
+
+    let body = {
+        name: exName.value,
+        description: exComments.value,
+        weightUnit: "kg",
+        pumpWeight: exWeight.value,
+        bodyPart: 'ok',
+        set: exSets.value,
+        repetitions: exReps.value,
+    };
+    let exercise = await postExercise(body);
+    createAndModifySession(exercise._id);
+
+    exName.value ='';
+    exReps.value = '';
+    exSets.value = '';
+    exWeight.value = '';
+    exComments.value ='';
+}
+
+async function createAndModifySession(_exerciseId){
+    let session = await searchSession();
+    if(session.status === 404){
+        let body = {
+            _coachId: await retrieveCoachId(),
+            _clientId: await retrieveClientId(),
+            weekday: retrieveDay(),
+            exercises: [_exerciseId],
+        };
+        await postSession(body);
+        return;
+    }
+
+    let sessionJson = await session.json();
+    let exercises = sessionJson.exercises;
+    let _sessionId = sessionJson._id;
+
+    exercises.push(_exerciseId);
+
+    let body = {
+        _coachId: await retrieveCoachId(),
+        _clientId: retrieveClientId(),
+        weekday: retrieveDay(),
+        exercises: exercises,
+    };
+    await putSession(_sessionId, body);
+}
+
+function resetTable(){
+    let table = document.getElementById('scheduleTable');
+    let rowCounter = 0;
+    while(document.getElementById('row' + rowCounter)){
+        table.removeChild(document.getElementById('row' + rowCounter));
+        rowCounter++;
+    }
+}
+
+async function renderTable(){
+    resetTable();
+    let session = await searchSession();
+    if(session.status === 404){
+        return;
+    }
+
+    let sessionJson = await session.json();
+    if(sessionJson.exercises === []){
+        return;
+    }
+
+    let exercisesIds = sessionJson.exercises;
+
+    let exerciseList = [];
+
+    for(let i = 0; i < exercisesIds.length; i++){
+        let exercise = await searchExercise(exercisesIds[i]);
+        exerciseList.push(exercise);
+    }
+
+    for(let i = 0; i < exerciseList.length; i++) {
+        addRow();
+        document.getElementById('exerciseName' + i).innerHTML = exerciseList[i].name;
+        document.getElementById('exerciseReps' + i).innerHTML = exerciseList[i].repetitions;
+        document.getElementById('exerciseSets' + i).innerHTML = exerciseList[i].set;
+        document.getElementById('exerciseWeight' + i).innerHTML = exerciseList[i].pumpWeight;
+        document.getElementById('exerciseComments' + i).innerHTML = exerciseList[i].description;
+    }
+}
+
+async function removeSingleExerciseFromDatabase(rowId){
+    let rowToBeRemovedFromDatabase = document.getElementById(rowId);
+
+    try{
+        let exerciseName = rowToBeRemovedFromDatabase.childNodes[0].innerHTML;
+        let exerciseReps = rowToBeRemovedFromDatabase.childNodes[1].innerHTML;
+        let exerciseSets = rowToBeRemovedFromDatabase.childNodes[2].innerHTML;
+        let exerciseWeight = rowToBeRemovedFromDatabase.childNodes[3].innerHTML;
+        let exerciseDescription = rowToBeRemovedFromDatabase.childNodes[4].innerHTML;
+
+        let foundExercise = await fetch('workouts/exercises/search'
+            + "?name=" + exerciseName
+            + "&repetitions=" + exerciseReps
+            + "&set=" + exerciseSets
+            + "&pumpWeight=" + exerciseWeight
+            + "&description=" + exerciseDescription, {
+            method: "GET",
+            headers: {
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            },
+        });
+        let exercise = await foundExercise.json();
+
+        let exId = exercise._id;
+        console.log("ID", exId);
+
+        let foundSession = await searchSession();
+        let session = await foundSession.json();
+
+        let sessionExercises = session.exercises;
+
+        let sessionId = session._id;
+
+        sessionExercises.splice(sessionExercises.indexOf(exId), 1);
+
+        let body = {
+            _coachId: await retrieveCoachId(),
+            _clientId: retrieveClientId(),
+            weekday: retrieveDay(),
+            exercises: sessionExercises
+        };
+
+        await putSession(sessionId,body);
+
+
+        await deleteExercise(exId);
+
+    }catch(e){
+        console.log(e);
+    }
+}
+
+async function deleteFromDatabase(){
+    let table = document.getElementById('scheduleTable');
+    let rowCounter = 0;
+    while(document.getElementById('row' + rowCounter)){
+
+        try{
+            let session = await searchSession();
+
+            let sessionJson = await session.json();
+
+            let exerciseIds = await sessionJson.exercises;
+
+            for(let i = 0; i < exerciseIds.length; i++){
+                await deleteExercise(exerciseIds[i]);
+            }
+
+            let sessionId = sessionJson._id;
+
+            await deleteSession(sessionId);
+
+            resetTable();
+
+        }catch(e){
+            console.log(e);
+        }
+        rowCounter++;
+    }
+
+
 }

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coach settings</title>
+</head>
+<body>
+<h2>Modify your settings</h2>
+<form action="/coaches/edit/{thisId}?_method=PUT" method="POST" enctype="application/x-www-form-urlencoded">
+    {>"../partials/settings"/}
+    <div>
+        <input type="submit" value="Change"/>
+    </div>
+</form>
+<script src="/js/helper.js"></script>
+<script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>
+</body>
+
+</html>
