@@ -6,7 +6,7 @@
 
                     <label for="last_name">Schedule Name</label>
 
-    <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="createSched(); doneScheduleName();">
+    <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName(); createSchedule()">
       <i class="material-icons" id="done_outline" >done_outline</i>
       </a>
 

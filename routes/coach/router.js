@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const dust = require('dustjs-helpers');//used for helper function inside dust files
 let ObjectId = require('mongodb').ObjectID;
 
 require('../../models/UserAccount.js');
@@ -193,7 +194,6 @@ router.get('/setting', function (req, res) {
     //todo render setting with info from database
     //todo check headers
 });
-
 
 // Edit a coach
 // It works only with all the required information provided
@@ -464,15 +464,41 @@ router.delete('/hire/delete/:id', async (req, res) => {
     }
 });
 
-router.post('/rating', (req, res) =>{
-    console.log("body",req.body);
+router.put('/rating', async (req, res) =>{
+    let body = await JSON.parse(req.body);
+    console.log(body);
+    let found = await Rating.findById(ObjectId(body.objId));
+    found.title = body.title;
+    found.comment = body.comment;
+    found.score = body.score;
+    await found.save();
+    res.end();/*todo whatever needed*/
+});
+
+router.post('/ratings', async (req, res) => {
+    let media = 0;
+    let found  = await Rating.find({_coachId : req.body.id});
+    if (!found){
+        res.send("NO rating are there");/*todo whatever needed*/
+    }
+    for (let i = 0; i < found.length; i++) {
+        media += found[i].score;
+    }
+    media = Math.floor(media/(found.length-1));
+    res.render('rating/stars.dust', {media : media}); //send media of rating
+})
+
+router.post('/newrating', async (req, res) =>{
+    let body = await JSON.parse(req.body);
+    console.log("body", body);
     console.log("user", req.user);
+    console.log(req.body.id);
     let rate = new Rating({
-        _clientId: req.user._userAccountId,
-        _coachId: req.body.id,
-        score : req.body.score,
-        comment: req.body.comment,
-        title: req.body.title
+        _clientId: ObjectId("5de66a9ef671d50d31c8b936"),
+        _coachId: ObjectId(body.id),
+        score : body.score,
+        comment: body.comment,
+        title: body.title
     });
     rate.save()
         .then(() => res.status(201).end())//todo rerender the page of client
@@ -664,17 +690,5 @@ function isLoggedIn(req, res, next) {
 }
 
 //todo delete this root /username
-/*router.post('/username', async (req, res) => {
-    if (req.get('Content-Type') === "application/json") {
-        try {
-            let username = await Credentials.find({});
-            res.send(username);
-        } catch (e) {
-            res.status(500).end("ERROR")
-        }
-    } else {
-        res.status(500).end("ERROR")
-    }
-});*/
 
 module.exports = router;

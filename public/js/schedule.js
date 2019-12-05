@@ -21,12 +21,20 @@ function retrieveClientId(){
     return selectedUser.options[selectedUser.selectedIndex].getAttribute("value");
 }
 
+function retrieveScheduleName(){
+    return document.getElementById("last_name").value;
+}
+
 function isNullOrWhiteSpace(input){
     if(typeof input === undefined || input === null){
         return true;
     }
     return input.replace(/\s/g,'').length < 1;
 }
+
+let scheduleId;
+let sessionsArray;
+let scheduleName;
 
 async function addRow() {
 
@@ -123,6 +131,23 @@ async function postSession(body){
     }
 }
 
+async function postSchedule(body){
+    try{
+        let exerciseFound = await fetch('/workouts/schedules/new', {
+            method: 'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }
+        });
+        let exercises = await exerciseFound.json();
+        return exercises;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
 async function putSession(_id, body){
     try{
         let updatingSession = await fetch('workouts/sessions/edit/' + _id, {
@@ -133,6 +158,23 @@ async function putSession(_id, body){
             body: JSON.stringify(body)
         });
         let session = await updatingSession.json();
+        return session;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
+async function putSchedule(_id, body){
+    try{
+        let updatingSchedule = await fetch('workouts/schedules/edit/' + _id, {
+            method: "PUT",
+            headers: {
+                'Content-Type':'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+        let session = await updatingSchedule.json();
         return session;
     }catch(e){
         console.log(e);
@@ -204,6 +246,7 @@ async function searchExercise(_id){
     }
 }
 
+
 function removeRow(){
     let toRemove = this.parentNode;
     removeSingleExerciseFromDatabase(toRemove.id);
@@ -264,7 +307,19 @@ async function createAndModifySession(_exerciseId){
             weekday: retrieveDay(),
             exercises: [_exerciseId],
         };
-        await postSession(body);
+
+        let session = await postSession(body);
+        sessionsArray.push(session._id);
+
+        let scheduleBody={
+            _coachId: await retrieveCoachId(),
+            _clientId: await retrieveClientId(),
+            name: retrieveScheduleName(),
+            sessions: sessionsArray,
+            startDate: Date.now(),
+            endDate: Date.now()
+        };
+        await putSchedule(scheduleId, scheduleBody);
         return;
     }
 
@@ -382,6 +437,76 @@ async function deleteFromDatabase(){
         }
         rowCounter++;
     }
-
-
 }
+
+
+async function doneScheduleName(){
+    let title = document.getElementById("title");
+    let scheduleName = retrieveScheduleName();
+
+    let schedName = document.getElementById("schedName");
+    schedName.remove();
+
+    let body ={
+        _coachId: await retrieveCoachId(),
+        _clientId: retrieveClientId(),
+        name: scheduleName,
+        sessions: sessionsArray, // Day of the week
+        startDate: Date.now(),
+        endDate: Date.now(),
+    };
+    putSchedule(scheduleId, body);
+
+    let h2 = document.createElement("h2");
+    h2.innerHTML = scheduleName;
+    h2.id = "title";
+    h2.className = "center";
+
+    title.insertAdjacentElement("afterend",h2);
+    title.remove();
+
+    let modify_a = document.createElement("a");
+    modify_a.className = "valign-wrapper btn-floating btn-small waves-effect waves-light black";
+    let  modify_i = document.createElement("i");
+    modify_i.className = "material-icons";
+    modify_i.innerHTML = "create";
+    modify_a.appendChild(modify_i);
+    h2.appendChild(modify_a);
+
+    modify_a.addEventListener("click", ()=>{
+        modifyScheduleName(scheduleName, h2);
+    });
+}
+
+function modifyScheduleName(scheduleName, h2){
+    //fetch put
+    let string = '<div class="input-field col s6" id="schedName"><input id="last_name" type="text" class="validate"><label for="last_name">Schedule Name</label><a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()"><i class="material-icons" id="done_outline" >done_outline</i> </a> </div> </div>';
+    h2.innerHTML = string;
+}
+
+createSchedule = async() => {
+    scheduleName = retrieveScheduleName();
+    if(retrieveScheduleName()) {
+        let body = {
+            _coachId: await retrieveCoachId(),
+            _clientId: retrieveClientId(),
+            name: retrieveScheduleName(),
+            sessions: [],
+            startDate: Date.now(),
+            endDate: Date.now(),
+        };
+        let created = await postSchedule(body);
+        scheduleId = created._id;
+    }else{
+        let body = {
+            _coachId: await retrieveCoachId(),
+            _clientId: retrieveClientId(),
+            name: '',
+            sessions: [], // Day of the week
+            startDate: {type: Date, required: true},
+            endDate: {type: Date, required: true},
+        };
+        let created = await postSchedule(body);
+        scheduleId = created._id;
+    }
+};

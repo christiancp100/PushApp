@@ -20,10 +20,10 @@ let ClientInfo = mongoose.model('ClientInfo');
 let CoachClients = mongoose.model('CoachClients');
 
 router.get('/test', function (req, res) {
-    res.render('rating/rating-first.dust', { name: 'Moreno' });
+    res.render('rating/rating-first.dust', {name: 'Moreno', id : '5de5094ec516ae82b90c9c44'});
 })
 router.get('/testing', function (req, res) {
-    res.render('rating/rating-again.dust', { name: 'Moreno' });
+res.render('rating/rating-again.dust', {name:'Moreno', score: 4, comment: "HE was very good", title: "awesome", objId: '5de7f4e3d9511123b9bfd669'});
 })
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
@@ -313,11 +313,11 @@ function setResponse(type, code, res, msg) {
 router.get('/coach/dashboard/clients', (req, res) => {
     let menu = {
         items: [
-            { name: "Dashboard", icon: "web" },
-            { name: "Clients", icon: "list" },
-            { name: "Schedules", icon: "dashboard" },
-            { name: "Chat", icon: "chat" },
-            { name: "Coaches", icon: "group" },
+            {name: "Dashboard", icon: "web"},
+            {name: "Clients", icon: "list"},
+            {name: "Schedules", icon: "dashboard"},
+            {name: "Chat", icon: "chat"},
+            {link: "/client/coaches", name: "Coaches", icon: "group", },
         ],
         accordions: [
             {
@@ -380,7 +380,7 @@ router.get('/client/coaches', (req, res) => {
 //             {name: "Dashboard", icon: "web"},
 //             {name: "Next Workout", icon: "list"},
 //             {name: "Schedule", icon: "dashboard"},
-//             {name: "Chat", icon: "chat"},
+//             {name: "Chat", icon: "chat",},
 //         ],
 //         accordions: [
 //             {

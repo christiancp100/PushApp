@@ -20,6 +20,13 @@ function fetchCoach(e) {
         });
 }
 
+function getImage() {
+    let image = document.getElementById("image").files[0];
+    let objurl = URL.createObjectURL(image);
+    console.log(objurl);
+    document.getElementById("putimage").value = objurl;
+}
+
 // function testing(name) {
 //     localStorage.setItem('username', name);
 // }
@@ -57,8 +64,8 @@ function fetchRating(e, coach) {
 }
 function starsRating(e) {
     e.preventDefault();
-    let uncolorClass = "unchecked hov fa fa-star";
-    let colorClass = "hov fa fa-star checked";
+    let uncolorClass = "unchecked fa fa-star";
+    let colorClass = "fa fa-star checked";
     let save = e.target.nextSibling;
     let child = e.target;
     //color the stars
@@ -74,18 +81,19 @@ function starsRating(e) {
 }
 
 function addReview(e, id) {
+    console.log(id);
     e.preventDefault();
     let rating = 0;
     let first = document.getElementById("firstStar");
     while (first.nodeName == "SPAN"){
-        if (first.className == "hov fa fa-star checked"){
+        if (first.className == "fa fa-star checked"){
             ++rating;
         }
         first = first.nextSibling;
     }
     let comment = document.getElementById("commentReview").value;
     let title = document.getElementById("titleReview").value;
-    fetch('/coaches/rating',{
+    fetch('/coaches/newrating',{
         method: "POST",
         body : JSON.stringify({
             score : rating,
@@ -97,4 +105,64 @@ function addReview(e, id) {
             'Content-type' : 'application/json'
         }*/
     })
+}
+
+function starColor(score) {
+    document.getElementById("titleReview").validity.valid;
+    document.getElementById("commentReview").validity.valid;
+    let uncolorClass = "unchecked hov fa fa-star";
+    let colorClass = "hov fa fa-star checked";
+    let star = document.getElementById("firstStar");
+    while (score > 0){
+        star.className = colorClass;
+        --score;
+        star = star.nextSibling;
+    }
+    if (star.nodeName != "BR"){
+        while (star.nodeName != "BR"){
+            star.className = uncolorClass;
+            star = star.nextSibling;
+        }
+    }
+}
+
+function changeRev(e, objId) {
+    e.preventDefault();
+    let comment = document.getElementById("commentReview").value;
+    let title = document.getElementById("titleReview").value;
+    let rating = 0;
+    let first = document.getElementById("firstStar");
+    while (first.nodeName == "SPAN"){
+        /*TODO make the class work without touching again stars*/
+        if (first.className == "fa fa-star checked"){
+            ++rating;
+        }
+        first = first.nextSibling;
+    }
+    fetch('/coaches/rating', {
+        method: "PUT",
+        body: JSON.stringify({
+            score : rating,
+            title : title,
+            comment: comment,
+            objId : objId
+        })
+    }).then((res) => {
+        /*todo whatever needed*/
+    }).catch(err => new Error(err))
+}
+
+function changeReview(e, objId) {
+    e.preventDefault();
+    console.log("objId",objId);
+    document.getElementById("titleReview").disabled = false;
+    document.getElementById("commentReview").disabled = false;
+    document.getElementById("buttons").innerHTML = '<button id="rate" type="button">Rate</button>';
+    document.getElementById("rate").addEventListener("mousedown", function () {
+        changeRev(e, objId)
+    })
+    document.querySelectorAll("span").forEach((el)=>{
+        console.log(el);
+        el.addEventListener("mousedown", starsRating)
+    });
 }
