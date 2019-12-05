@@ -11,11 +11,13 @@ require('../../models/UserAccount.js');
 require('../../models/Credential.js');
 require('../../models/CoachClients.js');
 require('../../models/Rating.js');
+require('../../models/Service');
 
 let UserAccount = mongoose.model('UserAccount');
 let Credentials = mongoose.model('Credentials');
 let CoachClients = mongoose.model('CoachClients');
 let Rating = mongoose.model('Rating');
+let Service = mongoose.model('Service');
 
 // GET all coach
 router.get('/', async (req, res) => {
@@ -41,16 +43,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-// router.get('/', function (req, res) {
-//     res.type("html");
-//     res.render('coach-board');
-//     /*if (req.header('accept') == "text/html") {
-//
-//     } else {
-//         res.status(400).end()
-//     }*/
-// });
 // Create a new coach
 router.post('/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined)) {
@@ -172,6 +164,7 @@ function getFilter(req) {
 
 // Search for coach
 router.get('/search', function (req, res) {
+    console.log("ENTRATO");
     let filter = getFilter(req);
     UserAccount.find(filter)
         .then((coaches) => {
@@ -325,8 +318,43 @@ router.put('/delete/:id', async (req, res) => {
     }
 });
 
+// GET all the information of a coach and render the setting page so that the coach can modify his data
+router.get('/edit', isLoggedIn, async (req, res) => {
+    let found = await UserAccount.findById(req.user._userAccountId);
+    let accountToModify = {
+        firstName: found.firstName,
+        lastName: found.lastName,
+        birthday: found.birthday,
+        sex: found.sex,
+        email: found.email,
+        phone: found.phone,
+        address1: found.address1,
+        city: found.city,
+        state: found.state,
+        zipCode: found.zipCode,
+        country: found.country,
+        currency: found.currency,
+        localization: found.localization
+    };
+    console.log("OLD", accountToModify);
+    if (typeof found.description != "undefined") {
+        accountToModify.description = found.description;
+    }
+    if (typeof found.photo != "undefined") {
+        accountToModify.photo = found.photo;
+    }
+    if (typeof found.address2 != "undefined") {
+        accountToModify.address2 = found.address2;
+    }
+    accountToModify.thisId = found._id;
+    console.log("to print", accountToModify);
+    if (req.accepts("text/html")) {
+        res.render('register_forms/coach-settings.dust', accountToModify);
+    }
+});
+
 // POST a new coach-client relation
-router.post('/hire', (req, res) => {
+router.post('/hire/new', (req, res) => {
     if (req.accepts("json")) {
         if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res.status(400).end();
@@ -406,7 +434,7 @@ router.get('/hire/client/:id', (req, res) => {
     }
 });
 
-router.delete('/hire/:id', async (req, res) => {
+router.delete('/hire/delete/:id', async (req, res) => {
     if (req.accepts("json")) {
         if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res.status(400).end();
@@ -472,11 +500,158 @@ router.post('/newrating', async (req, res) =>{
         comment: body.comment,
         title: body.title
     });
-    try {
-        let saved = await rate.save();
-        res.status(201).end()/*todo whatever needed*/
-    } catch (e) {
-        res.status(500).end()
+    rate.save()
+        .then(() => res.status(201).end())//todo rerender the page of client
+        .catch(() => res.status(500).end());
+});
+
+//GET all the services of a given coach
+router.get('/services/:id', async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
+        if (req.params.id === undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res = setResponse('json', 400, res, {Error: "To retrieve services of a coach provide a valid coachId."});
+            res.end();
+        }
+        console.log("Looking for services of the coach with ID " + req.params.id);
+        try{
+            let serviceFound = await Service.find({_coachId: req.params.id});
+            if(serviceFound === null){
+                res = setResponse('json', 404, res, {Error: 'No service for the given id'});
+                res.end();
+            }
+            res = setResponse('json', 200, res, serviceFound);
+            res.end();
+        }catch(e){
+            console.log(e);
+            res.status(500);
+            res.end();
+        }
+    } else {
+        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
+        res.end();
+    }
+});
+
+//GET all the services
+router.get('/services', async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
+        console.log("Looking for all the services");
+        try{
+            let foundServices = await Service.find({});
+            res = setResponse('json', 200, res, foundServices);
+            res.end();
+        }catch(e){
+            res.status(500);
+            res.end();
+        }
+    } else {
+        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
+        res.end();
+    }
+});
+
+// POST a new service
+router.post('/services/new', async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
+        console.log('Creating new service...');
+        if (req.body._coachId === undefined && !mongoose.Types.ObjectId.isValid(req.params.id) || req.body.name === undefined || req.body.description === undefined || req.body.duration === undefined || req.body.fee === undefined) {
+            res = setResponse('json', 400, res, {Error: "To create a new Service provide a valid coachId, a service name, description, duration and fee."});
+            res.end()
+        } else {
+            let service = new Service({
+                _coachId: req.body._coachId,
+                name: req.body.name,
+                description: req.body.description,
+                duration: req.body.duration,
+                fee: req.body.fee
+            });
+            try{
+                let savedService = await service.save();
+                res = setResponse('json', 201, res, savedService);
+                res.end();
+            }catch(e){
+                console.log(e);
+                res.status(500);
+                res.end();
+            }
+        }
+    } else {
+        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
+        res.end();
+    }
+});
+
+// no fields
+// PUT update an existing service
+router.put('/services/edit/:id', async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
+        if (req.params.id === undefined || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res = setResponse('json', 400, res, {Error: "To create a new Service provide a valid serviceId."});
+            res.end();
+        }
+        if(req.body.name === undefined && req.body.fee === undefined && req.body.description === undefined && req.body.duration === undefined){
+            res = setResponse('json', 404, res, {Error: 'The field you want to update does not exist in Service'});
+            res.end();
+        }
+        console.log('Editing service...');
+        console.log('Searching for service with ID: ' + req.params.id + '.');
+        try {
+            let found = await Service.findById(req.params.id);
+            if (found === null) {
+                res = setResponse('json', 404, res, {Error: 'No service for the given id'});
+                res.end();
+            } else {
+                if(req.body.name){
+                    found.name = req.body.name;
+                }
+                if(req.body.description){
+                    found.description = req.body.description;
+                }
+                if(req.body.duration){
+                    found.duration = req.body.duration;
+                }
+                if(req.body.fee){
+                    found.fee = req.body.fee;
+                }
+                let saved = await found.save();
+                res = setResponse('json', 200, res, saved);
+                res.end();
+            }
+        } catch(e) {
+            console.log(e);
+            res.status(500);
+            res.end();
+        }
+    } else {
+        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
+        res.end();
+    }
+});
+
+// DELETE an existing service
+router.delete('/services/delete/:id', async (req, res) => {
+    if (req.accepts("json")) {
+        console.log('ID', req.params.id);
+        if (req.params.id === undefined || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res.status(400).end();
+        } else {
+            try {
+                console.log('Searching for service with ID: ' + req.params.id + '.');
+                let found = await Service.findById(req.params.id);
+                if (found === null) {
+                    res = setResponse('json', 404, res, {Error: 'No service for the given id'});
+                    res.end();
+                } else {
+                    let removed = await Service.remove(found);
+                    console.log('The hire-relation has been deleted!');
+                    res = setResponse('json', 200, res, removed);
+                    res.end();
+                }
+            } catch (e) {
+                res = setResponse('json', 500, res, {Error: e});
+                res.end();
+            }
+        }
     }
 });
 
@@ -499,6 +674,19 @@ function setResponse(type, code, res, msg) {
         default:
             break;
     }
+}
+
+function isLoggedIn(req, res, next) {
+    // redirect if coach isn't not authenticated
+    if (!req.user){
+        res.redirect('/login');
+    }
+    // go on if coach is authenticated
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    // if they aren't render login page
+    res.redirect('/login');
 }
 
 //todo delete this root /username

@@ -315,7 +315,7 @@ router.get('/coach/dashboard/clients', (req, res) => {
             {name: "Clients", icon: "list"},
             {name: "Schedules", icon: "dashboard"},
             {name: "Chat", icon: "chat"},
-            {name: "Coaches", icon: "group"},
+            {link: "/client/coaches", name: "Coaches", icon: "group", },
         ],
         accordions: [
             {
@@ -378,7 +378,7 @@ router.get('/client/coaches', (req, res) => {
 //             {name: "Dashboard", icon: "web"},
 //             {name: "Next Workout", icon: "list"},
 //             {name: "Schedule", icon: "dashboard"},
-//             {name: "Chat", icon: "chat"},
+//             {name: "Chat", icon: "chat",},
 //         ],
 //         accordions: [
 //             {

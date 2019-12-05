@@ -1,7 +1,14 @@
+<div class="col s12" id="divtitle">
+      <div class="masonry row" style="position: relative; height: 987.047px;">
+        <div class="input-field col s6" id="name">
+            <input id="last_name" type="text" class="validate" onkeyup="searchCoaches()">
+            <label for="last_name">Search</label>
+        </div>
+      </div>
+</div>
 
-{#A}
-    <ul>
-        <li>{firstName} {lastName}<li>
-        <input type="button" value="Hire Me!">
-    </ul>
-{/A}
+    <div class="container mt-4">
+        <div class="row" id="grid">
+
+        </div>
+    </div>

@@ -6,9 +6,10 @@
 
                     <label for="last_name">Schedule Name</label>
 
-    <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()">
+    <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName(); createSchedule()">
       <i class="material-icons" id="done_outline" >done_outline</i>
       </a>
+
         </div>
 
     </div>
@@ -16,7 +17,7 @@
     <div class="col s12">
         <div class="input-field col s12 m6">
 
-            <select class="icons" id="pickUser" onchange="renderCoachTable()">
+            <select class="icons" id="pickUser" onchange="renderTable()">
                 <option value="" disabled selected>Choose your option</option>
                 {#clients}
                 <option data-icon="{photo}" value="{_userAccountId}" class="left">{firstName} {lastName}</option>
@@ -25,7 +26,7 @@
             <label>User</label>
         </div>
         <div class="input-field col m6 s12" >
-            <select id="day_btn" onchange="renderCoachTable()">
+            <select id="day_btn" onchange="renderTable()">
                 <option value="" disabled selected>Session</option>
                 <option value="1">Monday</option>
                 <option value="2">Tuesday</option>
@@ -58,10 +59,11 @@
     </div>
 </div>
 <div class="row center">
-    <a class="btn-floating btn-large waves-effect waves-light black" onclick="addRow(event); takeRows(event); resetFields();">
+    <a class="btn-floating btn-large waves-effect waves-light black" onclick="addRow(); newExercise(); resetFields();">
         <i class="material-icons">add</i>
     </a>
 </div>
 <script src="/js/schedule.js"></script>
 <script src="/js/renderCoachTable.js"></script>
+<script src="/js/schedule.js"></script>
 <script src="/js/schedule.js"></script>
