@@ -34,6 +34,8 @@ function isLoggedIn(req, res, next) {
         res.redirect('/login');
     } else if (req.isAuthenticated() && ("/" + req.user.username) === req.path) {
         return next();
+    } else if (req.isAuthenticated() && ("/payments") === req.path) {
+        return next();
     } else {
         // if they aren't render login page
         res.redirect('/login');
@@ -66,6 +68,8 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
                 res.render('register_forms/coach-register');
             } else if (req.path === '/register-client') {
                 res.render('register_forms/client-register');
+            } else if (req.path === '/payments') { // Stripe
+                res.render('payment_checkout');
             } else {
                 let credentials = await Credentials.findOne(filter);
                 console.log();
