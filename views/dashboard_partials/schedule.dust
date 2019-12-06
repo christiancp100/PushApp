@@ -23,7 +23,7 @@
                 <option data-icon="{photo}" value="{_userAccountId}" class="left">{firstName} {lastName}</option>
                 {/clients}
             </select>
-            <label>User</label>
+            <label>Client</label>
         </div>
         <div class="input-field col m6 s12" >
             <select id="day_btn" onchange="renderTable()">

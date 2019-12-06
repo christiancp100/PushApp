@@ -7,8 +7,8 @@ const SessionSchema = exports.SessionSchema = new Schema({
     _clientId: {type: Schema.Types.ObjectId, ref: 'UserAccount', required: true},
     weekday: {type: String, required: true},
     exercises: {type: [Schema.Types.ObjectId], ref: 'Exercise', default: () => []},
-    duration: {type: Number, default: 0}
-    // difficultyLevel: {type: Number, required: true}
+    duration: {type: Number, default: 0},
+    bodyPart: {type: String}
 });
 
 mongoose.model('Session', SessionSchema);
