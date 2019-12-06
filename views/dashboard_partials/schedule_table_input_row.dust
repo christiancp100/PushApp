@@ -5,6 +5,11 @@
         </div>
     </td>
     <td>
+            <div class="input-field">
+                <input placeholder="Body Part" id="bodyPart" type="text" class="validate">
+            </div>
+    </td>
+    <td>
         <div class="input-field">
             <input placeholder="Repetitions" id="repetitions" type="number" class="validate">
         </div>
