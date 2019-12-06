@@ -145,7 +145,7 @@ async function renderClientDashboard(res, activeUser) {
                 icon: "chevron_left",
                 subItems: [
                     {name: "Logout", icon: "person", logout: true},
-                    {name: "Settings", icon: "settings"},
+                    {name: "Settings", icon: "settings", accountType: 'clients'},
                 ]
             }
         ]

@@ -260,7 +260,7 @@ router.put('/edit/:id', async (req, res) => {
                     console.log('User with ID: ' + req.params.id + ' updated!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
-                        res.end()
+                        res.redirect('/' + req.user.username);
                     } else if (req.accepts("application/json")) {
                         // delete savedClient._doc['_credentials'];
                         res = setResponse('json', 201, res, {
