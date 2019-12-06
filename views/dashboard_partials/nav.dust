@@ -15,9 +15,9 @@
                                 <ul>
                                     {#subItems}
                                         {?logout}
-                                        <li><a onclick="logOut()" class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
+                                        <li><a href="/logout" class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
                                         {:else}
-                                        <li><a class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
+                                        <li><a href="/{accountType}/edit" class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
                                         {/logout}
                                     {/subItems}
                                 </ul>
