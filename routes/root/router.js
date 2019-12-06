@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const dust = require('dustjs-helpers');//used for helper function inside dust files
 
 require('../../models/Credential.js');
 require('../../models/UserAccount.js');
@@ -27,12 +28,19 @@ res.render('rating/rating-again.dust', {name:'Moreno', score: 4, comment: "HE wa
 })
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
-        res.render('index', { title: 'PushApp' });
+        if (typeof req.user !== "undefined" && req.isAuthenticated()){
+            console.log("ENTER");
+            res.render('index', {title: 'PushApp', log : 'Y'});
+        } else {
+            console.log("NOT ENTER");
+            res.render('index', {title: 'PushApp', log: 'N'});
+        }
     } else {
         // res.status(500);
         res.end();
     }
 });
+/*render index page without signup button and login Buttons*/
 
 function isLoggedIn(req, res, next) {
     console.log(req.path);
@@ -106,6 +114,7 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
     ;
 
 async function renderClientDashboard(res, activeUser) {
+    console.log("PHOTO", activeUser.photo);
     if (activeUser.photo === null || activeUser.photo === ' ') {
         activeUser.photo = '/img/icons/user-pic.png';
     }
@@ -137,8 +146,8 @@ async function renderClientDashboard(res, activeUser) {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Logout", icon: "person", logout: true },
-                    { name: "Settings", icon: "settings" },
+                    {name: "Logout", icon: "person", logout: true},
+                    {name: "Settings", icon: "settings", accountType: 'clients'},
                 ]
             }
         ]
@@ -214,7 +223,7 @@ async function renderCoachDashboard(res, activeUser) {
                 icon: "chevron_left",
                 subItems: [
                     { name: "Logout", icon: "person", logout: "true" },
-                    { name: "Settings", icon: "settings" },
+                    { name: "Settings", icon: "settings", accountType: "coaches"},
                 ]
             }
         ],

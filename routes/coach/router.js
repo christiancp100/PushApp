@@ -262,7 +262,7 @@ router.put('/edit/:id', async (req, res) => {
                 console.log('Coach with ID: ' + req.params.id + ' updated!');
                 if (req.accepts("text/html")) {
                     res = setResponse('html', 201, res);
-                    res.redirect('/');
+                    res.redirect('/' + req.user.username);
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, {userAccount: saved});
                     res.end();
