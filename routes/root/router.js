@@ -46,14 +46,15 @@ function isLoggedIn(req, res, next) {
     }
 }
 
-/*router.get('/register', function (req, res) {
+
+router.get('/our-coaches', function (req, res) {
   if (req.accepts("html")) {
     res.render('register_forms/register_1');
   } else {
-    res.status(500);
+    res.status(200);
     res.end();
   }
-})*/
+})
 
 
 // Dynamic user route according to userAccount type
