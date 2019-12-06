@@ -1,7 +1,7 @@
 <tr>
     <td>
         <div class="input-field">
-            <input placeholder="Exercise" id="exercise" type="text" class="validate">
+            <input placeholder="Exercise" id="exercise" type="text" class="validate" onkeyup="getExercises()">
         </div>
     </td>
     <td>

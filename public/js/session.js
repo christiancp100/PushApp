@@ -49,22 +49,32 @@ checkIfHiredAlready = async(id)=>{
     return 0;
 };
 async function getCoaches(){
-
     let everyone = await fetch("/coaches/search?accountType=coach");
     let coachesArray = await everyone.json();
     await displayCoaches(coachesArray);
 }
 
 
-displayCoaches = async(coachesArray) => {
-  console.log(coachesArray);
-  coachesArray.forEach(coach => {
-    coach.description = coach.description.slice(0, 50) + "...";
-    dust.render("dashboard_partials/coach_card_for_list", { coach: coach }, function(err, out) {
-      console.log(out);
-      document.getElementById("grid").innerHTML += out;
-    });
-  })
+displayCoaches = async (coachesArray) => {
+    console.log(coachesArray);
+    for (let i = 0; i < coachesArray.length; i++) {
+        let res = await fetch('/coaches/ratings', {
+            method : "POST",
+            body : JSON.stringify({
+                id: coachesArray[i]._id
+            })
+        });
+        let rating = await res.json();
+        console.log(rating);
+        coachesArray[i].description = coachesArray[i].description.slice(0, 50) + "...";
+        console.log("coach", coachesArray[i]);
+        let coach = coachesArray[i];
+        dust.render("dashboard_partials/coach_card_for_list", { coach: coach, media : rating }, function(err, out) {
+            console.log("out", out);
+            console.log(err);
+            document.getElementById("grid").innerHTML += out;
+        });
+    }
 };
 
 displayCoaches_2 = async(coachesArray)=>{

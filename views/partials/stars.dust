@@ -7,6 +7,9 @@
         }
     </style>
 </head>!}
+{@if cond="{media} == 0"}
+    <p>No ratings</p>
+{/if}
 {@if cond="{media} >= 1"}
     <span class="fa fa-star checked"></span>
 {:else}

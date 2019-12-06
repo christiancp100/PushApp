@@ -96,7 +96,6 @@ async function addRow() {
     newExerciseRow.appendChild(newExerciseComments);
     newExerciseRow.appendChild(newExerciseRemoveInput);
 
-
 }
 
 async function searchSession(){
@@ -213,6 +212,23 @@ async function searchExercise(_id){
     }
 }
 
+async function searchExerciseName(exName){
+    try{
+        let exerciseFound = await fetch('/workouts/exercises/search?name=' + exName, {
+            method: 'GET',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }
+        });
+
+        let exercises = await exerciseFound.json();
+        return exercises;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
 
 function removeRow(){
     let toRemove = this.parentNode;
@@ -430,3 +446,28 @@ function modifyScheduleName(scheduleName, h2){
     let string = '<div class="input-field col s6" id="schedName"><input id="last_name" type="text" class="validate"><label for="last_name">Schedule Name</label><a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()"><i class="material-icons" id="done_outline" >done_outline</i> </a> </div> </div>';
     h2.innerHTML = string;
 }
+
+getExercises = async() =>{
+    // clearDropdown();
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
+    //last row inputs
+    let exName = lastRow.querySelectorAll('td input')[0];
+
+    let name = exName.value;
+    let exercises = await searchExerciseName(name);
+    let ul = document.createElement("ul");
+    exName.className = 'select-dropdown dropdown-trigger';
+    console.log(exercises);
+    for(let i = 0; i < exercises.length; i++){
+        let li = document.createElement('li');
+        let span = document.createElement('span');
+        span.innerHTML = exercises[i].name;
+        console.log(exercises[i]);
+        ul.appendChild(li);
+        li.appendChild(span);
+    }
+    exName.appendChild(ul);
+};
