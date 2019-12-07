@@ -262,7 +262,7 @@ router.put('/edit/:id', async (req, res) => {
                 console.log('Coach with ID: ' + req.params.id + ' updated!');
                 if (req.accepts("text/html")) {
                     res = setResponse('html', 201, res);
-                    res.redirect('/');
+                    res.redirect('/' + req.user.username);
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, {userAccount: saved});
                     res.end();
@@ -477,15 +477,17 @@ router.put('/rating', async (req, res) =>{
 
 router.post('/ratings', async (req, res) => {
     let media = 0;
-    let found  = await Rating.find({_coachId : req.body.id});
+    let body = await JSON.parse(req.body);
+    let found  = await Rating.find({_coachId : body.id});
     if (!found){
-        res.send("NO rating are there");/*todo whatever needed*/
+        res.send('0');/*todo whatever needed*/
     }
     for (let i = 0; i < found.length; i++) {
         media += found[i].score;
     }
     media = Math.floor(media/(found.length-1));
-    res.render('rating/stars.dust', {media : media}); //send media of rating
+    res.send(media.toString());
+    //res.render('rating/stars.dust', {media : media}); //send media of rating
 })
 
 router.post('/newrating', async (req, res) =>{

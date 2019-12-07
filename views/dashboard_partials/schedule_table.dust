@@ -7,8 +7,6 @@
             <th data-field="sets">Nr. of Sets</th>
             <th data-field="weight">Weight</th>
             <th data-field="comments">Comments</th>
-            <th>
-            </th>
             {?coach}
                 <th data-field="#">
                 <a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="deleteFromDatabase()">
@@ -27,4 +25,3 @@
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/schedule.js"></script>
-<script src="/js/renderCoachTable.js"></script>

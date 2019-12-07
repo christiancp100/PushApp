@@ -23,6 +23,7 @@ function fetchCoach(e) {
 function getImage() {
     let image = document.getElementById("image").files[0];
     let objurl = URL.createObjectURL(image);
+
     console.log(objurl);
     document.getElementById("putimage").value = objurl;
 }
