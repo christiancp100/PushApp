@@ -2,8 +2,7 @@
 var stripe;
 
 var orderData = {
-    items: [{id: "photo-subscription"}],
-    currency: "usd"
+    items: [{id: "photo-subscription"}]
 };
 
 // Disable the button until we have Stripe set up on the page
@@ -56,6 +55,12 @@ var setupElements = function (data) {
 
     var card = elements.create("card", {style: style});
     card.mount("#card-element");
+    const formatter = new Intl.NumberFormat(data.locale, {
+        style: 'currency',
+        currency: data.currency.toUpperCase(),
+        minimumFractionDigits: 2
+    })
+    document.querySelector("#button-text").innerHTML += " " + formatter.format(data.amount / 100);
 
     return {
         stripe: stripe,

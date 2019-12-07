@@ -87,7 +87,7 @@ router.post('/new', async (req, res) => {
                 let savedUser = await user.save();
                 console.log(savedUser._id);
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', {accID : (savedUser._id).toString()});
+                    res.render('register_forms/register-credentials.dust', {accID: (savedUser._id).toString()});
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, savedUser);
                 }
@@ -464,7 +464,7 @@ router.delete('/hire/delete/:id', async (req, res) => {
     }
 });
 
-router.put('/rating', async (req, res) =>{
+router.put('/rating', async (req, res) => {
     let body = await JSON.parse(req.body);
     console.log(body);
     let found = await Rating.findById(ObjectId(body.objId));
@@ -478,19 +478,19 @@ router.put('/rating', async (req, res) =>{
 router.post('/ratings', async (req, res) => {
     let media = 0;
     let body = await JSON.parse(req.body);
-    let found  = await Rating.find({_coachId : body.id});
-    if (!found){
+    let found = await Rating.find({_coachId: body.id});
+    if (!found) {
         res.send('0');/*todo whatever needed*/
     }
     for (let i = 0; i < found.length; i++) {
         media += found[i].score;
     }
-    media = Math.floor(media/(found.length-1));
+    media = Math.floor(media / (found.length - 1));
     res.send(media.toString());
     //res.render('rating/stars.dust', {media : media}); //send media of rating
 })
 
-router.post('/newrating', async (req, res) =>{
+router.post('/newrating', async (req, res) => {
     let body = await JSON.parse(req.body);
     console.log("body", body);
     console.log("user", req.user);
@@ -498,7 +498,7 @@ router.post('/newrating', async (req, res) =>{
     let rate = new Rating({
         _clientId: ObjectId("5de66a9ef671d50d31c8b936"),
         _coachId: ObjectId(body.id),
-        score : body.score,
+        score: body.score,
         comment: body.comment,
         title: body.title
     });
@@ -515,15 +515,20 @@ router.get('/services/:id', async (req, res) => {
             res.end();
         }
         console.log("Looking for services of the coach with ID " + req.params.id);
-        try{
+        try {
             let serviceFound = await Service.find({_coachId: req.params.id});
-            if(serviceFound === null){
+            if (serviceFound.length > 0) {
+                res = setResponse('json', 200, res, serviceFound);
+            } else if (serviceFound.length === 0) {
+                serviceFound = await Service.find({_id: req.params.id});
+                if (serviceFound.length > 0) {
+                    res = setResponse('json', 200, res, serviceFound);
+                }
+            } else {
                 res = setResponse('json', 404, res, {Error: 'No service for the given id'});
-                res.end();
             }
-            res = setResponse('json', 200, res, serviceFound);
             res.end();
-        }catch(e){
+        } catch (e) {
             console.log(e);
             res.status(500);
             res.end();
@@ -538,11 +543,11 @@ router.get('/services/:id', async (req, res) => {
 router.get('/services', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         console.log("Looking for all the services");
-        try{
+        try {
             let foundServices = await Service.find({});
             res = setResponse('json', 200, res, foundServices);
             res.end();
-        }catch(e){
+        } catch (e) {
             res.status(500);
             res.end();
         }
@@ -567,11 +572,11 @@ router.post('/services/new', async (req, res) => {
                 duration: req.body.duration,
                 fee: req.body.fee
             });
-            try{
+            try {
                 let savedService = await service.save();
                 res = setResponse('json', 201, res, savedService);
                 res.end();
-            }catch(e){
+            } catch (e) {
                 console.log(e);
                 res.status(500);
                 res.end();
@@ -591,7 +596,7 @@ router.put('/services/edit/:id', async (req, res) => {
             res = setResponse('json', 400, res, {Error: "To create a new Service provide a valid serviceId."});
             res.end();
         }
-        if(req.body.name === undefined && req.body.fee === undefined && req.body.description === undefined && req.body.duration === undefined){
+        if (req.body.name === undefined && req.body.fee === undefined && req.body.description === undefined && req.body.duration === undefined) {
             res = setResponse('json', 404, res, {Error: 'The field you want to update does not exist in Service'});
             res.end();
         }
@@ -603,23 +608,23 @@ router.put('/services/edit/:id', async (req, res) => {
                 res = setResponse('json', 404, res, {Error: 'No service for the given id'});
                 res.end();
             } else {
-                if(req.body.name){
+                if (req.body.name) {
                     found.name = req.body.name;
                 }
-                if(req.body.description){
+                if (req.body.description) {
                     found.description = req.body.description;
                 }
-                if(req.body.duration){
+                if (req.body.duration) {
                     found.duration = req.body.duration;
                 }
-                if(req.body.fee){
+                if (req.body.fee) {
                     found.fee = req.body.fee;
                 }
                 let saved = await found.save();
                 res = setResponse('json', 200, res, saved);
                 res.end();
             }
-        } catch(e) {
+        } catch (e) {
             console.log(e);
             res.status(500);
             res.end();
@@ -680,7 +685,7 @@ function setResponse(type, code, res, msg) {
 
 function isLoggedIn(req, res, next) {
     // redirect if coach isn't not authenticated
-    if (!req.user){
+    if (!req.user) {
         res.redirect('/login');
     }
     // go on if coach is authenticated

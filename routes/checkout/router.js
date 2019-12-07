@@ -31,13 +31,16 @@ router.post("/create-payment-intent", async (req, res) => {
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
         amount: calculateOrderAmount(items),
-        currency: currency
+        currency: "chf"
     });
 
     // Send publishable key and PaymentIntent details to server
     res.send({
         publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
-        clientSecret: paymentIntent.client_secret
+        clientSecret: paymentIntent.client_secret,
+        amount: calculateOrderAmount(items),
+        locale: "en-CH",
+        currency: "chf"
     });
 });
 
