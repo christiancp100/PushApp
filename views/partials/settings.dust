@@ -21,16 +21,20 @@
 </div>
 <div>
     <label>Sex:<br>
-    <input type="radio" name="sex" value="male" {@eq key="sex" value="male"}checked{/eq}required> Male<br>
-    <input type="radio" name="sex" value="female" {@eq key="sex" value="female"}checked{/eq}>Female<br>
-    <input type="radio" name="sex" {@eq key="sex" value="other"}checked {/eq}value="other"> Other
+        <select name="sex" required>
+            <option {@eq key=sex value="male"}selected{/eq} value="male">male</option>
+            <option {@eq key=sex value="female"}selected{/eq} value="female">female</option>
+            <option {@eq key=sex value="other"}selected{/eq} value="other">other</option>
+        </select>
     </label>
 </div>
 <div>
-    <label>unit system:<br>{!TODO change to select!}
-        <input {@eq key="unitSystem" value="metric"}checked{/eq}  type="radio" name="unitSystem" value="metric"> Metric<br>
-        <input {@eq key="unitSystem" value="imperial"}checked{/eq}  type="radio" name="unitSystem" value="imperial"> Imperial<br>
-        <input {@eq key="unitSystem" value="other"}checked{/eq}  type="radio" name="unitSystem" value="other"> Other
+    <label>unit system:
+        <select name="unitSystem">
+            <option {@eq key=unitSystem value="metric"}selected{/eq} value="metric">metric</option>
+            <option {@eq key=unitSystem value="imperial"}selected{/eq} value="imperial">imperial</option>
+            <option {@eq key=unitSystem value="other"}selected{/eq} value="other">other</option>
+        </select>
     </label>
 </div>
 <div>
@@ -74,11 +78,11 @@
             <option {@eq key=currency value="Euro"} selected {/eq} value="Euro">€</option>
             <option {@eq key=currency value="CHF"} selected {/eq}value="CHF">CHF</option>
             <option {@eq key=currency value="USD"} selected {/eq}value="USD">$</option>
-            <option value="AUS">AU$</option>
-            <option value="CAN">$CAN</option>
-            <option value="Yen">¥</option>
-            <option value="GBP">£</option>
-            <option value="SWE">kr</option>
+            <option {@eq key=currency value="AUS"} selected {/eq} value="AUS">AU$</option>
+            <option {@eq key=currency value="CAN"} selected {/eq} value="CAN">$CAN</option>
+            <option {@eq key=currency value="Yen"} selected {/eq} value="Yen">¥</option>
+            <option {@eq key=currency value="GBP"} selected {/eq} value="GBP">£</option>
+            <option {@eq key=currency value="SWE"} selected {/eq} value="SWE">kr</option>
         </select>
     </label>
 </div>

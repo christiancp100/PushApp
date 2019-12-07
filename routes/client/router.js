@@ -5,6 +5,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 let ObjectId = require('mongodb').ObjectID;
+const dust = require('dustjs-helpers');//used for helper function inside dust files
+const fs = require('fs');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
@@ -65,11 +67,15 @@ router.post('/new', async (req, res) => {
                 res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
                 res.end();
             } else {
+                console.log(req.body.photo);
+                let pic = req.body.photo;
+                let photo = await pic.arrayBuffer();
+                console.log("PHOTOOOOOO", photo);
                 let userAccount = new UserAccount({
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     description: req.body.description,
-                    photo: req.body.photo,
+                    photo: photo,
                     birthday: req.body.birthday,
                     sex: req.body.sex,
                     email: req.body.email,
@@ -85,7 +91,6 @@ router.post('/new', async (req, res) => {
                     accountType: 'client',
                     creationDate: Date.now()
                 });
-
 
                 let savedUserAccount = await userAccount.save();
 
@@ -255,7 +260,7 @@ router.put('/edit/:id', async (req, res) => {
                     console.log('User with ID: ' + req.params.id + ' updated!');
                     if (req.accepts("text/html")) {
                         res = setResponse('html', 201, res);
-                        res.end()
+                        res.redirect('/' + req.user.username);
                     } else if (req.accepts("application/json")) {
                         // delete savedClient._doc['_credentials'];
                         res = setResponse('json', 201, res, {
@@ -335,7 +340,12 @@ router.post('/rating', async (req, res) => {
     //ask if user want to rate the coach again
     for (let i = 0; i < rating.length; i++) {
         if (thisCoachId === (rating[i]._coachId).toString()){
-            res.render('rating-again.dust')
+            res.render('rating-again.dust', {
+                score : rating[i].score,
+                comment: rating[i].score,
+                title: rating[i].title,
+                objId: (rating[i]._id).toString()
+            })
         }
     }
     //render the rating page
@@ -421,23 +431,5 @@ function isLoggedIn(req, res, next) {
     res.redirect('/login');
 }
 //todo delete this root /login post
-/*router.post('/login', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
-
-        let client = await Client.findOne({'access.username': req.body.username});
-        console.log(client);
-        if (!client) {
-            return res.status(400).send('Incorrect username!');
-        }
-        const validPassword = await bcrypt.compare(req.body.password, client.access.password);
-
-        if (!validPassword) {
-            return res.status(400).send('Incorrect password!');
-        }
-        //encode the _id of user object in the mongo
-        const token = jwt.sign({_id: client._id}, config.get('PrivateKey'));
-        return res.header('x-auth-token', token).redirect('/client');
-    }
-});*/
 
 module.exports = router;

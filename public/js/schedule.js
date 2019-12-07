@@ -21,6 +21,10 @@ function retrieveClientId(){
     return selectedUser.options[selectedUser.selectedIndex].getAttribute("value");
 }
 
+function retrieveScheduleName(){
+    return document.getElementById("last_name").value;
+}
+
 function isNullOrWhiteSpace(input){
     if(typeof input === undefined || input === null){
         return true;
@@ -31,7 +35,6 @@ function isNullOrWhiteSpace(input){
 async function addRow() {
 
     let level = countRow();
-    console.log('LEVEL', level);
 
     let table = document.getElementById('scheduleTable');
     let rows =  table.querySelectorAll("tr");
@@ -39,20 +42,22 @@ async function addRow() {
 
     //last row inputs
     let exName = lastRow.querySelectorAll('td input')[0];
-    let exReps = lastRow.querySelectorAll('td input')[1];
-    let exSets = lastRow.querySelectorAll('td input')[2];
-    let exWeight = lastRow.querySelectorAll('td input')[3];
-    let exComments = lastRow.querySelectorAll('td input')[4];
+    let exBody = lastRow.querySelectorAll('td input')[1];
+    let exReps = lastRow.querySelectorAll('td input')[2];
+    let exSets = lastRow.querySelectorAll('td input')[3];
+    let exWeight = lastRow.querySelectorAll('td input')[4];
+    let exComments = lastRow.querySelectorAll('td input')[5];
 
-    if(isNullOrWhiteSpace(exName.value) || isNullOrWhiteSpace(exReps.value) || isNullOrWhiteSpace(exSets.value) || isNullOrWhiteSpace(exWeight.value)){
-        return;
-    }
     let newExerciseRow = document.createElement('tr');
     newExerciseRow.id = 'row' + level;
 
     let newExerciseName = document.createElement('td');
     newExerciseName.id = 'exerciseName' + level;
     newExerciseName.innerHTML = exName.value;
+
+    let newExerciseBody = document.createElement('td');
+    newExerciseBody.id = 'exerciseBody' + level;
+    newExerciseBody.innerHTML = exBody.value;
 
     let newExerciseReps = document.createElement('td');
     newExerciseReps.id = 'exerciseReps' + level;
@@ -74,6 +79,7 @@ async function addRow() {
     newExerciseRemoveInput.type = 'submit';
     newExerciseRemoveInput.value = '-';
     newExerciseRemoveInput.className = 'valign-wrapper btn-floating btn-small waves-effect waves-light black';
+    newExerciseRemoveInput.id = "remove_btn";
     newExerciseRemoveInput.addEventListener('click', removeRow);
 
     let icon = document.createElement('i');//just for beauty reason
@@ -83,12 +89,12 @@ async function addRow() {
 
     table.insertBefore(newExerciseRow, table.childNodes[rows.length-1]);
     newExerciseRow.appendChild(newExerciseName);
+    newExerciseRow.appendChild(newExerciseBody);
     newExerciseRow.appendChild(newExerciseReps);
     newExerciseRow.appendChild(newExerciseSets);
     newExerciseRow.appendChild(newExerciseWeight);
     newExerciseRow.appendChild(newExerciseComments);
     newExerciseRow.appendChild(newExerciseRemoveInput);
-
 
 }
 
@@ -206,6 +212,24 @@ async function searchExercise(_id){
     }
 }
 
+async function searchExerciseName(exName){
+    try{
+        let exerciseFound = await fetch('/workouts/exercises/search?name=' + exName, {
+            method: 'GET',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }
+        });
+
+        let exercises = await exerciseFound.json();
+        return exercises;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
 function removeRow(){
     let toRemove = this.parentNode;
     removeSingleExerciseFromDatabase(toRemove.id);
@@ -232,24 +256,27 @@ async function newExercise() {
 
     //last row inputs
     let exName = lastRow.querySelectorAll('td input')[0];
-    let exReps = lastRow.querySelectorAll('td input')[1];
-    let exSets = lastRow.querySelectorAll('td input')[2];
-    let exWeight = lastRow.querySelectorAll('td input')[3];
-    let exComments = lastRow.querySelectorAll('td input')[4];
+    let exBody = lastRow.querySelectorAll('td input')[1];
+    let exReps = lastRow.querySelectorAll('td input')[2];
+    let exSets = lastRow.querySelectorAll('td input')[3];
+    let exWeight = lastRow.querySelectorAll('td input')[4];
+    let exComments = lastRow.querySelectorAll('td input')[5];
 
     let body = {
         name: exName.value,
         description: exComments.value,
         weightUnit: "kg",
         pumpWeight: exWeight.value,
-        bodyPart: 'ok',
+        bodyPart: exBody.value,
         set: exSets.value,
         repetitions: exReps.value,
     };
     let exercise = await postExercise(body);
-    createAndModifySession(exercise._id);
+
+    await createAndModifySession(exercise._id);
 
     exName.value ='';
+    exBody.value = '';
     exReps.value = '';
     exSets.value = '';
     exWeight.value = '';
@@ -265,7 +292,7 @@ async function createAndModifySession(_exerciseId){
             weekday: retrieveDay(),
             exercises: [_exerciseId],
         };
-        await postSession(body);
+        let session = await postSession(body);
         return;
     }
 
@@ -317,6 +344,7 @@ async function renderTable(){
     for(let i = 0; i < exerciseList.length; i++) {
         addRow();
         document.getElementById('exerciseName' + i).innerHTML = exerciseList[i].name;
+        document.getElementById('exerciseBody' + i).innerHTML = exerciseList[i].bodyPart;
         document.getElementById('exerciseReps' + i).innerHTML = exerciseList[i].repetitions;
         document.getElementById('exerciseSets' + i).innerHTML = exerciseList[i].set;
         document.getElementById('exerciseWeight' + i).innerHTML = exerciseList[i].pumpWeight;
@@ -325,38 +353,17 @@ async function renderTable(){
 }
 
 async function removeSingleExerciseFromDatabase(rowId){
-    let rowToBeRemovedFromDatabase = document.getElementById(rowId);
-
     try{
-        let exerciseName = rowToBeRemovedFromDatabase.childNodes[0].innerHTML;
-        let exerciseReps = rowToBeRemovedFromDatabase.childNodes[1].innerHTML;
-        let exerciseSets = rowToBeRemovedFromDatabase.childNodes[2].innerHTML;
-        let exerciseWeight = rowToBeRemovedFromDatabase.childNodes[3].innerHTML;
-        let exerciseDescription = rowToBeRemovedFromDatabase.childNodes[4].innerHTML;
-
-        let foundExercise = await fetch('workouts/exercises/search'
-            + "?name=" + exerciseName
-            + "&repetitions=" + exerciseReps
-            + "&set=" + exerciseSets
-            + "&pumpWeight=" + exerciseWeight
-            + "&description=" + exerciseDescription, {
-            method: "GET",
-            headers: {
-                'Content-Type':'application/json',
-                'Accept':'application/json'
-            },
-        });
-        let exercise = await foundExercise.json();
-
-        let exId = exercise._id;
-        console.log("ID", exId);
+        let string = rowId.slice(3, rowId.length);
+        let position = parseInt(string, 10);
 
         let foundSession = await searchSession();
         let session = await foundSession.json();
 
         let sessionExercises = session.exercises;
-
         let sessionId = session._id;
+
+        let exId = session.exercises[position];
 
         sessionExercises.splice(sessionExercises.indexOf(exId), 1);
 
@@ -378,7 +385,6 @@ async function removeSingleExerciseFromDatabase(rowId){
 }
 
 async function deleteFromDatabase(){
-    let table = document.getElementById('scheduleTable');
     let rowCounter = 0;
     while(document.getElementById('row' + rowCounter)){
 
@@ -404,6 +410,101 @@ async function deleteFromDatabase(){
         }
         rowCounter++;
     }
-
-
 }
+
+
+async function doneScheduleName(){
+    let title = document.getElementById("title");
+    let scheduleName = retrieveScheduleName();
+
+    let schedName = document.getElementById("schedName");
+    schedName.remove();
+
+    let h2 = document.createElement("h2");
+    h2.innerHTML = scheduleName;
+    h2.id = "title";
+    h2.className = "center";
+
+    title.insertAdjacentElement("afterend",h2);
+    title.remove();
+
+    let modify_a = document.createElement("a");
+    modify_a.className = "valign-wrapper btn-floating btn-small waves-effect waves-light black";
+    let  modify_i = document.createElement("i");
+    modify_i.className = "material-icons";
+    modify_i.innerHTML = "create";
+    modify_a.appendChild(modify_i);
+    h2.appendChild(modify_a);
+
+    modify_a.addEventListener("click", ()=>{
+        modifyScheduleName(scheduleName, h2);
+    });
+}
+
+function modifyScheduleName(scheduleName, h2){
+    //fetch put
+    let string = '<div class="input-field col s6" id="schedName"><input id="last_name" type="text" class="validate"><label for="last_name">Schedule Name</label><a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()"><i class="material-icons" id="done_outline" >done_outline</i> </a> </div> </div>';
+    h2.innerHTML = string;
+}
+
+getExercises = async() =>{
+    let A = [];
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
+    //last row inputs
+    let exName = lastRow.querySelectorAll('td input')[0];
+    let name = exName.value;
+
+
+    let exercises = await searchExerciseName(name);
+    A.push(exercises);
+
+    if(A[0].name) {
+        let datalist = document.getElementsByTagName("datalist")[0];
+        clearDropdown(datalist); //clears to not have them appended many times
+        for (let i = 0; i < A.length; i++) {
+            if (A[i].name) {
+                let option = document.createElement("option");
+
+                option.value = name;
+                option.innerHTML = name;
+                datalist.appendChild(option);
+            }
+        }
+    }
+};
+clearDropdown = (parent) => {
+    if(parent.hasChildNodes()){
+        let children = parent.childNodes;
+        for(let j = 0; j<children.length; j++){
+            children[j].remove();
+        }
+    }
+};
+
+autoComplete = async() =>{
+
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
+    //last row inputs
+    let exBody = lastRow.querySelectorAll('td input')[1];
+    let exReps = lastRow.querySelectorAll('td input')[2];
+    let exSets = lastRow.querySelectorAll('td input')[3];
+    let exWeight = lastRow.querySelectorAll('td input')[4];
+    let exComments = lastRow.querySelectorAll('td input')[5];
+
+    let input = document.getElementById("exercise");
+    let exname = input.value;
+    let exercise = await searchExerciseName(exname);
+    if(exercise.bodyPart !== undefined || exercise.repetitions !== undefined || exercise.set !== undefined || exercise.pumpWeight !== undefined) {
+        exBody.value = exercise.bodyPart;
+        exReps.value = exercise.repetitions;
+        exSets.value = exercise.set;
+        exWeight.value = exercise.pumpWeight;
+        exComments.value = exercise.description;
+    }
+};

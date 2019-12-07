@@ -41,7 +41,7 @@ cleanCards = () => {
 checkIfHiredAlready = async (id) => {
     let getting = await fetch("/coaches/hire/coach/" + id, {
         method: "GET",
-        headers: {'Content-Type': 'application/json'}
+        headers: { 'Content-Type': 'application/json' }
     });
     let clientsArray = await getting.json();
     for (let i = 0; i < clientsArray.length; i++) {
@@ -52,15 +52,36 @@ checkIfHiredAlready = async (id) => {
     }
     return 0;
 };
-
 async function getCoaches() {
-
     let everyone = await fetch("/coaches/search?accountType=coach");
     let coachesArray = await everyone.json();
     await displayCoaches(coachesArray);
 }
 
+
 displayCoaches = async (coachesArray) => {
+    console.log(coachesArray);
+    for (let i = 0; i < coachesArray.length; i++) {
+        let res = await fetch('/coaches/ratings', {
+            method: "POST",
+            body: JSON.stringify({
+                id: coachesArray[i]._id
+            })
+        });
+        let rating = await res.json();
+        console.log(rating);
+        coachesArray[i].description = coachesArray[i].description.slice(0, 50) + "...";
+        console.log("coach", coachesArray[i]);
+        let coach = coachesArray[i];
+        dust.render("dashboard_partials/coach_card_for_list", { coach: coach, media: rating }, function (err, out) {
+            console.log("out", out);
+            console.log(err);
+            document.getElementById("grid").innerHTML += out;
+        });
+    }
+};
+
+displayCoaches_2 = async (coachesArray) => {
     cleanCards();
     for (let i = 0; i < coachesArray.length; i++) {
         let div = document.getElementById("grid");
@@ -149,8 +170,8 @@ async function getExercises() {
         console.log(exercises);
 
         dust.render("dashboard_partials\/schedule_table_row",
-            {exercises: exercises}, (err, out) =>
-                document.getElementById('scheduleTable').innerHTML = out);
+            { exercises: exercises }, (err, out) =>
+            document.getElementById('scheduleTable').innerHTML = out);
     } catch (err) {
         console.log(err);
     }

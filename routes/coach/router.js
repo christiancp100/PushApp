@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const dust = require('dustjs-helpers');//used for helper function inside dust files
 let ObjectId = require('mongodb').ObjectID;
 
 require('../../models/UserAccount.js');
@@ -194,7 +195,6 @@ router.get('/setting', function (req, res) {
     //todo check headers
 });
 
-
 // Edit a coach
 // It works only with all the required information provided
 router.put('/edit/:id', async (req, res) => {
@@ -262,7 +262,7 @@ router.put('/edit/:id', async (req, res) => {
                 console.log('Coach with ID: ' + req.params.id + ' updated!');
                 if (req.accepts("text/html")) {
                     res = setResponse('html', 201, res);
-                    res.redirect('/');
+                    res.redirect('/' + req.user.username);
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, {userAccount: saved});
                     res.end();
@@ -464,57 +464,88 @@ router.delete('/hire/delete/:id', async (req, res) => {
     }
 });
 
-router.post('/rating', (req, res) =>{
-    console.log("body",req.body);
+router.put('/rating', async (req, res) =>{
+    let body = await JSON.parse(req.body);
+    console.log(body);
+    let found = await Rating.findById(ObjectId(body.objId));
+    found.title = body.title;
+    found.comment = body.comment;
+    found.score = body.score;
+    await found.save();
+    res.end();/*todo whatever needed*/
+});
+
+router.post('/ratings', async (req, res) => {
+    let media = 0;
+    let body = await JSON.parse(req.body);
+    let found  = await Rating.find({_coachId : body.id});
+    if (!found){
+        res.send('0');/*todo whatever needed*/
+    }
+    for (let i = 0; i < found.length; i++) {
+        media += found[i].score;
+    }
+    media = Math.floor(media/(found.length-1));
+    res.send(media.toString());
+    //res.render('rating/stars.dust', {media : media}); //send media of rating
+})
+
+router.post('/newrating', async (req, res) =>{
+    let body = await JSON.parse(req.body);
+    console.log("body", body);
     console.log("user", req.user);
+    console.log(req.body.id);
     let rate = new Rating({
-        _clientId: req.user._userAccountId,
-        _coachId: req.body.id,
-        score : req.body.score,
-        comment: req.body.comment,
-        title: req.body.title
+        _clientId: ObjectId("5de66a9ef671d50d31c8b936"),
+        _coachId: ObjectId(body.id),
+        score : body.score,
+        comment: body.comment,
+        title: body.title
     });
     rate.save()
         .then(() => res.status(201).end())//todo rerender the page of client
         .catch(() => res.status(500).end());
 });
 
-//GET all the services
-router.get('/services', (req, res) => {
+//GET all the services of a given coach
+router.get('/services/:id', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
-        console.log("Looking for all the services");
-        Service.find({})
-            .then((services) => {
-                res = setResponse('json', 200, res, services);
+        if (req.params.id === undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            res = setResponse('json', 400, res, {Error: "To retrieve services of a coach provide a valid coachId."});
+            res.end();
+        }
+        console.log("Looking for services of the coach with ID " + req.params.id);
+        try{
+            let serviceFound = await Service.find({_coachId: req.params.id});
+            if(serviceFound === null){
+                res = setResponse('json', 404, res, {Error: 'No service for the given id'});
                 res.end();
-            })
-            .catch((e) => {
-                console.log(e);
-                res.status(500);
-                res.end();
-            })
+            }
+            res = setResponse('json', 200, res, serviceFound);
+            res.end();
+        }catch(e){
+            console.log(e);
+            res.status(500);
+            res.end();
+        }
     } else {
         res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
         res.end();
     }
 });
 
-//GET all the services of a given coach
-router.get('/services/:id', (res, req) => {
+//GET all the services
+router.get('/services', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
-        if (req.params.id === undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res = setResponse('json', 400, res, {Error: "To retrieve services of a coach provide a valid coachId."});
+        console.log("Looking for all the services");
+        try{
+            let foundServices = await Service.find({});
+            res = setResponse('json', 200, res, foundServices);
+            res.end();
+        }catch(e){
+            res.status(500);
+            res.end();
         }
-        console.log("Looking for services of the coach with ID " + req.params.id);
-        Service.find({_coachId: req.params.id})
-            .then((services) => {
-                res = setResponse('json', 200, res, services);
-                res.end();
-            })
-            .catch((e) => {
-                res = setResponse('json', 404, res, {Error: 'Cannot find services for the given coachId.'});
-                res.end();
-            })
     } else {
         res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
         res.end();
@@ -522,16 +553,12 @@ router.get('/services/:id', (res, req) => {
 });
 
 // POST a new service
-router.post('/services/new', (req,res) => {
+router.post('/services/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
         console.log('Creating new service...');
-        if (req.body._coachId === undefined &&
-            !mongoose.Types.ObjectId.isValid(req.params.id) &&
-            req.body.name === undefined &&
-            req.body.description === undefined &&
-            req.body.duration === undefined &&
-            req.body.fee === undefined) {
+        if (req.body._coachId === undefined && !mongoose.Types.ObjectId.isValid(req.params.id) || req.body.name === undefined || req.body.description === undefined || req.body.duration === undefined || req.body.fee === undefined) {
             res = setResponse('json', 400, res, {Error: "To create a new Service provide a valid coachId, a service name, description, duration and fee."});
+            res.end()
         } else {
             let service = new Service({
                 _coachId: req.body._coachId,
@@ -540,16 +567,15 @@ router.post('/services/new', (req,res) => {
                 duration: req.body.duration,
                 fee: req.body.fee
             });
-            service.save()
-                .then((saved) => {
-                    res = setResponse('json', 201, res, saved);
-                    res.end();
-                })
-                .catch((e) => {
-                    console.log(e);
-                    res.status(500);
-                    res.end();
-                });
+            try{
+                let savedService = await service.save();
+                res = setResponse('json', 201, res, savedService);
+                res.end();
+            }catch(e){
+                console.log(e);
+                res.status(500);
+                res.end();
+            }
         }
     } else {
         res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
@@ -557,14 +583,17 @@ router.post('/services/new', (req,res) => {
     }
 });
 
+// no fields
 // PUT update an existing service
 router.put('/services/edit/:id', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
         if (req.params.id === undefined || !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res = setResponse('json', 400, res, {Error: "To create a new Service provide a valid serviceId."});
+            res.end();
         }
         if(req.body.name === undefined && req.body.fee === undefined && req.body.description === undefined && req.body.duration === undefined){
             res = setResponse('json', 404, res, {Error: 'The field you want to update does not exist in Service'});
+            res.end();
         }
         console.log('Editing service...');
         console.log('Searching for service with ID: ' + req.params.id + '.');
@@ -615,15 +644,10 @@ router.delete('/services/delete/:id', async (req, res) => {
                     res = setResponse('json', 404, res, {Error: 'No service for the given id'});
                     res.end();
                 } else {
-                    try {
-                        let removed = await Service.remove(found);
-                        console.log('The hire-relation has been deleted!');
-                        res = setResponse('json', 200, res, removed);
-                        res.end();
-                    } catch (e) {
-                        res = setResponse('json', 500, res, {Error: e});
-                        res.end();
-                    }
+                    let removed = await Service.remove(found);
+                    console.log('The hire-relation has been deleted!');
+                    res = setResponse('json', 200, res, removed);
+                    res.end();
                 }
             } catch (e) {
                 res = setResponse('json', 500, res, {Error: e});
@@ -668,17 +692,5 @@ function isLoggedIn(req, res, next) {
 }
 
 //todo delete this root /username
-/*router.post('/username', async (req, res) => {
-    if (req.get('Content-Type') === "application/json") {
-        try {
-            let username = await Credentials.find({});
-            res.send(username);
-        } catch (e) {
-            res.status(500).end("ERROR")
-        }
-    } else {
-        res.status(500).end("ERROR")
-    }
-});*/
 
 module.exports = router;
