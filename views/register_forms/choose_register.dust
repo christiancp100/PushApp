@@ -18,12 +18,14 @@
 </head>
 <body>
     <div class="container">
-        <div class="row">
+        <div class="row" id="reg">
             <div class="col l6 s12">
-                <a href="/register-coach"><i class=""></i>Coach</a>
+                <img src="/img/icons/coach-icon.png" alt="">
+                <input type="submit" onclick="fetchCoach(event)" value="Coach" name="coach">                
             </div>
             <div class="col l6 s12">
-                <a href="/register-coach"><i class=""></i>Client</a>
+                <img src="/img/icons/client-icon.png" alt="">
+                <input type="submit" onclick="fetchClient(event)" value="Client" name="client">
             </div>
         </div>
     </div>
