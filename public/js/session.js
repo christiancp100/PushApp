@@ -56,26 +56,21 @@ async function getCoaches(){
 
 
 displayCoaches = async (coachesArray) => {
+
     console.log(coachesArray);
     for (let i = 0; i < coachesArray.length; i++) {
-        let res = await fetch('/coaches/ratings', {
+
+        let response = await fetch('/coaches/ratings', {
             method : "POST",
             body : JSON.stringify({
-                id: coachesArray[i]._id
+                coach: coachesArray[i]
             })
         });
-        let rating = await res.json();
-        console.log(rating);
-        coachesArray[i].description = coachesArray[i].description.slice(0, 50) + "...";
-        console.log("coach", coachesArray[i]);
-        let coach = coachesArray[i];
-        dust.render("dashboard_partials/coach_card_for_list", { coach: coach, media : rating }, function(err, out) {
-            console.log("out", out);
-            console.log(err);
-            document.getElementById("grid").innerHTML += out;
-        });
+        let res = await response.text();
+        console.log(res);
+        document.getElementById("grid").innerHTML += res;
     }
-};
+}
 
 displayCoaches_2 = async(coachesArray)=>{
     cleanCards();
