@@ -6,10 +6,10 @@
         <span></span>
         <span></span>
         <ul id="menu">
-            <a href="#">
+            <a href="/">
                 <li>Home</li>
             </a>
-            <a href="#">
+            <a href="/our-coaches">
                 <li>Our Coaches</li>
             </a>
             <a href="#">
@@ -33,8 +33,8 @@
 <nav class="nav">
     <img src="img/logoPushAppWhite.svg" alt="">
     <ul>
-        <li><a class="list-element" href="#">Home</a></li>
-        <li><a class="list-element" href="#">Our Coaches</a></li>
+        <li><a class="list-element" href="/">Home</a></li>
+        <li><a class="list-element" href="/our-coaches">Our Coaches</a></li>
         <li><a class="list-element" href="#about">About us</a></li>
         <li><a class="list-element" href="/login">Login</a></li>
         <li><a class="btn btn--gradient" href="/register">Sign up now!</a></li>
