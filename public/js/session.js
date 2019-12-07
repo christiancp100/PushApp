@@ -56,12 +56,29 @@ async function getCoaches(){
 }
 
 
+async function getCoachesIndex() {
+
+    let everyone = await fetch("/coaches/search?accountType=coach");
+    let coachesArray = await everyone.json();
+    await displayCoachesIndex(coachesArray);
+}
+
+displayCoachesIndex = async(coachesArray) => {
+    coachesArray.forEach(coach => {
+        coach.description = coach.description.slice(0, 50) + "...";
+        dust.render("partials/coach_card", { coach: coach }, function (err, out) {
+            console.log("coach", coach);
+            console.log(out);
+            document.getElementById("grid").innerHTML += out;
+        });
+    })
+}
+
+
 displayCoaches = async(coachesArray) => {
-  console.log(coachesArray);
   coachesArray.forEach(coach => {
     coach.description = coach.description.slice(0, 50) + "...";
     dust.render("dashboard_partials/coach_card_for_list", { coach: coach }, function(err, out) {
-      console.log(out);
       document.getElementById("grid").innerHTML += out;
     });
   })

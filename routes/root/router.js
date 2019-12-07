@@ -49,21 +49,18 @@ function isLoggedIn(req, res, next) {
 
 router.get('/our-coaches', function (req, res) {
   if (req.accepts("html")) {
-    res.render('register_forms/register_1');
+    res.render('our-coaches');
   } else {
     res.status(200);
     res.end();
   }
-})
-
+});
 
 // Dynamic user route according to userAccount type
 router.get('/:username', isLoggedIn, async (req, res, next) => {
     try {
         if (req.accepts("html")) {
             const filter = getFilter(req);
-
-
             if (req.path === '/login') {
                 res.render('login.dust')
             } else if (req.path === '/register') {
