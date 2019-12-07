@@ -1,11 +1,13 @@
 /** @module root/router */
 'use strict';
 
+require('../../models/Service.js');
 require("dotenv").config({path: "../.env"});
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const Service = mongoose.model('Service');
 
 router.use(
     express.json({
@@ -19,28 +21,42 @@ router.use(
     })
 );
 
-const calculateOrderAmount = items => {
-    // Replace this constant with a calculation of the order's amount
-    // Calculate the order total on the client to prevent
-    // people from directly manipulating the amount on the server
-    return 14000;
+const getServiceData = async (request) => {
+    try {
+        let serviceFound = await Service.findById(request.serviceId);
+        return serviceFound;
+    } catch (err) {
+        console.log(err);
+    }
 };
 
+function getClientCurrency() {
+    return {locale: "en-CH", currency: "chf"};
+}
+
 router.post("/create-payment-intent", async (req, res) => {
-    const {items, currency} = req.body;
+    let request = getRequest(req);
+    let service = await getServiceData(request);
+    let amount = await service.fee * 100;
+    let locale = getClientCurrency().locale;
+    let currency = getClientCurrency().currency;
+
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: calculateOrderAmount(items),
-        currency: "chf"
+        amount: amount,
+        currency: currency
     });
 
     // Send publishable key and PaymentIntent details to server
     res.send({
         publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
         clientSecret: paymentIntent.client_secret,
-        amount: calculateOrderAmount(items),
-        locale: "en-CH",
-        currency: "chf"
+        amount: amount,
+        locale: locale,
+        currency: currency,
+        description: "custom desc",
+        statement_descriptor: "PushApp " + service.duration + "-month coaching membership",
+        receipt_email: "erickgarro@gmail.com"
     });
 });
 
@@ -84,5 +100,18 @@ router.post("/webhook", async (req, res) => {
     }
     res.sendStatus(200);
 });
+
+
+function getRequest(req) {
+    let request;
+    if (Object.keys(req.body).length > 0) {
+        request = req.body;
+    } else if (Object.keys(req.query).length > 0) {
+        request = req.query;
+    } else if (Object.keys(req.params).length > 0) {
+        request = req.params;
+    }
+    return request;
+}
 
 module.exports = router;

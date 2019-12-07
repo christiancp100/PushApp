@@ -2,7 +2,8 @@
 var stripe;
 
 var orderData = {
-    items: [{id: "photo-subscription"}]
+    items: [{id: "photo-subscription"}],
+    serviceId: "5debb66404395829c2b33b0b"
 };
 
 // Disable the button until we have Stripe set up on the page
