@@ -21,19 +21,19 @@ let ClientInfo = mongoose.model('ClientInfo');
 let CoachClients = mongoose.model('CoachClients');
 
 router.get('/test', function (req, res) {
-    res.render('rating/rating-first.dust', {name: 'Moreno', id : '5de5094ec516ae82b90c9c44'});
+    res.render('rating/rating-first.dust', { name: 'Moreno', id: '5de5094ec516ae82b90c9c44' });
 })
 router.get('/testing', function (req, res) {
-res.render('rating/rating-again.dust', {name:'Moreno', score: 4, comment: "HE was very good", title: "awesome", objId: '5de7f4e3d9511123b9bfd669'});
+    res.render('rating/rating-again.dust', { name: 'Moreno', score: 4, comment: "HE was very good", title: "awesome", objId: '5de7f4e3d9511123b9bfd669' });
 })
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
-        if (typeof req.user !== "undefined" && req.isAuthenticated()){
+        if (typeof req.user !== "undefined" && req.isAuthenticated()) {
             console.log("ENTER");
-            res.render('index', {title: 'PushApp', log : 'Y'});
+            res.render('index', { title: 'PushApp', log: 'Y' });
         } else {
             console.log("NOT ENTER");
-            res.render('index', {title: 'PushApp', log: 'N'});
+            res.render('index', { title: 'PushApp', log: 'N' });
         }
     } else {
         // res.status(500);
@@ -48,29 +48,29 @@ function isLoggedIn(req, res, next) {
         res.redirect('/login');
     } else if (req.isAuthenticated() && ("/" + req.user.username) === req.path) {
         return next();
+    } else if (req.isAuthenticated() && ("/payments") === req.path) {
+        return next();
     } else {
         // if they aren't render login page
         res.redirect('/login');
     }
 }
 
-/*router.get('/register', function (req, res) {
+
+router.get('/our-coaches', function (req, res) {
   if (req.accepts("html")) {
-    res.render('register_forms/register_1');
+    res.render('our-coaches');
   } else {
-    res.status(500);
+    res.status(200);
     res.end();
   }
-})*/
-
+});
 
 // Dynamic user route according to userAccount type
 router.get('/:username', isLoggedIn, async (req, res, next) => {
     try {
         if (req.accepts("html")) {
             const filter = getFilter(req);
-
-
             if (req.path === '/login') {
                 res.render('login.dust')
             } else if (req.path === '/register') {
@@ -79,6 +79,8 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
                 res.render('register_forms/coach-register');
             } else if (req.path === '/register-client') {
                 res.render('register_forms/client-register');
+            } else if (req.path === '/payments') { // Stripe
+                res.render('payment_checkout');
             } else if (req.path === '/workout') {
                 res.render('workout');
             }
@@ -146,8 +148,8 @@ async function renderClientDashboard(res, activeUser) {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Logout", icon: "person", logout: true},
-                    {name: "Settings", icon: "settings", accountType: 'clients'},
+                    { name: "Logout", icon: "person", logout: true },
+                    { name: "Settings", icon: "settings", accountType: 'clients' },
                 ]
             }
         ]
@@ -223,7 +225,7 @@ async function renderCoachDashboard(res, activeUser) {
                 icon: "chevron_left",
                 subItems: [
                     { name: "Logout", icon: "person", logout: "true" },
-                    { name: "Settings", icon: "settings", accountType: "coaches"},
+                    { name: "Settings", icon: "settings", accountType: "coaches" },
                 ]
             }
         ],
@@ -322,11 +324,11 @@ function setResponse(type, code, res, msg) {
 router.get('/coach/dashboard/clients', (req, res) => {
     let menu = {
         items: [
-            {name: "Dashboard", icon: "web"},
-            {name: "Clients", icon: "list"},
-            {name: "Schedules", icon: "dashboard"},
-            {name: "Chat", icon: "chat"},
-            {link: "/client/coaches", name: "Coaches", icon: "group", },
+            { name: "Dashboard", icon: "web" },
+            { name: "Clients", icon: "list" },
+            { name: "Schedules", icon: "dashboard" },
+            { name: "Chat", icon: "chat" },
+            { link: "/client/coaches", name: "Coaches", icon: "group", },
         ],
         accordions: [
             {

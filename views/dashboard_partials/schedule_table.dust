@@ -25,4 +25,3 @@
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/schedule.js"></script>
-<script src="/js/renderCoachTable.js"></script>
