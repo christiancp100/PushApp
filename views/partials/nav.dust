@@ -12,7 +12,7 @@
             <a href="/our-coaches">
                 <li>Our Coaches</li>
             </a>
-            <a href="#">
+            <a href="/#about">
                 <li>About us</li>
             </a>
             {@if cond="{log} == 'N'"}
@@ -35,7 +35,7 @@
     <ul>
         <li><a class="list-element" href="/">Home</a></li>
         <li><a class="list-element" href="/our-coaches">Our Coaches</a></li>
-        <li><a class="list-element" href="#about">About us</a></li>
+        <li><a class="list-element" href="/#about">About us</a></li>
         <li><a class="list-element" href="/login">Login</a></li>
         <li><a class="btn btn--gradient" href="/register">Sign up now!</a></li>
     </ul>
