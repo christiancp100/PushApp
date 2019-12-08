@@ -28,6 +28,8 @@
 <script src="/js/views.js"></script>
 <script src="/js/fetch.js"></script>
 <script src="/js/session.js"></script>
+
+<script src="/js/service.js"></script>
 <script src="/js/helper.js"></script>
 
 </html>

@@ -40,3 +40,21 @@ async function renderServices(){
         });
     })
 }
+
+async function showServices(){
+    let id = name;
+    console.log("ID", this.parentNode);
+    try{
+        let servicesFound = await fetch('/coaches/services/' + id, {
+            method: 'GET',
+            headers: {
+                'Content-Type' : 'application/json',
+                'Accept' : 'application/json'
+            }
+        });
+        return await servicesFound.json();
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}

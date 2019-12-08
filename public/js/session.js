@@ -65,6 +65,7 @@ async function getCoachesIndex() {
 
 displayCoaches = async (coachesArray) => {
     //leave this one
+    cleanCards();
     console.log(coachesArray);
     for (let i = 0; i < coachesArray.length; i++) {
         let response = await fetch('/coaches/ratings', {
@@ -80,6 +81,7 @@ displayCoaches = async (coachesArray) => {
 }
 
 displayCoachesIndex = async (coachesArray) => {
+    cleanCards();
     coachesArray.forEach(coach => {
         coach.description = coach.description.slice(0, 50) + "...";
         dust.render("partials/coach_card", {coach: coach}, function (err, out) {
