@@ -9,7 +9,7 @@
         </div>
         <div class="card-action">
         {?text}
-             <a href="#">{text}</a>
+             <a href="#" name="{service._id}" onclick="retrieveServiceId(event)">{text}</a>
              {:else}
              <a href="#">Edit service</a>
              {/text}

@@ -1,6 +1,12 @@
+retrieveServiceId=(e) =>{
+    e.preventDefault();
+    console.log(e.target.name);
+    return e.target.name;
+};
+
 var orderData = {
     items: [{id: "PushApp membership"}],
-    serviceId: "5debb66404395829c2b33b0b"
+    serviceId: retrieveServiceId(),
 };
 
 function fetchClient(e) {
