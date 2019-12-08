@@ -127,13 +127,15 @@ async function orderComplete(clientSecret) {
 
         let transaction = {
             "_stripeId": paymentIntent.id,
-            "stripe_amount": paymentIntent.amount,
+            "amount": paymentIntent.amount / 100,
             "currency": paymentIntent.currency,
             "description": "Add here product description",
-            "stripe_status": paymentIntent.status,
+            "status": paymentIntent.status,
             "_userId": user.userAccountId,
             "_coachId": user.userAccountId, // change for actual coach's id
-            "stripe_created": paymentIntent.created
+            // "startDate": xxx,
+            // "endDate": xxx,
+            "stripeTimestamp": parseInt(paymentIntent.created)
         };
         let savedTransaction = await fetch("/checkout/register-transaction", {
             method: 'POST',
@@ -143,10 +145,11 @@ async function orderComplete(clientSecret) {
             },
             body: JSON.stringify(transaction)
         });
-        await savedTransaction.json.parse();
+
         document.querySelector(".sr-payment-form").classList.add("hidden");
         if (savedTransaction.status === 200) {
-            document.querySelector("pre").textContent = paymentIntentJson;
+
+            document.querySelector("pre").textContent = "Transaction successful. Thank you!";
             // document.querySelector("pre").textContent = paymentIntentJson;
 
             document.querySelector(".sr-result").classList.remove("hidden");
@@ -155,6 +158,8 @@ async function orderComplete(clientSecret) {
             }, 200);
 
             changeLoadingState(false);
+        } else {
+            // document.querySelector("pre").textContent = paymentIntentJson;
         }
     } catch (err) {
         console.log(err);

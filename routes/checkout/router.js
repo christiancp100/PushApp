@@ -108,30 +108,29 @@ router.post("/register-transaction", async (req, res) => {
             if (req.get('Content-Type') === "application/json" && req.accepts("application/json") === "application/json" && req.body !== undefined) {
                 console.log('Creating new users...');
                 let transaction = new Transaction({
-                    _stripeId: req.body.id,
-                    stripe_amount: req.body.amount,
+                    _stripeId: req.body._stripeId,
+                    amount: req.body.amount,
                     currency: req.body.currency,
                     description: req.body.description,
-                    stripe_status: req.body.status,
+                    status: req.body.status,
                     _userId: req.body._userId,
                     _coachId: req.body._coachId,
-                    stripe_created: req.body.created
+                    // startDate: req.body.startDate,
+                    // endDate: req.body.endDate,
+                    stripeTimestamp: req.body.stripeTimestamp
                 });
                 let savedTransaction = await transaction.save();
 
                 if (req.accepts("text/html")) {
                     res = setResponse('json', 200, res);
                     // res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});
-                } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 200, res);
                 }
                 res.end();
             } else {
                 res = setResponse('json', 400, res, {Error: "Only application/json 'Accept' and 'Content-Type' is allowed."});
                 res.end();
             }
-        } catch
-            (err) {
+        } catch (err) {
             console.log(err);
             res.status(500).end();
         }
@@ -148,6 +147,23 @@ function getRequest(req) {
         request = req.params;
     }
     return request;
+}
+
+function setResponse(type, code, res, msg) {
+    res.status(code);
+    switch (type) {
+        case 'json':
+            res.set('Content-Type', 'application/json');
+            res.json(msg);
+            return res;
+        case 'html':
+            return res.set('Content-Type', 'text/html');
+        case 'error':
+            res.json(msg);
+            return res;
+        default:
+            break;
+    }
 }
 
 module.exports = router;
