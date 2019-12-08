@@ -42,7 +42,7 @@ cleanCards = () => {
 checkIfHiredAlready = async (id) => {
   let getting = await fetch("/coaches/hire/coach/" + id, {
     method: "GET",
-    headers: {'Content-Type': 'application/json'}
+    headers: { 'Content-Type': 'application/json' }
   });
   let clientsArray = await getting.json();
   for (let i = 0; i < clientsArray.length; i++) {
@@ -60,11 +60,11 @@ async function getCoaches() {
   await displayCoaches(coachesArray);
 }
 
-async function getCoachesIndex() {}
+async function getCoachesIndex() { }
 
 displayCoaches = async (coachesArray) => {
-//leave this one
-console.log(coachesArray);
+  //leave this one
+  console.log(coachesArray);
   for (let i = 0; i < coachesArray.length; i++) {
     let response = await fetch('/coaches/ratings', {
       method: "POST",
@@ -81,7 +81,7 @@ console.log(coachesArray);
 displayCoachesIndex = async (coachesArray) => {
   coachesArray.forEach(coach => {
     coach.description = coach.description.slice(0, 50) + "...";
-    dust.render("partials/coach_card", {coach: coach}, function (err, out) {
+    dust.render("partials/coach_card", { coach: coach }, function (err, out) {
       console.log("coach", coach);
       console.log(out);
       document.getElementById("grid").innerHTML += out;
@@ -94,7 +94,7 @@ displayCoachesIndex = async (coachesArray) => {
 //todo delete this
   coachesArray.forEach(coach => {
     coach.description = coach.description.slice(0, 50) + "...";
-    dust.render("dashboard_partials/coach_card_for_list", {coach: coach}, function (err, out) {
+    dust.render("dashboard_partials/coach_card_for_list", { coach: coach }, function (err, out) {
       document.getElementById("grid").innerHTML += out;
     });
   });
@@ -115,7 +115,7 @@ displayCoaches = async (coachesArray) => {
     coachesArray[i].description = coachesArray[i].description.slice(0, 50) + "...";
     console.log("coach", coachesArray[i]);
     let coach = coachesArray[i];
-    dust.render("dashboard_partials/coach_card_for_list", {coach: coach, media: rating}, function (err, out) {
+    dust.render("dashboard_partials/coach_card_for_list", { coach: coach, media: rating }, function (err, out) {
       console.log("out", out);
       console.log(err);
       document.getElementById("grid").innerHTML += out;
@@ -211,8 +211,8 @@ async function getExercises() {
     console.log(exercises);
 
     dust.render("dashboard_partials\/schedule_table_row",
-        {exercises: exercises}, (err, out) =>
-            document.getElementById('scheduleTable').innerHTML = out);
+      { exercises: exercises }, (err, out) =>
+      document.getElementById('scheduleTable').innerHTML = out);
   } catch (err) {
     console.log(err);
   }
