@@ -59,7 +59,7 @@ async function getCoaches() {
   await displayCoaches(coachesArray);
 }
 
-async function getCoachesIndex() {
+async function getCoachesIndex() {}
 
 displayCoaches = async (coachesArray) => {
 
@@ -222,4 +222,5 @@ function getWeekDay() {
   return weekdays[new Date().getDay()];
 }
 
-getExercises();
+function getExercises() {
+}
