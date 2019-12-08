@@ -40,13 +40,19 @@ router.post("/create-payment-intent", async (req, res) => {
     let request = getRequest(req);
     let service = await getServiceData(request);
     let amount = await service.fee * 100;
+    let _coachId = await service._coachId;
+    let duration = await service.duration;
+    let description = await service.description;
     let locale = getClientCurrency().locale;
     let currency = getClientCurrency().currency;
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
         amount: amount,
-        currency: currency
+        currency: currency,
+        description: description,
+        statement_descriptor: "PushApp " + service.duration + "-month(s)",
+        receipt_email: "erickgarro@gmail.com"
     });
 
     // Send publishable key and PaymentIntent details to server
@@ -54,10 +60,12 @@ router.post("/create-payment-intent", async (req, res) => {
         publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
         clientSecret: paymentIntent.client_secret,
         amount: amount,
+        _coachId: _coachId,
+        duration: duration,
         locale: locale,
         currency: currency,
-        description: "custom desc",
-        statement_descriptor: "PushApp " + service.duration + "-month coaching membership",
+        description: description,
+        statement_descriptor: "PushApp " + service.duration + "-month(s)",
         receipt_email: "erickgarro@gmail.com"
     });
 });
@@ -107,18 +115,24 @@ router.post("/register-transaction", async (req, res) => {
         try {
             if (req.get('Content-Type') === "application/json" && req.accepts("application/json") === "application/json" && req.body !== undefined) {
                 console.log('Creating new users...');
+                let duration = req.body.duration;
+                let startDate = new Date();
+                let endDate = new Date(startDate.setMonth(startDate.getMonth() + duration));
+
                 let transaction = new Transaction({
                     _stripeId: req.body._stripeId,
                     amount: req.body.amount,
                     currency: req.body.currency,
-                    description: req.body.description,
+                    description: "PushApp " + duration + "-month(s) membership",
                     status: req.body.status,
                     _userId: req.body._userId,
                     _coachId: req.body._coachId,
-                    // startDate: req.body.startDate,
-                    // endDate: req.body.endDate,
+                    duration: duration,
+                    startDate: new Date(),
+                    endDate: endDate,
                     stripeTimestamp: req.body.stripeTimestamp
                 });
+
                 let savedTransaction = await transaction.save();
 
                 if (req.accepts("text/html")) {
