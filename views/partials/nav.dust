@@ -15,18 +15,12 @@
             <a href="/#about">
                 <li>About us</li>
             </a>
-            {@if cond="{log} == 'N'"}
             <a href="/login">
                 <li>Login</li>
             </a>
             <a href="/register" target="_blank">
                 <li>Sign up now!</li>
             </a>
-            {:else}
-                <a href="/logout">
-                    <li>Logout</li>
-                </a>
-            {/if}
         </ul>
     </div>
 </nav>
