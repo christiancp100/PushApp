@@ -38,6 +38,7 @@ cleanCards = () => {
   }
 
 };
+
 checkIfHiredAlready = async (id) => {
   let getting = await fetch("/coaches/hire/coach/" + id, {
     method: "GET",

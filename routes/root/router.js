@@ -148,8 +148,8 @@ async function renderClientDashboard(res, activeUser) {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Logout", icon: "person", logout: true },
-                    { name: "Settings", icon: "settings", accountType: 'clients' },
+                    {name: "Logout", icon: "person", logout: true},
+                    {name: "Settings", icon: "settings", accountType: "clients"},
                 ]
             }
         ]
@@ -209,6 +209,7 @@ async function renderCoachDashboard(res, activeUser) {
             { name: "Clients", icon: "list" },
             { name: "Schedules", icon: "dashboard" },
             { name: "Chat", icon: "chat" },
+            { name: "MyService", icon: "dynamic_feed"}
         ],
         accordions: [
             {

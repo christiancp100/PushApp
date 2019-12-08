@@ -11,5 +11,4 @@ const ExerciseSchema = exports.ExerciseSchema = new Schema({
     set: {type: Number, required: true},
     repetitions: {type: Number, required: true}
 });
-
 mongoose.model('Exercise', ExerciseSchema);
