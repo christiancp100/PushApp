@@ -13,28 +13,31 @@
     </div>
     <div id="login-page" class="row">
         <div class="col s12 z-depth-6 card-panel">
-            <form class="login-form">
+            <form class="login-form" action="/login" method="post">
                 <div class="row">
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <i class="material-icons prefix">mail_outline</i>
-                        <input placeholder="Email" class="validate" id="email" type="email">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input placeholder="Username" class="validate" id="email" name="username" type="text">
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">lock_outline</i>
-                        <input placeholder="Password" id="password" type="password">
+                        <input placeholder="Password" id="password" name="password" type="password">
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s8 offset-s2">
-                        <a href="#" class="btn waves-effect waves-light pink darken-2 col s12">Login</a>
+                        <input type="submit" class="btn waves-effect waves-light pink darken-2 col s12"></a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </body>
+<script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>
+<script src="/js/helper.js"></script>
 </html>
