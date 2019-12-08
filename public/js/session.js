@@ -60,14 +60,12 @@ async function getCoaches() {
   await displayCoaches(coachesArray);
 }
 
-async function getCoachesIndex() {
-}
+async function getCoachesIndex() { }
 
 displayCoaches = async (coachesArray) => {
-
+  //leave this one
   console.log(coachesArray);
   for (let i = 0; i < coachesArray.length; i++) {
-
     let response = await fetch('/coaches/ratings', {
       method: "POST",
       body: JSON.stringify({
@@ -92,7 +90,8 @@ displayCoachesIndex = async (coachesArray) => {
 };
 
 
-displayCoaches = async (coachesArray) => {
+/*displayCoaches = async (coachesArray) => {
+//todo delete this
   coachesArray.forEach(coach => {
     coach.description = coach.description.slice(0, 50) + "...";
     dust.render("dashboard_partials/coach_card_for_list", { coach: coach }, function (err, out) {
@@ -102,6 +101,7 @@ displayCoaches = async (coachesArray) => {
 }
 
 displayCoaches = async (coachesArray) => {
+//todo delete this
   console.log(coachesArray);
   for (let i = 0; i < coachesArray.length; i++) {
     let res = await fetch('/coaches/ratings', {
@@ -121,7 +121,7 @@ displayCoaches = async (coachesArray) => {
       document.getElementById("grid").innerHTML += out;
     });
   }
-};
+};*/
 
 displayCoaches_2 = async (coachesArray) => {
   cleanCards();
@@ -224,4 +224,5 @@ function getWeekDay() {
   return weekdays[new Date().getDay()];
 }
 
-getExercises();
+function getExercises() {
+}

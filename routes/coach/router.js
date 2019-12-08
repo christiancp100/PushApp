@@ -477,7 +477,9 @@ router.put('/rating', async (req, res) => {
 
 router.post('/ratings', async (req, res) => {
     let media = 0;
+    console.log(req.body);
     let body = await JSON.parse(req.body);
+    console.log(body);
     let found = await Rating.find({ _coachId: body.coach._id });
     if (found.length === 0) {
         console.log("NOT found");
