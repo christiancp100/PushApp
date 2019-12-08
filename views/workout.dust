@@ -26,7 +26,7 @@
                 <h1 onload="chronoStart()" id="chronometer" class="white-text">00:00:00</h1>
             </div>
             <div class="col l2 m3 s3">
-                <a onclick="chronoReset()" class="btn-huge right"><i class="material-icons">stop</i></a>
+                <a onclick="stopWorkout()" class="btn-huge right"><i class="material-icons">stop</i></a>
             </div>
         </div>
         <div class="row exercise-div center">
@@ -92,6 +92,15 @@
             </tbody>
         </table>
     </div>
+        <script src="/js/chronometer.js"></script>
+        <script src="/js/fetch.js"></script>
+        <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+        <script src="/js/session.js"></script>
+        <script src="/js/schedule.js"></script>
+        <script src="/js/views.js"></script>
+        <script src="/js/helper.js"></script>
+        <script src="/js/workout.js"></script>
+
 </body>
 
 </html>

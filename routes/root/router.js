@@ -86,7 +86,6 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
             }
             else {
                 let credentials = await Credentials.findOne(filter);
-                console.log();
                 if (credentials === null || credentials.username !== filter.username) {
                     // CHANGE FOR CORRECT 404 PAGE
                     res = setResponse('json', 401, res, { Error: 'Unauthorized access!' });
@@ -94,6 +93,9 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
                     let activeUser = await UserAccount.findById({ _id: credentials._userAccountId });
 
                     if (activeUser.accountType === 'client') {
+                        if(req.path === "/workouts"){
+                          await renderWorkout(res, activeUser);
+                        }
                         await renderClientDashboard(res, activeUser);
                     }
                     if (activeUser.accountType === 'coach') {
@@ -155,6 +157,10 @@ async function renderClientDashboard(res, activeUser) {
         ]
     };
     res.render("dashboard_client", menu);
+}
+
+async function renderWorkout(res, activeUser){
+  res.redirect("/workouts");
 }
 
 async function clientsDropdown(activeUser) {
@@ -383,7 +389,6 @@ router.get('/client/coaches', (req, res) => {
             }
         ]
     };
-
     res.render("coachesList_dashboard_client.dust", menu);
 });
 // router.get("/client/dashboard", (req, res) => {

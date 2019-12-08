@@ -8,14 +8,19 @@ const mongoose = require('mongoose');
 require('../../models/Schedule.js');
 require('../../models/Session.js');
 require('../../models/Exercise.js');
+require('../../models/ExerciseControl.js');
+require('../../models/SessionControl.js');
+
 
 let Schedule = mongoose.model('Schedule');
 let Session = mongoose.model('Session');
 let Exercise = mongoose.model('Exercise');
+let SessionControl = mongoose.model('SessionControl');
+let ExerciseControl = mongoose.model('ExerciseControl');
 
 function isLoggedIn(req, res, next) {
     console.log(req);
-
+    console.log("Entra aqui");
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated())
         return next();
@@ -28,7 +33,14 @@ function isLoggedIn(req, res, next) {
 router.get('/', isLoggedIn, async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
-            res = setResponse('json', 400, res, {Message: 'Nothing here. Go exercise!'});
+
+            let found = await SessionControl.findOneAndUpdate({finishDate: null});
+            if(found) {found.finishDate = Date.now(); found.save()}
+
+            let sessionControl = new SessionControl({
+
+            });
+            res = setResponse('json', 200, res, {Message: 'Nothing here. Go exercise!'});
             res.end();
         } catch (err) {
             console.log(err);
