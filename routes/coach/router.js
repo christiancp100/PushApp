@@ -477,15 +477,29 @@ router.put('/rating', async (req, res) =>{
 
 router.post('/ratings', async (req, res) => {
     let media = 0;
-    let found  = await Rating.find({_coachId : req.body.id});
-    if (!found){
-        res.send("NO rating are there");/*todo whatever needed*/
+    let body = await JSON.parse(req.body);
+    let found  = await Rating.find({_coachId : body.coach._id});
+    if (found.length === 0){
+        console.log("NOT found");
+        res.render("dashboard_partials/coach_card_for_list.dust", { coach: body.coach, noRating : true });
+    } else {
+        for (let i = 0; i < found.length; i++) {
+            media += found[i].score;
+        }
+        media = Math.floor(media / (found.length - 1));
+        let stars = [];
+        let j = 1;
+        while (j <= media) {
+            stars.push("fa fa-star checked");
+            ++j;
+        }
+        while (j <= 5) {
+            stars.push("fa fa-star");
+            ++j;
+        }
+        console.log(stars);
+        res.render('dashboard_partials/coach_card_for_list.dust', {coach: body.coach, stars: stars}); //send media of rating
     }
-    for (let i = 0; i < found.length; i++) {
-        media += found[i].score;
-    }
-    media = Math.floor(media/(found.length-1));
-    res.render('rating/stars.dust', {media : media}); //send media of rating
 })
 
 router.post('/newrating', async (req, res) =>{

@@ -96,7 +96,6 @@ async function addRow() {
     newExerciseRow.appendChild(newExerciseComments);
     newExerciseRow.appendChild(newExerciseRemoveInput);
 
-
 }
 
 async function searchSession(){
@@ -213,6 +212,23 @@ async function searchExercise(_id){
     }
 }
 
+async function searchExerciseName(exName){
+    try{
+        let exerciseFound = await fetch('/workouts/exercises/search?name=' + exName, {
+            method: 'GET',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }
+        });
+
+        let exercises = await exerciseFound.json();
+        return exercises;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
 
 function removeRow(){
     let toRemove = this.parentNode;
@@ -430,3 +446,65 @@ function modifyScheduleName(scheduleName, h2){
     let string = '<div class="input-field col s6" id="schedName"><input id="last_name" type="text" class="validate"><label for="last_name">Schedule Name</label><a class="valign-wrapper btn-floating btn-small waves-effect waves-light black" onclick="doneScheduleName()"><i class="material-icons" id="done_outline" >done_outline</i> </a> </div> </div>';
     h2.innerHTML = string;
 }
+
+getExercises = async() =>{
+    let A = [];
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
+    //last row inputs
+    let exName = lastRow.querySelectorAll('td input')[0];
+    let name = exName.value;
+
+
+    let exercises = await searchExerciseName(name);
+    A.push(exercises);
+
+    if(A[0].name) {
+        let datalist = document.getElementsByTagName("datalist")[0];
+        clearDropdown(datalist); //clears to not have them appended many times
+        for (let i = 0; i < A.length; i++) {
+            if (A[i].name) {
+                let option = document.createElement("option");
+
+                option.value = name;
+                option.innerHTML = name;
+                datalist.appendChild(option);
+            }
+        }
+    }
+};
+clearDropdown = (parent) => {
+    if(parent.hasChildNodes()){
+        let children = parent.childNodes;
+        for(let j = 0; j<children.length; j++){
+            children[j].remove();
+        }
+    }
+};
+
+autoComplete = async() =>{
+
+    let table = document.getElementById('scheduleTable');
+    let rows =  table.querySelectorAll("tr");
+    let lastRow = table.childNodes[rows.length-1];//The lastRow elements s.t. we can retrieve the content and put it in the table
+
+    //last row inputs
+    let exBody = lastRow.querySelectorAll('td input')[1];
+    let exReps = lastRow.querySelectorAll('td input')[2];
+    let exSets = lastRow.querySelectorAll('td input')[3];
+    let exWeight = lastRow.querySelectorAll('td input')[4];
+    let exComments = lastRow.querySelectorAll('td input')[5];
+
+    let input = document.getElementById("exercise");
+    let exname = input.value;
+    let exercise = await searchExerciseName(exname);
+    if(exercise.bodyPart !== undefined || exercise.repetitions !== undefined || exercise.set !== undefined || exercise.pumpWeight !== undefined) {
+        exBody.value = exercise.bodyPart;
+        exReps.value = exercise.repetitions;
+        exSets.value = exercise.set;
+        exWeight.value = exercise.pumpWeight;
+        exComments.value = exercise.description;
+    }
+};

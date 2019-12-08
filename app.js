@@ -9,8 +9,9 @@ const express = require('express');
 const dust = require('klei-dust');
 const logger = require('morgan');
 const path = require('path');
+const env = require("dotenv").config({path: "./.env"});
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const app = express();
-
 
 // Models
 require('./models/ClientInfo.js');
@@ -19,19 +20,8 @@ require('./models/UserAccount.js');
 require('./models/CoachClients.js');
 
 require('dotenv').config(); //
+
 // Mongoose connection to MongoDB and Collection name declaration
-
-/*const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://christiancp:pushapp123@pushapp-yvfjb.mongodb.net/PushApp?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});*/
-
-
-
 mongoose.connect('mongodb://localhost/PushApp', {useNewUrlParser: true, useUnifiedTopology: true});
 
 // Dust views rendering engine
@@ -47,7 +37,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 
 //for passport js
-app.use(require('express-session')({ secret: 'secretcode', resave: true, saveUninitialized: true, maxAge: 24*60*60*1000/*a day long*/ }));
+app.use(require('express-session')({
+    secret: 'secretcode',
+    resave: true,
+    saveUninitialized: true,
+    maxAge: 24 * 60 * 60 * 1000/*a day long*/
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -59,7 +54,7 @@ app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({extended: true}));
 
 require('./config/passport')(passport);
-require('./routes/index.js')(app,passport);
+require('./routes/index.js')(app, passport);
 
 // Initialize routers here
 const routers = require('./routes/routers');
@@ -68,6 +63,7 @@ app.use('/auth', routers.auth);
 app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
 app.use('/workouts', routers.workout);
+app.use('/payment', routers.payment);
 
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes

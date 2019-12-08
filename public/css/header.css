@@ -11,6 +11,21 @@
 	height: 80vh;
 }
 
+
+.hero-header-banner-section--2 {
+  background-attachment: fixed;
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+  background-image: url("../img/trainers/trainer-hero.jpeg");
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 40vh;
+  margin-bottom: 5rem;
+}
+
 .header-text--h1{
   position: absolute;
   bottom: 70%;

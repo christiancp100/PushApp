@@ -142,6 +142,16 @@
     text-transform: uppercase;
     margin-bottom: 1rem;
 }
+ .card-image-bg h2 a{
+     font-size: 1.2rem;
+     color: black;
+     text-transform: uppercase;
+ }
+
+ .card-image-bg h2:hover a{
+    color: white;
+}
+
 
 .card-image-bg p{
     opacity: 0;
