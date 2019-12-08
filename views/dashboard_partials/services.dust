@@ -2,13 +2,17 @@
     <div class="card">
 
         <div class="card-content">
-            <h4>{service.name}</h4>
+            <h5>{service.name}</h5>
             <p>Duration: {service.duration}</p>
             <p>Fee: {service.fee}</p><hr>
             <p>{service.description}</p>
         </div>
         <div class="card-action">
+        {?text}
+             <a href="#">{text}</a>
+             {:else}
              <a href="#">Edit service</a>
+             {/text}
         </div>
     </div>
 </div>

@@ -534,6 +534,7 @@ router.get('/services/:id', async (req, res) => {
             if (serviceFound.length > 0) {
                 res = setResponse('json', 200, res, serviceFound);
             } else if (serviceFound.length === 0) {
+
                 serviceFound = await Service.find({ _id: req.params.id });
                 if (serviceFound.length > 0) {
                     res = setResponse('json', 200, res, serviceFound);
@@ -559,6 +560,7 @@ router.get('/services', async (req, res) => {
         console.log("Looking for all the services");
         try {
             let foundServices = await Service.find({});
+
             res = setResponse('json', 200, res, foundServices);
             res.end();
         } catch (e) {

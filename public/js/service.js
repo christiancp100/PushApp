@@ -41,20 +41,33 @@ async function renderServices(){
     })
 }
 
-async function showServices(){
-    let id = name;
-    console.log("ID", this.parentNode);
-    try{
-        let servicesFound = await fetch('/coaches/services/' + id, {
-            method: 'GET',
-            headers: {
-                'Content-Type' : 'application/json',
-                'Accept' : 'application/json'
-            }
-        });
-        return await servicesFound.json();
-    }catch(e){
-        console.log(e);
-        return undefined;
+
+showServices = async(e)=>{
+    try {
+        e.preventDefault();
+        let headers = {
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json'
+        };
+        let id = e.target.name;
+        console.log(id);
+        let res = await fetch('/coaches/services/'+id, {method:"GET", headers:headers});
+        let services = await res.json();
+        console.log(services);
+
+        document.getElementById("grid").remove();
+        let div = document.createElement("div");
+        div.id="grid";
+
+        let parent = document.getElementById("divtitle");
+        parent.appendChild(div);
+
+        for(let i = 0 ; i<services.length;i++) {
+            dust.render("dashboard_partials/services", {service: services[i], text:"Go to payment"}, (err,out)=>{
+                div.innerHTML+=out;
+            });
+        }
+    } catch (err) {
+        throw err;
     }
-}
+};
