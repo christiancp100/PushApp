@@ -2,7 +2,7 @@
 var stripe;
 
 var orderData = {
-    items: [{id: "photo-subscription"}],
+    items: [{id: "PushApp membership"}],
     serviceId: "5debb66404395829c2b33b0b"
 };
 
@@ -97,26 +97,6 @@ var pay = function (stripe, card, clientSecret) {
 };
 
 /* ------- Post-payment helpers ------- */
-
-// /* Shows a success / error message when the payment is complete */
-// // var orderComplete = (clientSecret) => {
-// //     stripe.retrievePaymentIntent(clientSecret).then(function (result) {
-// //         var paymentIntent = result.paymentIntent;
-// //         var paymentIntentJson = JSON.stringify(paymentIntent, null, 2);
-// //
-// //         document.querySelector(".sr-payment-form").classList.add("hidden");
-// //         // document.querySelector("pre").textContent = paymentIntentJson;
-// //         document.querySelector("pre").textContent = paymentIntentJson;
-// //
-// //         document.querySelector(".sr-result").classList.remove("hidden");
-// //         setTimeout(function () {
-// //             document.querySelector(".sr-result").classList.add("expand");
-// //         }, 200);
-// //
-// //         changeLoadingState(false);
-// //     });
-// // };
-
 async function orderComplete(clientSecret) {
     try {
         let result = await stripe.retrievePaymentIntent(clientSecret);
