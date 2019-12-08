@@ -3,35 +3,13 @@
         <div class="card-image">
             <img src="/img/trainers/trainer-img-2.png">
             <span class="card-title">{coach.firstName} {coach.lastName} </span>
+            {?noRating}
+                <p>No rating yet for {coach.firstName}</p>
+            {/noRating}
+            {#stars}
+                <span class="{stars}"></span>
+            {/stars}
 
-               {@if cond="{media} == 0"}
-                   <p>No ratings</p>
-               {/if}
-               {@if cond="{media} >= 1"}
-                   <span class="fa fa-star checked"></span>
-               {:else}
-                   <span class="fa fa-star"></span>
-               {/if}
-               {@if cond="{media} >= 2"}
-                   <span class="fa fa-star checked"></span>
-               {:else}
-                   <span class="fa fa-star"></span>
-               {/if}
-               {@if cond="{media} >= 3"}
-                   <span class="fa fa-star checked"></span>
-               {:else}
-                   <span class="fa fa-star"></span>
-               {/if}
-               {@if cond="{media} >= 4"}
-                   <span class="fa fa-star checked"></span>
-               {:else}
-                   <span class="fa fa-star"></span>
-               {/if}
-               {@if cond="{media} >= 5"}
-                   <span class="fa fa-star checked"></span>
-               {:else}
-                   <span class="fa fa-star"></span>
-               {/if}
         </div>
         <div class="card-content">
             <p>{coach.description}</p>
