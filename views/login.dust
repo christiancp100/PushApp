@@ -37,4 +37,7 @@
         </div>
     </div>
 </body>
+<script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+<script src="/js/views.js"></script>
+<script src="/js/helper.js"></script>
 </html>

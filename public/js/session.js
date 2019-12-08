@@ -62,9 +62,21 @@ async function getCoaches() {
 
 async function getCoachesIndex() {
 
-  let everyone = await fetch("/coaches/search?accountType=coach");
-  let coachesArray = await everyone.json();
-  await displayCoachesIndex(coachesArray);
+displayCoaches = async (coachesArray) => {
+
+    console.log(coachesArray);
+    for (let i = 0; i < coachesArray.length; i++) {
+
+        let response = await fetch('/coaches/ratings', {
+            method : "POST",
+            body : JSON.stringify({
+                coach: coachesArray[i]
+            })
+        });
+        let res = await response.text();
+        console.log(res);
+        document.getElementById("grid").innerHTML += res;
+    }
 }
 
 displayCoachesIndex = async (coachesArray) => {
@@ -212,5 +224,3 @@ function getWeekDay() {
 }
 
 getExercises();
-
-
