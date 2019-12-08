@@ -135,7 +135,6 @@ displayCoaches_2 = async (coachesArray) => {
     let img = document.createElement("img");
     img.src = coachesArray[i].photo;
     card.appendChild(img);
-
     let h2 = document.createElement("h2");
     h2.innerHTML = coachesArray[i].firstName + " " + coachesArray[i].lastName;
     img.insertAdjacentElement("afterend", h2);
