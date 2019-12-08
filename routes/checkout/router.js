@@ -1,6 +1,7 @@
 /** @module root/router */
 'use strict';
 
+require('../../models/UserAccount.js');
 require('../../models/Service.js');
 require("dotenv").config({path: "../.env"});
 const express = require('express');
@@ -8,6 +9,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Service = mongoose.model('Service');
+const Transaction = mongoose.model('Transaction');
 
 router.use(
     express.json({
@@ -101,6 +103,40 @@ router.post("/webhook", async (req, res) => {
     res.sendStatus(200);
 });
 
+router.post("/register-transaction", async (req, res) => {
+        try {
+            if (req.get('Content-Type') === "application/json" && req.accepts("application/json") === "application/json" && req.body !== undefined) {
+                console.log('Creating new users...');
+                let transaction = new Transaction({
+                    _stripeId: req.body.id,
+                    stripe_amount: req.body.amount,
+                    currency: req.body.currency,
+                    description: req.body.description,
+                    stripe_status: req.body.status,
+                    _userId: req.body._userId,
+                    _coachId: req.body._coachId,
+                    stripe_created: req.body.created
+                });
+                let savedTransaction = await transaction.save();
+
+                if (req.accepts("text/html")) {
+                    res = setResponse('json', 200, res);
+                    // res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});
+                } else if (req.accepts("application/json")) {
+                    res = setResponse('json', 200, res);
+                }
+                res.end();
+            } else {
+                res = setResponse('json', 400, res, {Error: "Only application/json 'Accept' and 'Content-Type' is allowed."});
+                res.end();
+            }
+        } catch
+            (err) {
+            console.log(err);
+            res.status(500).end();
+        }
+    }
+);
 
 function getRequest(req) {
     let request;

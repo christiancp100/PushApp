@@ -16,6 +16,7 @@ require('./models/ClientInfo.js');
 require('./models/Credential.js');
 require('./models/UserAccount.js');
 require('./models/CoachClients.js');
+require('./models/Transaction.js');
 
 require('dotenv').config(); //
 

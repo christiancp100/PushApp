@@ -15,6 +15,7 @@ require('../../models/Exercise');
 require('../../models/Session');
 require('../../models/Schedule');
 require('../../models/Service');
+require('../../models/Transaction');
 
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
