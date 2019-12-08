@@ -4,22 +4,6 @@ getUserId = async () => {
     return obj.userAccountId;
 };
 
-// let A = [];
-function prettyPrinterDate(src) {
-    let partial = '';
-    for (let i = 0; i < src.length; i++) {
-        let x = src.charAt(i);
-        if (x === 'T') {
-            return partial;
-        } else if (x === '-') {
-            x = '/';
-            partial += x;
-        } else {
-            partial += x;
-        }
-    }
-}
-
 searchCoaches = async () => {
     let txt = document.getElementById("last_name").value;
     if (txt === '' || txt === " ") {
@@ -36,7 +20,6 @@ cleanCards = () => {
     for (let i = 0; i < children.length; i++) {
         children[i].remove();
     }
-
 };
 
 checkIfHiredAlready = async (id) => {
@@ -179,6 +162,11 @@ displayCoaches_2 = async (coachesArray) => {
         }
     }
 };
+
+
+
+
+
 
 // Used in client dashboard
 async function getExercises() {
