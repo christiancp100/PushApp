@@ -63,20 +63,19 @@ async function getCoaches() {
 async function getCoachesIndex() {}
 
 displayCoaches = async (coachesArray) => {
-
-    console.log(coachesArray);
-    for (let i = 0; i < coachesArray.length; i++) {
-
-        let response = await fetch('/coaches/ratings', {
-            method : "POST",
-            body : JSON.stringify({
-                coach: coachesArray[i]
-            })
-        });
-        let res = await response.text();
-        console.log(res);
-        document.getElementById("grid").innerHTML += res;
-    }
+//leave this one
+console.log(coachesArray);
+  for (let i = 0; i < coachesArray.length; i++) {
+    let response = await fetch('/coaches/ratings', {
+      method: "POST",
+      body: JSON.stringify({
+        coach: coachesArray[i]
+      })
+    });
+    let res = await response.text();
+    console.log(res);
+    document.getElementById("grid").innerHTML += res;
+  }
 }
 
 displayCoachesIndex = async (coachesArray) => {
@@ -91,7 +90,8 @@ displayCoachesIndex = async (coachesArray) => {
 };
 
 
-displayCoaches = async (coachesArray) => {
+/*displayCoaches = async (coachesArray) => {
+//todo delete this
   coachesArray.forEach(coach => {
     coach.description = coach.description.slice(0, 50) + "...";
     dust.render("dashboard_partials/coach_card_for_list", {coach: coach}, function (err, out) {
@@ -101,6 +101,7 @@ displayCoaches = async (coachesArray) => {
 }
 
 displayCoaches = async (coachesArray) => {
+//todo delete this
   console.log(coachesArray);
   for (let i = 0; i < coachesArray.length; i++) {
     let res = await fetch('/coaches/ratings', {
@@ -120,7 +121,7 @@ displayCoaches = async (coachesArray) => {
       document.getElementById("grid").innerHTML += out;
     });
   }
-};
+};*/
 
 displayCoaches_2 = async (coachesArray) => {
   cleanCards();
@@ -211,8 +212,8 @@ async function getExercises() {
     console.log(exercises);
 
     dust.render("dashboard_partials\/schedule_table_row",
-      {exercises: exercises}, (err, out) =>
-        document.getElementById('scheduleTable').innerHTML = out);
+        {exercises: exercises}, (err, out) =>
+            document.getElementById('scheduleTable').innerHTML = out);
   } catch (err) {
     console.log(err);
   }
