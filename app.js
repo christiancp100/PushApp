@@ -19,7 +19,7 @@ require('./models/Credential.js');
 require('./models/UserAccount.js');
 require('./models/CoachClients.js');
 
-require('dotenv').config(); //
+//require('dotenv').config(); //
 
 // Mongoose connection to MongoDB and Collection name declaration
 mongoose.connect('mongodb://localhost/PushApp', {useNewUrlParser: true, useUnifiedTopology: true});

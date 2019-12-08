@@ -12,13 +12,14 @@ module.exports = function(app,passport){
         return res.render('register_forms/client-register.dust');
     })
 
-    app.get('/signup', function (req, res) {
-        console.log(req.body);
-        res.render('register_forms/register-credentials.dust', {accID : req.body.id});
+    //render only if the username firstly was occupied
+    app.get('/signup', function (req, res) {//flashes only ones
+        res.render('register_forms/register-credentials.dust', {accID : req.flash('id')[0], message : req.flash('signup-Message')[0]});
+
     })
 
     app.get('/login',(req,res) => {
-        res.render('login')
+        res.render('login', {message : req.flash('loginMessage')[0]})
     });
 
     app.post('/signup', passport.authenticate('local-register', {
@@ -26,7 +27,7 @@ module.exports = function(app,passport){
         failureFlash : true // allow flash messages
         }),
         function (req, res) {
-        res.redirect('/' + req.user.username);
+            res.redirect('/' + req.user.username);
     });
 
     app.post('/login', passport.authenticate('local-login',{
@@ -43,8 +44,6 @@ module.exports = function(app,passport){
         res.redirect('/');
     });
 
-    //todo use this middleware function to routes
-    // route middleware to make sure a user is logged in
     function isLoggedIn(req, res, next) {
 
         // if user is authenticated in the session, carry on
