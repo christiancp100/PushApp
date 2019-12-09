@@ -10,9 +10,9 @@
     <div class="col s12 m4">
         <div class="card">
             <div class="card-content">
-                <h4>{name}</h4>
-                <p>Duration: {duration}</p>
-                <p>Fee: {fee}</p><hr>
+                <h5>{name}</h5>
+                <p><strong>Duration:</strong> {duration} month(s)</p>
+                <p><strong>Fee:</strong> {fee}</p><hr>
                 <p>{description}</p>
                 <input type="hidden" name="_id" value="{_id}">
             </div>

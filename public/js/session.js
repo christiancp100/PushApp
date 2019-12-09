@@ -3,16 +3,16 @@ getUserId = async () => {
     obj = await obj.json();
     return obj.userAccountId;
 };
-toCamelCase = (text) =>{
+toCamelCase = (text) => {
     let ret = '';
-    for(let i = 0; i<text.length;i++){
-        if(i === 0){
+    for (let i = 0; i < text.length; i++) {
+        if (i === 0) {
             ret += text.charAt(0).toUpperCase();
-        }else {
+        } else {
             ret += text.charAt(i).toLowerCase();
         }
-        if(text.charAt(i) === ' '){
-            ret += text.charAt(i+1).toUpperCase();
+        if (text.charAt(i) === ' ') {
+            ret += text.charAt(i + 1).toUpperCase();
             i++;
         }
     }
@@ -37,6 +37,23 @@ cleanCards = () => {
         children[i].remove();
     }
 };
+
+
+async function renderCoaches() {
+    //container of the page
+    let container = document.getElementsByClassName("container")[0];
+    container.innerHTML = '';
+
+    let div =  document.createElement('div');
+    div.className ="row";
+    div.id= "divtitle";
+
+    container.appendChild(div);
+    dust.render("dashboard_partials/coaches", {}, function(err, out) {
+        div.innerHTML += out;
+        getCoaches();
+    });
+}
 
 checkIfHiredAlready = async (id) => {
     let getting = await fetch("/coaches/hire/coach/" + id, {
@@ -178,10 +195,6 @@ displayCoaches_2 = async (coachesArray) => {
         }
     }
 };
-
-
-
-
 
 
 // Used in client dashboard
