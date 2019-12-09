@@ -36,7 +36,10 @@ function fetchCoach(e) {
 
 function getImage() {
     let file = document.getElementById("image").files[0];
-    let fileReader = new FileReader();
+    let img = URL.createObjectURL(file);
+    document.getElementById("im").src = img;
+    document.getElementById("putimage").value = img;
+    /*let fileReader = new FileReader();
     fileReader.addEventListener("load", function () {
         let image = new Image();
         image.height = 100;
@@ -45,8 +48,7 @@ function getImage() {
         document.getElementById("im").src = image;
         document.getElementById("putimage").value = image;
     }, false)
-    fileReader.readAsDataURL(file);
-
+    fileReader.readAsDataURL(file);*/
 }
 
 // function testing(name) {

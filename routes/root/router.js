@@ -167,7 +167,6 @@ function encode (input) {
 }
 
 async function renderClientDashboard(res, activeUser) {
-    console.log("PHOTO", activeUser.photo.data.buffer);
     if (activeUser.photo === null || activeUser.photo === ' ') {
         activeUser.photo = '/img/icons/user-pic.png';
     }
