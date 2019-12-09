@@ -35,13 +35,18 @@ function fetchCoach(e) {
 }
 
 function getImage() {
-    let image = document.getElementById("image").files[0];
-    console.log(image.path);
-    let objurl = URL.createObjectURL(image);
+    let file = document.getElementById("image").files[0];
+    let fileReader = new FileReader();
+    fileReader.addEventListener("load", function () {
+        let image = new Image();
+        image.height = 100;
+        image.title = file.name;
+        image.src = this.result;
+        document.getElementById("im").src = image;
+        document.getElementById("putimage").value = image;
+    }, false)
+    fileReader.readAsDataURL(file);
 
-    console.log(objurl);
-    document.getElementById("im").src = objurl;
-    document.getElementById("putimage").value = objurl;
 }
 
 // function testing(name) {
