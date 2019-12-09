@@ -11,6 +11,10 @@ toCamelCase = (text) =>{
         }else {
             ret += text.charAt(i).toLowerCase();
         }
+        if(text.charAt(i) === ' '){
+            ret += text.charAt(i+1).toUpperCase();
+            i++;
+        }
     }
     return ret;
 };
