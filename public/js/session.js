@@ -3,9 +3,20 @@ getUserId = async () => {
     obj = await obj.json();
     return obj.userAccountId;
 };
-
+toCamelCase = (text) =>{
+    let ret = '';
+    for(let i = 0; i<text.length;i++){
+        if(i === 0){
+            ret += text.charAt(0).toUpperCase();
+        }else {
+            ret += text.charAt(i).toLowerCase();
+        }
+    }
+    return ret;
+};
 searchCoaches = async () => {
-    let txt = document.getElementById("last_name").value;
+    let nonformatted_txt = document.getElementById("last_name").value;
+    let txt = toCamelCase(nonformatted_txt);
     if (txt === '' || txt === " ") {
         getCoaches();
     }
@@ -17,6 +28,7 @@ searchCoaches = async () => {
 
 cleanCards = () => {
     let children = document.getElementById("grid").childNodes;
+    console.log(children);
     for (let i = 0; i < children.length; i++) {
         children[i].remove();
     }
@@ -64,7 +76,7 @@ displayCoaches = async (coachesArray) => {
 }
 
 displayCoachesIndex = async (coachesArray) => {
-    cleanCards();
+    // cleanCards();
     coachesArray.forEach(coach => {
         coach.description = coach.description.slice(0, 50) + "...";
         dust.render("partials/coach_card", {coach: coach}, function (err, out) {

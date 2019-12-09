@@ -1,5 +1,4 @@
 retrieveServiceId=(e) =>{
-    e.preventDefault();
     console.log(e.target.name);
     return e.target.name;
 };
