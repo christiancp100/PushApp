@@ -117,7 +117,7 @@ displayCoachesIndex = async (coachesArray) => {
       document.getElementById("grid").innerHTML += out;
     });
   });
-}
+};
 
 displayCoaches = async (coachesArray) => {
 //todo delete this
