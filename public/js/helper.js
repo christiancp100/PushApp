@@ -2,8 +2,10 @@ function gotoCheckout(e) {
     e.preventDefault();
     orderData.serviceId = e.target.name;
     dust.render("checkout", {}, function (err, out) {
-        document.getElementById("main-container").innerHTML += out;
+        document.getElementById("searchBox").remove();
+        document.getElementById("grid").innerHTML = out;
     });
+    initStripe();
 };
 
 var orderData = {

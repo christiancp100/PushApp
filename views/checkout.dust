@@ -1,8 +1,5 @@
     <link rel="stylesheet" href="css/stripe_normalize.css" />
     <link rel="stylesheet" href="css/stripe_global.css" />
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="js/helper.js" defer></script>
-    <script src="js/checkout.js" defer></script>
 
     <div class="sr-root">
       <div class="sr-main">
