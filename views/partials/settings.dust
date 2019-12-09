@@ -18,16 +18,20 @@
 <div class="input-field col s12">
     <label>Description:
         {?description}<input type="text" value="{description}" name="description"/>
-        {:else}<input type="text" name="description"/>{/description}
+        {:else}<input type="text" name="description" data-length="120"/>{/description}
     </label>
 </div>
 </div>
 
 <div class="row">
-<div class="input-field col s12">
-    <label>Choose yor photo:
+<div class="file-field input-field">
+<div class="btn">
+    <span>FILE</span>
         <input accept="image/*" type="file" name="image"/>
-    </label>
+    </div>
+        <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+         </div>
 </div>
 </div>
 
@@ -45,8 +49,9 @@
 
 <div class="row">
 <div class="input-field col s12">
-    <label>unit system:
-        <select name="unitSystem">
+<label>Unit System
+        <select name="unitSystem" >
+            <option value="" disabled selected>Choose your option</option>
             <option {@eq key=unitSystem value="metric"}selected{/eq} value="metric">metric</option>
             <option {@eq key=unitSystem value="imperial"}selected{/eq} value="imperial">imperial</option>
             <option {@eq key=unitSystem value="other"}selected{/eq} value="other">other</option>

@@ -46,7 +46,12 @@
             </div>
         </div>
 
-        <input class="waves-effect white waves-light btn" type="submit" value="Submit changes">
+        <div class="row">
+            <div class="input-field col s12">
+        <input class="waves-effect white waves-light btn-large" type="submit" value="Submit changes">
+
+            </div>
+        </div>
 
     </form>
 </div>
