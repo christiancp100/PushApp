@@ -5,10 +5,11 @@ function buttons(){
     buttonService.addEventListener("click", () => {
         serviceInitialize();
     });
-    // let buttonDashboard = buttons[0];
-    // buttonDashboard.addEventListener("click", () => {
-    //     renderDashboard();
-    // });
+    let buttonDashboard = buttons[0];
+    buttonDashboard.addEventListener("click", () => {
+        console.log("hello");
+        renderDashboard();
+    });
 }
 
 function clientButtons(){

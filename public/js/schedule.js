@@ -508,3 +508,67 @@ autoComplete = async() =>{
         exComments.value = exercise.description;
     }
 };
+
+async function getHiringClients(){
+    try{
+        let hiringClients = await fetch('coaches/hire/coach/' + await retrieveCoachId(), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        let hiringClientsJSON = await hiringClients.json();
+        return hiringClientsJSON;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
+async function getClientAccount(_id){
+    try{
+        let clientAccount = await fetch('/clients/search?id=' + _id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        return clientAccount;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
+async function renderDashboard(){
+    resetDocument();
+    let container = document.getElementsByClassName("container")[0];
+    let hiringClients = await getHiringClients();
+    let clients = [];
+    for(let i = 0; i < hiringClients.length; i++){
+        let clientAccount = await getClientAccount(hiringClients[i]._clientId);
+        let clientAccountJson = await clientAccount.json();
+        console.log(clientAccountJson);
+        let maialino = {
+            firstName: clientAccountJson[0].firstName,
+            lastName: clientAccountJson[0].lastName,
+            _userAccountId: clientAccountJson[0]._id,
+            photo: clientAccountJson[0].photo
+        };
+        clients.push(maialino);
+    }
+    console.log(clients);
+    dust.render('dashboard_partials/schedule', {clients: clients}, (err,out) => {
+        console.log(out);
+        container.innerHTML = out;
+    });
+
+    dust.render('dashboard_partials/schedule_table_input_row', {}, (err,out) => {
+        let scheduleTable = document.getElementById("scheduleTable");
+        scheduleTable.innerHTML += out;
+    });
+    // dust.render();
+    // await renderTable();
+}
