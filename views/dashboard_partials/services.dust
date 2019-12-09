@@ -1,18 +1,26 @@
-<div class="col s12 m4">
-    <div class="card">
-
-        <div class="card-content">
-            <h5>{service.name}</h5>
-            <p>Duration: {service.duration}</p>
-            <p>Fee: {service.fee}</p><hr>
-            <p>{service.description}</p>
+<div class="row" id="divtitle">
+        <div class="col s12 m4">
+            <div class="card">
+                    <div class="card-action">
+                        <a onclick="windowToNewService()">New Service</a>
+                    </div>
+            </div>
         </div>
-        <div class="card-action">
-        {?text}
-             <a href="#" name="{service._id}" onclick="retrieveServiceId(event)">{text}</a>
-             {:else}
-             <a href="#">Edit service</a>
-             {/text}
+    {#services}
+    <div class="col s12 m4">
+        <div class="card">
+            <div class="card-content">
+                <h4>{name}</h4>
+                <p>Duration: {duration}</p>
+                <p>Fee: {fee}</p><hr>
+                <p>{description}</p>
+                <input type="hidden" name="_id" value="{_id}">
+            </div>
+            <div class="card-action">
+                 <a onclick="windowToEditService(event)">Edit service</a>
+                 <a onclick="deleteService(event)">Delete service</a>
+            </div>
         </div>
     </div>
+    {/services}
 </div>

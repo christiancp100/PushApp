@@ -1,0 +1,15 @@
+<div class="row" id="divtitle">
+    <div class="col s12 m4">
+        <div class="card">
+                <div class="card-content" style="background: orange;">
+                    <input name="name" placeholder="Name">
+                    <input name="duration" placeholder="Duration">
+                    <input name="fee" placeholder="Fee">
+                    <input name="description" placeholder="Description">
+                </div>
+                <div class="card-action">
+                    <a onclick="newService()">New Service</a>
+                </div>
+        </div>
+    </div>
+</div>
