@@ -39,7 +39,7 @@
             <blockquote class="col l12 s12">
                 {exercise.description}
             </blockquote>
-            <a class="col l5 s5 btn btn-large waves-effect waves-light black ">Give Feedback</a>
+            <a onclick="giveFeedback()" class="col l5 s5 btn btn-large waves-effect waves-light black ">Give Feedback</a>
             {^finish}
             <a onclick="continueWorkout()" class="col l5 s5 btn btn-large waves-effect waves-light black offset-l2 offset-s2">Continue</a>
             {:else}
@@ -96,14 +96,52 @@
             </tbody>
         </table>
     </div>
-        <script src="/js/chronometer.js"></script>
-        <script src="/js/fetch.js"></script>
-        <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
-        <script src="/js/session.js"></script>
-        <script src="/js/schedule.js"></script>
-        <script src="/js/views.js"></script>
-        <script src="/js/helper.js"></script>
-        <script src="/js/workout.js"></script>
+
+    <div class="feedback-form" id="feedback-form"> 
+        <div class="row">
+            <form id="feedback-form-form" class="col s12">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input name="repetitions" id="repetitions" type="number" class="validate">
+                        <label for="repetitions">Repetitions</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">How many repetitions could you do?</span>
+                    </div>
+                    <div class="input-field col s12">
+                        <input name="sets" id="sets" type="number" class="validate">
+                        <label for="sets">Sets</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">How many sets could you do?</span>
+                    </div>
+                    <div class="input-field col s12">
+                        <input name="weight" id="weight" type="number" class="validate">
+                        <label for="weight">Weight</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">How much weight could you lift?</span>
+                    </div>
+                    <div class="input-field col s12">
+                        <input name="comments" id="comments" type="text" class="validate">
+                        <label for="comments">Comments</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">Comments for the coach</span>
+                    </div>
+                    <div class="center">
+                        <div class="input-field col s6">
+                            <input onclick="submitFeedback(event)" type="submit" class="btn btn--large black white-text" value="Submit">
+                        </div>
+                        <div class="input-field col s6">
+                            <button onclick="closeFeedbackForm(event)" class="btn btn--large black white-text">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/chronometer.js"></script>
+    <script src="/js/fetch.js"></script>
+    <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+    <script src="/js/session.js"></script>
+    <script src="/js/schedule.js"></script>
+    <script src="/js/views.js"></script>
+    <script src="/js/helper.js"></script>
+    <script src="/js/workout.js"></script>
 
 </body>
 

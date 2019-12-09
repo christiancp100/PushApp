@@ -30,6 +30,30 @@ continueWorkout = () => {
 };
 
 
+giveFeedback = () => {
+  let feedbackForm = document.getElementById("feedback-form");
+  let form = document.getElementById("feedback-form-form");
+  let exerciseId = document.createElement("input");
+  exerciseId.type = "hidden";
+  exerciseId.name = "exerciseId";
+  console.log(exercises[0].exercise);
+  exerciseId.value = exercises[0].exercise.id;
+  console.log(exerciseId);
+  form.appendChild(exerciseId);
+  feedbackForm.style.display = "block";
+}
+
+closeFeedbackForm = (event) => {
+  event.preventDefault();
+  let feedbackForm = document.getElementById("feedback-form");
+  feedbackForm.style.display = "none";
+}
+
+submitFeedback = (event) => {
+  event.preventDefault();
+  let currentExercise = exercises[0];
+}
+
 stopWorkout = async () => {
   let headers = {
     'Accept': 'text/html',
