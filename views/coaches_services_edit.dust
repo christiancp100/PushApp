@@ -1,0 +1,16 @@
+<div class="row" id="divtitle">
+    <div class="col s12 m4">
+        <div class="card">
+                <div class="card-content" style="background: orange;">
+                    <input name="_id" type="hidden">
+                    <input name="name" placeholder="Name">
+                    <input name="duration" placeholder="Duration">
+                    <input name="fee" placeholder="Fee">
+                    <input name="description" placeholder="Description">
+                </div>
+                <div class="card-action">
+                    <a style="cursor:pointer" onclick="editService(event)">Update Service</a>
+                </div>
+        </div>
+    </div>
+</div>

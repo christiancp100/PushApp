@@ -9,8 +9,6 @@ const express = require('express');
 const dust = require('klei-dust');
 const logger = require('morgan');
 const path = require('path');
-const env = require("dotenv").config({path: "./.env"});
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const app = express();
 
 // Models
@@ -18,6 +16,7 @@ require('./models/ClientInfo.js');
 require('./models/Credential.js');
 require('./models/UserAccount.js');
 require('./models/CoachClients.js');
+require('./models/Transaction.js');
 
 //require('dotenv').config(); //
 
@@ -63,7 +62,7 @@ app.use('/auth', routers.auth);
 app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
 app.use('/workouts', routers.workout);
-app.use('/payment', routers.payment);
+app.use('/checkout', routers.checkout);
 
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes
@@ -73,4 +72,5 @@ app.use(function (req, res, next) {
     next(err);
 });
 
+console.log("The server is running on port 3000")
 module.exports = app;

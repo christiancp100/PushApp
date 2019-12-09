@@ -3,7 +3,7 @@
     <li class="no-padding">
         <ul>
             {#nItems}{!put links inside the array, or use AJAX!}
-                <li><a href="/client/coaches" class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
+                <li><a class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
              {/nItems}
         </ul>
 

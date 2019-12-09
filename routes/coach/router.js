@@ -50,7 +50,7 @@ router.post('/new', async (req, res) => {
         if (req.body.firstName === undefined && req.body.lastName === undefined && req.body.birthday === undefined && req.body.sex === undefined &&
             req.body.email === undefined && req.body.address1 === undefined && req.body.city === undefined && req.body.state === undefined &&
             req.body.zipCode === undefined && req.body.country === undefined && req.body.currency === undefined) {
-            res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
+            res = setResponse('json', 400, res, { Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided" });
             res.end();
         } else {
             try {
@@ -86,7 +86,7 @@ router.post('/new', async (req, res) => {
                 let savedUser = await user.save();
                 console.log(savedUser._id);
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', {accID : (savedUser._id).toString()});
+                    res.render('register_forms/register-credentials.dust', { accID: (savedUser._id).toString() });
                 } else if (req.accepts("application/json")) {
                     res = setResponse('json', 201, res, savedUser);
                 }
@@ -97,7 +97,7 @@ router.post('/new', async (req, res) => {
             }
         }
     } else {
-        res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
+        res = setResponse('json', 400, res, { Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed." });
         res.end();
     }
 });
@@ -163,7 +163,6 @@ function getFilter(req) {
 
 // Search for coach
 router.get('/search', function (req, res) {
-    console.log("ENTRATO");
     let filter = getFilter(req);
     UserAccount.find(filter)
         .then((coaches) => {
@@ -254,7 +253,7 @@ router.put('/edit/:id', async (req, res) => {
                         found.localization = req.body.localization;
                     }
                 } else {
-                    res = setResponse('error', 404, res, {Error: 'Coach not found!'});
+                    res = setResponse('error', 404, res, { Error: 'Coach not found!' });
                     res.end();
                 }
                 let saved = await found.save();
@@ -263,7 +262,7 @@ router.put('/edit/:id', async (req, res) => {
                     res = setResponse('html', 201, res);
                     res.redirect('/' + req.user.username);
                 } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 201, res, {userAccount: saved});
+                    res = setResponse('json', 201, res, { userAccount: saved });
                     res.end();
                 }
             } catch (e) {
@@ -294,7 +293,7 @@ router.put('/delete/:id', async (req, res) => {
                     found.address2 = '';
                     found.isDeleted = true;
                 } else {
-                    res = setResponse('error', 404, res, {Error: 'Coach not found!'});
+                    res = setResponse('error', 404, res, { Error: 'Coach not found!' });
                     res.end();
                 }
                 let saved = found.save()
@@ -307,7 +306,7 @@ router.put('/delete/:id', async (req, res) => {
                     res = setResponse('html', 201, res);
                     res.redirect('/');
                 } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 201, res, {userAccount: saved});
+                    res = setResponse('json', 201, res, { userAccount: saved });
                     res.end();
                 }
             } catch (e) {
@@ -370,7 +369,7 @@ router.post('/hire/new', (req, res) => {
                     res.end();
                 })
                 .catch((err) => {
-                    res = setResponse(err, 500, res, {Error: 'Cannot create a new hire'});
+                    res = setResponse(err, 500, res, { Error: 'Cannot create a new hire' });
                     res.end();
                 })
         }
@@ -385,7 +384,7 @@ router.get('/hire/coach/:id', (req, res) => {
         } else {
             console.log('Searching for coach with ID: ' + req.params.id + '.');
             if (req.params.id) {
-                CoachClients.find({_coachId: req.params.id})
+                CoachClients.find({ _coachId: req.params.id })
                     .then((found) => {
                         console.log(found);
                         console.log('The coach has ' + found.length + ' clients.');
@@ -394,11 +393,11 @@ router.get('/hire/coach/:id', (req, res) => {
                     })
                     .catch((err) => {
                         console.log(err);
-                        res = setResponse('json', 500, {Error: err});
+                        res = setResponse('json', 500, { Error: err });
                         res.end();
                     })
             } else {
-                res = setResponse('json', 404, {Error: 'No clients for the given coach'});
+                res = setResponse('json', 404, { Error: 'No clients for the given coach' });
                 res.end();
             }
         }
@@ -413,7 +412,7 @@ router.get('/hire/client/:id', (req, res) => {
         } else {
             console.log('Searching for client with ID: ' + req.params.id + '.');
             if (req.params.id) {
-                CoachClients.find({_clientId: req.params.id})
+                CoachClients.find({ _clientId: req.params.id })
                     .then((found) => {
                         console.log(found);
                         console.log('The client has ' + found.length + ' coaches.');
@@ -422,11 +421,11 @@ router.get('/hire/client/:id', (req, res) => {
                     })
                     .catch((err) => {
                         console.log(err);
-                        res = setResponse('json', 500, {Error: err});
+                        res = setResponse('json', 500, { Error: err });
                         res.end();
                     })
             } else {
-                res = setResponse('json', 404, {Error: 'No coaches for the given client'});
+                res = setResponse('json', 404, { Error: 'No coaches for the given client' });
                 res.end();
             }
         }
@@ -442,7 +441,7 @@ router.delete('/hire/delete/:id', async (req, res) => {
                 console.log('Searching for hire-relation with ID: ' + req.params.id + '.');
                 let found = await CoachClients.findById(req.params.id);
                 if (found === null) {
-                    res = setResponse('json', 404, res, {Error: 'No hire-relation for the given id'});
+                    res = setResponse('json', 404, res, { Error: 'No hire-relation for the given id' });
                     res.end();
                 } else {
                     try {
@@ -451,19 +450,19 @@ router.delete('/hire/delete/:id', async (req, res) => {
                         res = setResponse('json', 200, res, removed);
                         res.end();
                     } catch (e) {
-                        res = setResponse('json', 500, res, {Error: e});
+                        res = setResponse('json', 500, res, { Error: e });
                         res.end();
                     }
                 }
             } catch (e) {
-                res = setResponse('json', 500, res, {Error: e});
+                res = setResponse('json', 500, res, { Error: e });
                 res.end();
             }
         }
     }
 });
 
-router.put('/rating', async (req, res) =>{
+router.put('/rating', async (req, res) => {
     let body = await JSON.parse(req.body);
     console.log(body);
     let found = await Rating.findById(ObjectId(body.objId));
@@ -479,10 +478,10 @@ router.post('/ratings', async (req, res) => {
     console.log(req.body);
     let body = await JSON.parse(req.body);
     console.log(body);
-    let found  = await Rating.find({_coachId : body.coach._id});
-    if (found.length === 0){
+    let found = await Rating.find({ _coachId: body.coach._id });
+    if (found.length === 0) {
         console.log("NOT found");
-        res.render("dashboard_partials/coach_card_for_list.dust", { coach: body.coach, noRating : true });
+        res.render("dashboard_partials/coach_card_for_list.dust", { coach: body.coach, noRating: true });
     } else {
         for (let i = 0; i < found.length; i++) {
             media += found[i].score;
@@ -499,19 +498,19 @@ router.post('/ratings', async (req, res) => {
             ++j;
         }
         console.log(stars);
-        res.render('dashboard_partials/coach_card_for_list.dust', {coach: body.coach, stars: stars}); //send media of rating
+        res.render('dashboard_partials/coach_card_for_list.dust', { coach: body.coach, stars: stars }); //send media of rating
     }
 })
 
-router.post('/newrating', async (req, res) =>{
-    let body = await JSON.parse(req.body);
+router.post('/newrating', async (req, res) => {
+    let body = req.body;
     console.log("body", body);
     console.log("user", req.user);
     console.log(req.body.id);
     let rate = new Rating({
         _clientId: req.user._id,
         _coachId: ObjectId(body.id),
-        score : body.score,
+        score: body.score,
         comment: body.comment,
         title: body.title
     });
@@ -524,25 +523,31 @@ router.post('/newrating', async (req, res) =>{
 router.get('/services/:id', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         if (req.params.id === undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res = setResponse('json', 400, res, {Error: "To retrieve services of a coach provide a valid coachId."});
+            res = setResponse('json', 400, res, { Error: "To retrieve services of a coach provide a valid coachId." });
             res.end();
         }
         console.log("Looking for services of the coach with ID " + req.params.id);
-        try{
-            let serviceFound = await Service.find({_coachId: req.params.id});
-            if(serviceFound === null){
-                res = setResponse('json', 404, res, {Error: 'No service for the given id'});
-                res.end();
+        try {
+            let serviceFound = await Service.find({ _coachId: req.params.id });
+            if (serviceFound.length > 0) {
+                res = setResponse('json', 200, res, serviceFound);
+            } else if (serviceFound.length === 0) {
+
+                serviceFound = await Service.find({ _id: req.params.id });
+                if (serviceFound.length > 0) {
+                    res = setResponse('json', 200, res, serviceFound);
+                }
+            } else {
+                res = setResponse('json', 404, res, { Error: 'No service for the given id' });
             }
-            res = setResponse('json', 200, res, serviceFound);
             res.end();
-        }catch(e){
+        } catch (e) {
             console.log(e);
             res.status(500);
             res.end();
         }
     } else {
-        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
+        res = setResponse('json', 412, res, { Error: "Precondition Failed (incorrect request header fields)." });
         res.end();
     }
 });
@@ -551,16 +556,17 @@ router.get('/services/:id', async (req, res) => {
 router.get('/services', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         console.log("Looking for all the services");
-        try{
+        try {
             let foundServices = await Service.find({});
+
             res = setResponse('json', 200, res, foundServices);
             res.end();
-        }catch(e){
+        } catch (e) {
             res.status(500);
             res.end();
         }
     } else {
-        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
+        res = setResponse('json', 412, res, { Error: "Precondition Failed (incorrect request header fields)." });
         res.end();
     }
 });
@@ -570,7 +576,7 @@ router.post('/services/new', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
         console.log('Creating new service...');
         if (req.body._coachId === undefined && !mongoose.Types.ObjectId.isValid(req.params.id) || req.body.name === undefined || req.body.description === undefined || req.body.duration === undefined || req.body.fee === undefined) {
-            res = setResponse('json', 400, res, {Error: "To create a new Service provide a valid coachId, a service name, description, duration and fee."});
+            res = setResponse('json', 400, res, { Error: "To create a new Service provide a valid coachId, a service name, description, duration and fee." });
             res.end()
         } else {
             let service = new Service({
@@ -580,18 +586,18 @@ router.post('/services/new', async (req, res) => {
                 duration: req.body.duration,
                 fee: req.body.fee
             });
-            try{
+            try {
                 let savedService = await service.save();
                 res = setResponse('json', 201, res, savedService);
                 res.end();
-            }catch(e){
+            } catch (e) {
                 console.log(e);
                 res.status(500);
                 res.end();
             }
         }
     } else {
-        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
+        res = setResponse('json', 412, res, { Error: "Precondition Failed (incorrect request header fields)." });
         res.end();
     }
 });
@@ -601,11 +607,11 @@ router.post('/services/new', async (req, res) => {
 router.put('/services/edit/:id', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.accepts("application/json"))) {
         if (req.params.id === undefined || !mongoose.Types.ObjectId.isValid(req.params.id)) {
-            res = setResponse('json', 400, res, {Error: "To create a new Service provide a valid serviceId."});
+            res = setResponse('json', 400, res, { Error: "To create a new Service provide a valid serviceId." });
             res.end();
         }
-        if(req.body.name === undefined && req.body.fee === undefined && req.body.description === undefined && req.body.duration === undefined){
-            res = setResponse('json', 404, res, {Error: 'The field you want to update does not exist in Service'});
+        if (req.body.name === undefined && req.body.fee === undefined && req.body.description === undefined && req.body.duration === undefined) {
+            res = setResponse('json', 404, res, { Error: 'The field you want to update does not exist in Service' });
             res.end();
         }
         console.log('Editing service...');
@@ -613,32 +619,32 @@ router.put('/services/edit/:id', async (req, res) => {
         try {
             let found = await Service.findById(req.params.id);
             if (found === null) {
-                res = setResponse('json', 404, res, {Error: 'No service for the given id'});
+                res = setResponse('json', 404, res, { Error: 'No service for the given id' });
                 res.end();
             } else {
-                if(req.body.name){
+                if (req.body.name) {
                     found.name = req.body.name;
                 }
-                if(req.body.description){
+                if (req.body.description) {
                     found.description = req.body.description;
                 }
-                if(req.body.duration){
+                if (req.body.duration) {
                     found.duration = req.body.duration;
                 }
-                if(req.body.fee){
+                if (req.body.fee) {
                     found.fee = req.body.fee;
                 }
                 let saved = await found.save();
                 res = setResponse('json', 200, res, saved);
                 res.end();
             }
-        } catch(e) {
+        } catch (e) {
             console.log(e);
             res.status(500);
             res.end();
         }
     } else {
-        res = setResponse('json', 412, res, {Error: "Precondition Failed (incorrect request header fields)."});
+        res = setResponse('json', 412, res, { Error: "Precondition Failed (incorrect request header fields)." });
         res.end();
     }
 });
@@ -654,7 +660,7 @@ router.delete('/services/delete/:id', async (req, res) => {
                 console.log('Searching for service with ID: ' + req.params.id + '.');
                 let found = await Service.findById(req.params.id);
                 if (found === null) {
-                    res = setResponse('json', 404, res, {Error: 'No service for the given id'});
+                    res = setResponse('json', 404, res, { Error: 'No service for the given id' });
                     res.end();
                 } else {
                     let removed = await Service.remove(found);
@@ -663,7 +669,7 @@ router.delete('/services/delete/:id', async (req, res) => {
                     res.end();
                 }
             } catch (e) {
-                res = setResponse('json', 500, res, {Error: e});
+                res = setResponse('json', 500, res, { Error: e });
                 res.end();
             }
         }
@@ -693,7 +699,7 @@ function setResponse(type, code, res, msg) {
 
 function isLoggedIn(req, res, next) {
     // redirect if coach isn't not authenticated
-    if (!req.user){
+    if (!req.user) {
         res.redirect('/login');
     }
     // go on if coach is authenticated
