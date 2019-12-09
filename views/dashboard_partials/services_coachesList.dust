@@ -3,7 +3,7 @@
 
         <div class="card-content">
             <h5>{service.name}</h5>
-            <p><strong>Duration: {service.duration}</strong></p>
+            <p><strong>Duration:</strong> {service.duration} month(s)</p>
             <p><strong>Fee: {service.fee}</strong></p><hr>
             <p>{service.description}</p>
         </div>

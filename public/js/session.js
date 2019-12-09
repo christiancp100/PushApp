@@ -3,16 +3,16 @@ getUserId = async () => {
     obj = await obj.json();
     return obj.userAccountId;
 };
-toCamelCase = (text) =>{
+toCamelCase = (text) => {
     let ret = '';
-    for(let i = 0; i<text.length;i++){
-        if(i === 0){
+    for (let i = 0; i < text.length; i++) {
+        if (i === 0) {
             ret += text.charAt(0).toUpperCase();
-        }else {
+        } else {
             ret += text.charAt(i).toLowerCase();
         }
-        if(text.charAt(i) === ' '){
-            ret += text.charAt(i+1).toUpperCase();
+        if (text.charAt(i) === ' ') {
+            ret += text.charAt(i + 1).toUpperCase();
             i++;
         }
     }
@@ -178,10 +178,6 @@ displayCoaches_2 = async (coachesArray) => {
         }
     }
 };
-
-
-
-
 
 
 // Used in client dashboard
