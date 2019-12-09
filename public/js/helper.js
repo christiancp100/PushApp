@@ -1,11 +1,14 @@
-retrieveServiceId=(e) =>{
-    console.log(e.target.name);
-    return e.target.name;
+function gotoCheckout(e) {
+    e.preventDefault();
+    orderData.serviceId = e.target.name;
+    dust.render("checkout", {}, function (err, out) {
+        document.getElementById("main-container").innerHTML += out;
+    });
 };
 
 var orderData = {
     items: [{id: "PushApp membership"}],
-    serviceId: retrieveServiceId(),
+    serviceId: ""
 };
 
 function fetchClient(e) {

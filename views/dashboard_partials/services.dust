@@ -1,15 +1,14 @@
 <div class="col s12 m4">
     <div class="card">
-
         <div class="card-content">
-            <h5>{service.name}</h5>
-            <p>Duration: {service.duration}</p>
-            <p>Fee: {service.fee}</p><hr>
+            <h6>{service.name}</h5>
+            <p><strong>Duration:</strong> {service.duration} month(s)</p>
+            <p><strong>Fee:</strong> {service.fee}</p><hr>
             <p>{service.description}</p>
         </div>
         <div class="card-action">
         {?text}
-             <a href="#" name="{service._id}" onclick="retrieveServiceId(event)">{text}</a>
+             <a href="#" name="{service._id}" onclick="gotoCheckout(event)">{text}</a>
              {:else}
              <a href="#">Edit service</a>
              {/text}
