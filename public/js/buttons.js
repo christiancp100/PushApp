@@ -20,22 +20,7 @@ function clientButtons(){
     });
 }
 
-async function renderCoaches() {
 
-        //container of the page
-        let container = document.getElementsByClassName("container")[0];
-        container.innerHTML = '';
-
-        let div =  document.createElement('div');
-        div.className ="row";
-        div.id= "divtitle";
-
-        container.appendChild(div);
-        dust.render("dashboard_partials/coaches", {}, function(err, out) {
-            div.innerHTML += out;
-            getCoaches();
-        });
-}
 // async function renderDashboard(){
 //     //container of the page
 //     let container = document.getElementsByClassName("container")[0];
