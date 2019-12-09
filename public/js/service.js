@@ -63,7 +63,7 @@ showServices = async(e)=>{
         parent.appendChild(div);
 
         for(let i = 0 ; i<services.length;i++) {
-            dust.render("dashboard_partials/services", {service: services[i], text:"Go to payment"}, (err,out)=>{
+            dust.render("dashboard_partials/services_coachesList", {service: services[i], text:"Go to payment"}, (err,out)=>{
                 div.innerHTML+=out;
             });
         }
