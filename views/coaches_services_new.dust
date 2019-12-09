@@ -8,7 +8,7 @@
                     <input name="description" placeholder="Description">
                 </div>
                 <div class="card-action">
-                    <a onclick="newService()">New Service</a>
+                    <a style="cursor:pointer" onclick="newService()">New Service</a>
                 </div>
         </div>
     </div>

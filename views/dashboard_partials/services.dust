@@ -2,7 +2,7 @@
         <div class="col s12 m4">
             <div class="card">
                     <div class="card-action">
-                        <a onclick="windowToNewService()">New Service</a>
+                        <a style="cursor:pointer" onclick="windowToNewService()">New Service</a>
                     </div>
             </div>
         </div>
@@ -17,8 +17,8 @@
                 <input type="hidden" name="_id" value="{_id}">
             </div>
             <div class="card-action">
-                 <a onclick="windowToEditService(event)">Edit service</a>
-                 <a onclick="deleteService(event)">Delete service</a>
+                 <a style="cursor:pointer" onclick="windowToEditService(event)">Edit service</a>
+                 <a style="cursor:pointer" onclick="deleteService(event)">Delete service</a>
             </div>
         </div>
     </div>
