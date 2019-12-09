@@ -22,7 +22,7 @@
                     </div>
                     <div class="row center-align">
                         <div class="col m6 s12">
-                            <a class="btn-large black">Begin Workout</a>
+                            <a onclick="startWorkout()" class="btn-large black">Begin Workout</a>
                         </div>
                         <div class="col m6 s12">
                             <a class="btn-large black disabled">Contact Coach</a>
@@ -42,6 +42,8 @@
     <script src="/js/schedule.js"></script>
     <script src="/js/views.js"></script>
     <script src="/js/helper.js"></script>
+    <script src="/js/workout.js"></script>
+    <script src="/js/chronometer.js"></script>
     <script src="/js/buttons.js"></script>
     <script src="/js/service.js"></script>
     <script src="https://js.stripe.com/v3/"></script>

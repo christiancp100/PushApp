@@ -8,14 +8,23 @@ const mongoose = require('mongoose');
 require('../../models/Schedule.js');
 require('../../models/Session.js');
 require('../../models/Exercise.js');
+require('../../models/ExerciseControl.js');
+require('../../models/SessionControl.js');
+require('../../models/Credential.js');
+require('../../models/UserAccount.js');
+
 
 let Schedule = mongoose.model('Schedule');
 let Session = mongoose.model('Session');
 let Exercise = mongoose.model('Exercise');
+let SessionControl = mongoose.model('SessionControl');
+let ExerciseControl = mongoose.model('ExerciseControl');
+let Credentials = mongoose.model('Credentials');
+let UserAccount = mongoose.model('UserAccount');
+
 
 function isLoggedIn(req, res, next) {
     console.log(req);
-
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated())
         return next();
@@ -25,13 +34,80 @@ function isLoggedIn(req, res, next) {
 
 /* GETS */
 // Get ALL at /workouts root, not serving data
-router.get('/', isLoggedIn, async (req, res) => {
+router.get('/begin', isLoggedIn, async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
-            res = setResponse('json', 400, res, {Message: 'Nothing here. Go exercise!'});
-            res.end();
+            let weekDay = getWeekDay().toLowerCase();
+            //The information that is going to be sent to the frontend composed with
+            // ExerciseControl id and all the information about the realisation o the exercise
+            let sessionExercises = [];
+            // If any workout has no finishDate, add the actual day and save it
+            let found = await SessionControl.find({finishDate: null});
+            if (found.length > 0) {
+                found.forEach(found => {
+                    found.finishDate = Date.now();
+                    found.save().then(saved => {
+                        console.log("Modified Date")
+                    })
+                })
+            }
+            //Retrieve user account id with the req parameters
+            let accountId = req.user._userAccountId;
+            // let clientId = await Credentials.findOne({_userAccountId: accountId});
+            // clientId = clientId._userAccountId;
+//xx
+            //Find the sessions a client has
+            let session = await Session.findOne({_clientId: accountId, weekday: weekDay});
+            // if (!session) {
+            //     //Rest day. We should return a template for rest day
+            //     return;
+            // }
+
+            // Save the session control object
+            let sessionControl = new SessionControl({
+                _clientId: accountId,
+            });
+
+            // For each exercise in the session we create an exercise control
+            session.exercises.forEach((exercise, index) => {
+                let auxExercise = {};
+                let exerciseControl;
+
+                Exercise.findOne({_id: exercise})
+                    .then(ex => {
+                        auxExercise = {
+                            name: ex.name,
+                            description: ex.description,
+                            comment: ex.comment,
+                            weightUnit: ex.weightUnit,
+                            pumpWeight: ex.pumpWeight,
+                            set: ex.set,
+                            repetitions: ex.repetitions
+                        };
+                        exerciseControl = new ExerciseControl({
+                            exercise: exercise,
+                            weight: auxExercise.pumpWeight,
+                            repetitions: auxExercise.repetitions,
+                            sets: auxExercise.set,
+                        });
+                        exerciseControl.save()
+                            .then(savedExerciseControl => {
+                                sessionControl.exercises.push(savedExerciseControl._id);
+                                sessionExercises.push({exercise: auxExercise});
+                                console.log("sessionExercises Array ", sessionExercises);
+                                if (index === session.exercises.length - 1) {
+                                    res = setResponse('json', 200, res, {exercises: sessionExercises});
+                                    res.end();
+                                }
+                            })
+                    })
+
+            });
+
+            let savedSessionControl = await sessionControl.save();
+
         } catch (err) {
-            console.log(err);
+            console.log(err + "this is an error");
             res.status(500);
             res.end();
         }
@@ -40,6 +116,71 @@ router.get('/', isLoggedIn, async (req, res) => {
         res.end();
     }
 });
+
+router.get('/finish-workout', isLoggedIn, async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "text/html")) {
+        try {
+            // If any workout has no finishDate, add the actual date and save it
+            let found = await SessionControl.find({finishDate: null});
+            if (found) {
+                found.forEach(found => {
+                    found.finishDate = Date.now();
+                    found.save().then(saved => {
+                        console.log("Modified Date")
+                    })
+                })
+            }
+            let accountId = req.user.id;
+            let clientId = await Credentials.findOne({_id: accountId}, "_userAccountId");
+            let activeUser = await UserAccount.findById({_id: clientId._userAccountId});
+            let menu = {
+                user:
+                    {
+                        firstName: activeUser.firstName,
+                        photo: activeUser.photo
+                    }
+                ,
+                items: [
+                    {name: "Dashboard", icon: "web"},
+                    {name: "Next Workout", icon: "list"},
+                    {name: "Schedule", icon: "dashboard"},
+                    {name: "Chat", icon: "chat"},
+                    {name: "Coaches", icon: "group"},
+                ],
+                accordions: [
+                    {
+                        title: "Progress",
+                        icon: "chevron_left",
+                        subItems: [
+                            {name: "Weight", icon: "show_chart"},
+                            {name: "Exercises", icon: "equalizer"},
+                            {name: "Volume of Training", icon: "multiline_chart"},
+                        ]
+                    },
+                    {
+                        title: "Account",
+                        icon: "chevron_left",
+                        subItems: [
+                            {name: "Logout", icon: "person", logout: true},
+                            {name: "Settings", icon: "settings", accountType: "clients"},
+                        ]
+                    }
+                ]
+            };
+            res.render("dashboard_client", menu);
+            res.end();
+        } catch (err) {
+            console.log(err + "this is an error");
+            res.status(500);
+            res.end();
+        }
+    } else {
+        res.status(200);
+        res.json({finished: true});
+        res.end();
+    }
+});
+
 
 // Get ALL schedules
 router.get('/schedules', async (req, res) => {
@@ -561,5 +702,28 @@ function setResponse(type, code, res, msg) {
     }
 }
 
+//Given a date retrieves day in the week
+function getWeekDay() {
+    let now = new Date();
+    let orderDay = now.getDay();
+    switch (orderDay) {
+        case 1:
+            return "Monday";
+        case 2:
+            return "Tuesday";
+        case 3:
+            return "Wednesday";
+        case 4:
+            return "Thursday";
+        case 5:
+            return "Friday";
+        case 6:
+            return "Saturday";
+        case 7:
+            return "Sunday";
+        default:
+            return "Error";
+    }
+}
 
 module.exports = router;

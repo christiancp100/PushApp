@@ -8,7 +8,7 @@
                 <span>No rating yet for {coach.firstName}</span>
             {/noRating}
             {#stars}
-                <span class="{stars}"></span>
+                <span class="{.}"></span>
             {/stars}
         </div>
         <div class="card-content">
