@@ -3,13 +3,13 @@
 
         <div class="card-content">
             <h5>{service.name}</h5>
-            <p>Duration: {service.duration}</p>
-            <p>Fee: {service.fee}</p><hr>
+            <p><strong>Duration: {service.duration}</strong></p>
+            <p><strong>Fee: {service.fee}</strong></p><hr>
             <p>{service.description}</p>
         </div>
         <div class="card-action">
         {?text}
-             <a href="#" name="{service._id}" onclick="retrieveServiceId(event)">{text}</a>
+             <a href="#" name="{service._id}" onclick="gotoCheckout(event)">{text}</a>
              {:else}
              <a href="#">Edit service</a>
              {/text}
