@@ -1,25 +1,38 @@
-<div>
+<div class="row">
+<div class="input-field col s12">
     <label>First name:
         <input required pattern="[a-zA-Z][a-z]+$" type="text" value="{firstName}" name="firstName"/>
     </label>
 </div>
-<div>
+</div>
+
+<div class="row">
+<div class="input-field col s12">
     <label>Last name:
         <input required pattern="[a-zA-Z][a-z]+$" type="text" value="{lastName}" name="lastName"/>
     </label>
 </div>
-<div>
+</div>
+
+<div class="row">
+<div class="input-field col s12">
     <label>Description:
         {?description}<input type="text" value="{description}" name="description"/>
         {:else}<input type="text" name="description"/>{/description}
     </label>
 </div>
-<div>
+</div>
+
+<div class="row">
+<div class="input-field col s12">
     <label>Choose yor photo:
         <input accept="image/*" type="file" name="image"/>
     </label>
 </div>
-<div>
+</div>
+
+<div class="row">
+<div class="input-field col s12">
     <label>Sex:<br>
         <select name="sex" required>
             <option {@eq key=sex value="male"}selected{/eq} value="male">male</option>
@@ -28,7 +41,10 @@
         </select>
     </label>
 </div>
-<div>
+</div>
+
+<div class="row">
+<div class="input-field col s12">
     <label>unit system:
         <select name="unitSystem">
             <option {@eq key=unitSystem value="metric"}selected{/eq} value="metric">metric</option>
@@ -37,42 +53,65 @@
         </select>
     </label>
 </div>
-<div>
-    <label>Phone:
-        <input required value="{phone}" type="text" name="phone"/>
-    </label>
 </div>
-<div>
-    <label>address1:
-        <input required value="{address1}" type="text" name="address1"/>
-    </label>
+
+<div class="row">
+    <div class="input-field col s12">
+        <label>Phone:
+            <input required value="{phone}" type="text" name="phone"/>
+        </label>
+    </div>
 </div>
-<div>
-    <label>address2:
-        <input type="text" value="{address2}" name="address2"/>
-    </label>
+
+<div class="row">
+    <div class="input-field col s12">
+        <label>address1:
+            <input required value="{address1}" type="text" name="address1"/>
+        </label>
+    </div>
 </div>
-<div>
+
+<div class="row">
+    <div class="input-field col s12">
+        <label>address2:
+            <input type="text" value="{address2}" name="address2"/>
+        </label>
+    </div>
+</div>
+
+<div class="row">
+<div class="input-field col s12">
     <label>city:
         <input required value="{city}" type="text" name="city"/>
     </label>
 </div>
-<div>
-    <label>state:
-        <input required value="{state}"type="text" name="state"/>
-    </label>
 </div>
-<div>
-    <label>zip Code:
-        <input required value="{zipCode}" type="text" name="zipCode"/>
-    </label>
+
+<div class="row">
+    <div class="input-field col s12">
+        <label>state:
+            <input required value="{state}"type="text" name="state"/>
+        </label>
+    </div>
 </div>
-<div>
-    <label>Country:
-        <input required value="{country}" type="text" name="country"/>
-    </label>
+
+<div class="row">
+    <div class="input-field col s12">
+        <label>zip Code:
+            <input required value="{zipCode}" type="text" name="zipCode"/>
+        </label>
+    </div>
 </div>
-<div>
+<div class="row">
+    <div class="input-field col s12">
+        <label>Country:
+            <input required value="{country}" type="text" name="country"/>
+        </label>
+    </div>
+</div>
+
+<div class="row">
+<div class="input-field col s12">
     <label>Currency:
         <select required id="currency" name="currency">
             <option {@eq key=currency value="Euro"} selected {/eq} value="Euro">€</option>
@@ -86,15 +125,22 @@
         </select>
     </label>
 </div>
-<div>
-    <label>Localization: {!TODO lolcalization function work!}
-        <input onload="getLocation()" name="localization"/>
-    </label>
 </div>
-<div>
-    <label>Email:
-        <input required value="{email}" type="email" name="email"/>
-    </label>
+
+<div class="row">
+    <div class="input-field col s12">
+        <label>Localization: {!TODO lolcalization function work!}
+            <input onload="getLocation()" name="localization"/>
+        </label>
+    </div>
+</div>
+
+<div class="row">
+    <div class="input-field col s12">
+        <label>Email:
+            <input required value="{email}" type="email" name="email"/>
+        </label>
+    </div>
 </div>
 
 <input type="hidden" value="{credentials}" name="credentials">
