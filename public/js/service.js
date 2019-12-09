@@ -172,3 +172,36 @@ async function deleteService(event){
     await deleteServices(serviceId);
     await serviceInitialize();
 }
+    })
+}
+
+
+showServices = async(e)=>{
+    try {
+        e.preventDefault();
+        let headers = {
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json'
+        };
+        let id = e.target.name;
+        console.log(id);
+        let res = await fetch('/coaches/services/'+id, {method:"GET", headers:headers});
+        let services = await res.json();
+        console.log(services);
+
+        document.getElementById("grid").remove();
+        let div = document.createElement("div");
+        div.id="grid";
+
+        let parent = document.getElementById("divtitle");
+        parent.appendChild(div);
+
+        for(let i = 0 ; i<services.length;i++) {
+            dust.render("dashboard_partials/services", {service: services[i], text:"Go to payment"}, (err,out)=>{
+                div.innerHTML+=out;
+            });
+        }
+    } catch (err) {
+        throw err;
+    }
+};

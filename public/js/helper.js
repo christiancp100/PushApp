@@ -1,3 +1,12 @@
+retrieveServiceId=(e) =>{
+    console.log(e.target.name);
+    return e.target.name;
+};
+
+var orderData = {
+    items: [{id: "PushApp membership"}],
+    serviceId: retrieveServiceId(),
+};
 
 function fetchClient(e) {
     e.preventDefault();
@@ -56,13 +65,14 @@ function fetchRating(e, coach) {
     e.preventDefault();
     fetch('/clients/rating', {
         method: "POST",
-        body: {coach : coach}//todo send coach or its id when you have ended the session
+        body: {coach: coach}//todo send coach or its id when you have ended the session
     })
         .then(res => res.text())
         .then(text => {
             //todo bring form of rating to page
         })
 }
+
 function starsRating(e) {
     e.preventDefault();
     let uncolorClass = "unchecked fa fa-star";
@@ -70,12 +80,12 @@ function starsRating(e) {
     let save = e.target.nextSibling;
     let child = e.target;
     //color the stars
-    while (child.nodeName != "H2"){
+    while (child.nodeName != "H2") {
         child.className = colorClass;
         child = child.previousSibling;
     }
     //uncolor the stars
-    while (save.nodeName != "BR"){
+    while (save.nodeName != "BR") {
         save.className = uncolorClass;
         save = save.nextSibling;
     }
@@ -86,19 +96,19 @@ function addReview(e, id) {
     e.preventDefault();
     let rating = 0;
     let first = document.getElementById("firstStar");
-    while (first.nodeName == "SPAN"){
-        if (first.className == "fa fa-star checked"){
+    while (first.nodeName == "SPAN") {
+        if (first.className == "fa fa-star checked") {
             ++rating;
         }
         first = first.nextSibling;
     }
     let comment = document.getElementById("commentReview").value;
     let title = document.getElementById("titleReview").value;
-    fetch('/coaches/newrating',{
+    fetch('/coaches/newrating', {
         method: "POST",
-        body : JSON.stringify({
-            score : rating,
-            title : title,
+        body: JSON.stringify({
+            score: rating,
+            title: title,
             comment: comment,
             id: id
         }),
@@ -114,13 +124,13 @@ function starColor(score) {
     let uncolorClass = "unchecked hov fa fa-star";
     let colorClass = "hov fa fa-star checked";
     let star = document.getElementById("firstStar");
-    while (score > 0){
+    while (score > 0) {
         star.className = colorClass;
         --score;
         star = star.nextSibling;
     }
-    if (star.nodeName != "BR"){
-        while (star.nodeName != "BR"){
+    if (star.nodeName != "BR") {
+        while (star.nodeName != "BR") {
             star.className = uncolorClass;
             star = star.nextSibling;
         }
@@ -133,9 +143,9 @@ function changeRev(e, objId) {
     let title = document.getElementById("titleReview").value;
     let rating = 0;
     let first = document.getElementById("firstStar");
-    while (first.nodeName == "SPAN"){
+    while (first.nodeName == "SPAN") {
         /*TODO make the class work without touching again stars*/
-        if (first.className == "fa fa-star checked"){
+        if (first.className == "fa fa-star checked") {
             ++rating;
         }
         first = first.nextSibling;
@@ -143,10 +153,10 @@ function changeRev(e, objId) {
     fetch('/coaches/rating', {
         method: "PUT",
         body: JSON.stringify({
-            score : rating,
-            title : title,
+            score: rating,
+            title: title,
             comment: comment,
-            objId : objId
+            objId: objId
         })
     }).then((res) => {
         /*todo whatever needed*/
@@ -155,14 +165,14 @@ function changeRev(e, objId) {
 
 function changeReview(e, objId) {
     e.preventDefault();
-    console.log("objId",objId);
+    console.log("objId", objId);
     document.getElementById("titleReview").disabled = false;
     document.getElementById("commentReview").disabled = false;
     document.getElementById("buttons").innerHTML = '<button id="rate" type="button">Rate</button>';
     document.getElementById("rate").addEventListener("mousedown", function () {
         changeRev(e, objId)
     })
-    document.querySelectorAll("span").forEach((el)=>{
+    document.querySelectorAll("span").forEach((el) => {
         console.log(el);
         el.addEventListener("mousedown", starsRating)
     });

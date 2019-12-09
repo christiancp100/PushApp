@@ -164,7 +164,6 @@ function getFilter(req) {
 
 // Search for coach
 router.get('/search', function (req, res) {
-    console.log("ENTRATO");
     let filter = getFilter(req);
     UserAccount.find(filter)
         .then((coaches) => {
@@ -505,12 +504,12 @@ router.post('/ratings', async (req, res) => {
 })
 
 router.post('/newrating', async (req, res) => {
-    let body = await JSON.parse(req.body);
+    let body = req.body;
     console.log("body", body);
     console.log("user", req.user);
     console.log(req.body.id);
     let rate = new Rating({
-        _clientId: ObjectId("5de66a9ef671d50d31c8b936"),
+        _clientId: ObjectId("5de65d6c34b8d99f3f2aaf71"),
         _coachId: ObjectId(body.id),
         score: body.score,
         comment: body.comment,
@@ -534,6 +533,7 @@ router.get('/services/:id', async (req, res) => {
             if (serviceFound.length > 0) {
                 res = setResponse('json', 200, res, serviceFound);
             } else if (serviceFound.length === 0) {
+
                 serviceFound = await Service.find({ _id: req.params.id });
                 if (serviceFound.length > 0) {
                     res = setResponse('json', 200, res, serviceFound);
@@ -559,6 +559,7 @@ router.get('/services', async (req, res) => {
         console.log("Looking for all the services");
         try {
             let foundServices = await Service.find({});
+
             res = setResponse('json', 200, res, foundServices);
             res.end();
         } catch (e) {
