@@ -44,12 +44,12 @@ async function renderCoaches() {
     let container = document.getElementsByClassName("container")[0];
     container.innerHTML = '';
 
-    let div =  document.createElement('div');
-    div.className ="row";
-    div.id= "divtitle";
+    let div = document.createElement('div');
+    div.className = "row";
+    div.id = "divtitle";
 
     container.appendChild(div);
-    dust.render("dashboard_partials/coaches", {}, function(err, out) {
+    dust.render("dashboard_partials/coaches", {}, function (err, out) {
         div.innerHTML += out;
         getCoaches();
     });
@@ -117,7 +117,7 @@ displayCoachesIndex = async (coachesArray) => {
       document.getElementById("grid").innerHTML += out;
     });
   });
-}
+};
 
 displayCoaches = async (coachesArray) => {
 //todo delete this
@@ -222,8 +222,8 @@ async function getExercises() {
                     method: 'GET',
                     headers: headers
                 });
-                exercise = await exercise.json();
-                exercises.push(exercise);
+                let foundExercise = await exercise.json();
+                exercises.push(foundExercise);
             }
         } else {
             exercises = ['-', '-', '-', '-', '-', '-'];

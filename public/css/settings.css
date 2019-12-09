@@ -1,0 +1,42 @@
+html,
+body {
+    height: 100%;
+}
+
+.container{
+    background: #2b2b2b;
+    width: 600px;
+    height:auto;
+}
+
+body {
+    background: url('../img/settings-background.jpg') ;
+    background-size: cover;
+}
+.container input { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: white;
+}
+.row{
+    padding:20px;
+}
+input[type="submit"]{
+    color:black;
+    appearance: none;
+    height: 30px;
+    width: 200px;
+    left: 60%;
+    top: 70%;
+    margin-top: -15px;   /* = -height / 2   */
+    margin-left: -100px; /* = -width / 2    */
+    position: fixed;     /* Fixed is better */
+}
+.card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -moz-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
