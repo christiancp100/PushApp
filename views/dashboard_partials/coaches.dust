@@ -1,6 +1,5 @@
-<div class="row" id="divtitle">
-    <div class="col l12 s12">
-        <div class="input-field col s6" id="name">
+        <!-- <div class="input-field col s6" id="name"> -->
+        <div class="input-field col s6" id="searchBox">
             <input id="last_name" type="text" class="validate" onkeyup="searchCoaches()">
             <label for="last_name">Search...</label>
         </div>
@@ -9,6 +8,4 @@
         <div class="row" id="grid">
             
         </div>
-    </div>
-</div>
 

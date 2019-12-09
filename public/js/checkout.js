@@ -1,38 +1,40 @@
 // A reference to Stripe.js
 var stripe;
 
-var orderData = {
-    items: [{id: "PushApp membership"}],
-    serviceId: "5debb66404395829c2b33b0b"
-};
+// var orderData = {
+//     items: [{id: "PushApp membership"}],
+//     serviceId: "5debb66404395829c2b33b0b"
+// };
 
-// Disable the button until we have Stripe set up on the page
-document.querySelector("button").disabled = true;
+function initStripe() {
+    // Disable the button until we have Stripe set up on the page
+    document.querySelector("button").disabled = true;
 
-fetch("/checkout/create-payment-intent", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(orderData)
-})
-    .then(function (result) {
-        return result.json();
+    fetch("/checkout/create-payment-intent", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
     })
-    .then(function (data) {
-        return setupElements(data);
-    })
-    .then(function ({stripe, card, clientSecret}) {
-        document.querySelector("button").disabled = false;
+        .then(function (result) {
+            return result.json();
+        })
+        .then(function (data) {
+            return setupElements(data);
+        })
+        .then(function ({stripe, card, clientSecret}) {
+            document.querySelector("button").disabled = false;
 
-        // Handle form submission.
-        var form = document.getElementById("payment-form");
-        form.addEventListener("submit", function (event) {
-            event.preventDefault();
-            // Initiate payment when the submit button is clicked
-            pay(stripe, card, clientSecret);
+            // Handle form submission.
+            var form = document.getElementById("payment-form");
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                // Initiate payment when the submit button is clicked
+                pay(stripe, card, clientSecret);
+            });
         });
-    });
+}
 
 // Set up Stripe.js and Elements to use in checkout form
 var setupElements = function (data) {
@@ -60,7 +62,7 @@ var setupElements = function (data) {
         style: 'currency',
         currency: data.currency.toUpperCase(),
         minimumFractionDigits: 2
-    })
+    });
     document.querySelector("#button-text").innerHTML += " " + formatter.format(data.amount / 100);
 
     return {
@@ -104,17 +106,24 @@ async function orderComplete(clientSecret) {
         let paymentIntentJson = JSON.stringify(paymentIntent, null, 2);
         let _userAccountInfo = await fetch("/auth/getuserinfo");
         let user = await _userAccountInfo.json();
+        let service = await fetch("/coaches/services/" + orderData.serviceId, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        service = await service.json();
 
         let transaction = {
             "_stripeId": paymentIntent.id,
             "amount": paymentIntent.amount / 100,
             "currency": paymentIntent.currency,
-            "description": "Add here product description",
+            "description": paymentIntent.description,
             "status": paymentIntent.status,
             "_userId": user.userAccountId,
-            "_coachId": user.userAccountId, // change for actual coach's id
-            // "startDate": xxx,
-            // "endDate": xxx,
+            "_coachId": service[0]._coachId,
+            "duration": service[0].duration,
             "stripeTimestamp": parseInt(paymentIntent.created)
         };
         let savedTransaction = await fetch("/checkout/register-transaction", {

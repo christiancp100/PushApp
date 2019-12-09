@@ -21,22 +21,184 @@ async function getServices(){
     }
 }
 
-async function renderServices(){
-    //container of the page
+async function getService(_id){
+    try{
+        let servicesFound = await fetch('/coaches/services/' + _id, {
+            method: 'GET',
+            headers: {
+                'Content-Type' : 'application/json',
+                'Accept' : 'application/json'
+            }
+        });
+        let services = await servicesFound.json();
+        return services;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
+async function postServices(body){
+    try{
+        let createService = await fetch('/coaches/services/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json',
+                'Accept' : 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        let createdService = await createService.json();
+        return createdService;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
+async function putServices(body, id){
+    try{
+        let modifyService = await fetch('/coaches/services/edit/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json',
+                'Accept' : 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        let modifiedService = await modifyService.json();
+        return modifyService;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
+async function deleteServices(id){
+    try{
+        let deleteService = await fetch('/coaches/services/delete/' + id, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type' : 'application/json',
+                'Accept' : 'application/json'
+            }
+        });
+        let deletedService = await deleteService.json();
+        return deletedService;
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
+function resetDocument(){
     let container = document.getElementsByClassName("container")[0];
     container.innerHTML = '';
-
-    let div =  document.createElement('div');
-    div.className ="row";
-    div.id= "divtitle";
-
-    container.appendChild(div);
-    let services = await getServices();
-    services.forEach((service) => {
-        console.log("Service:", service);
-        dust.render("dashboard_partials/services", { service: service }, function(err, out) {
-            console.log("OUT",out);
-            div.innerHTML += out;
-        });
-    })
 }
+
+async function serviceInitialize(){
+    let container = document.getElementsByClassName("container")[0];
+    resetDocument();
+    try{
+        let services = await getServices();
+        dust.render("dashboard_partials/services", { services: services }, function(err, out) {
+            container.innerHTML = out;
+        });
+    }catch(e){
+        console.log(e);
+        return undefined;
+    }
+}
+
+function windowToNewService(){
+    let container = document.getElementsByClassName("container")[0];
+    resetDocument();
+    dust.render("coaches_services_new", {}, function(err, out) {
+        container.innerHTML = out;
+    });
+}
+
+async function newService(){
+    let name = document.getElementsByName("name")[0].value;
+    let duration = document.getElementsByName("duration")[0].value;
+    let fee = document.getElementsByName("fee")[0].value;
+    let description = document.getElementsByName("description")[1].value;
+    let body = {
+        _coachId: await retrieveCoachId(),
+        name : name,
+        duration: duration,
+        fee: fee,
+        description: description
+    };
+    await postServices(body);
+    await serviceInitialize();
+}
+
+async function windowToEditService(event){
+    let parent = event.target.parentNode.parentNode;
+    let serviceId = parent.childNodes[0].childNodes[5].value;
+    let container = document.getElementsByClassName("container")[0];
+    resetDocument();
+    dust.render("coaches_services_edit", {}, function(err, out) {
+        container.innerHTML = out;
+    });
+    let found = await getService(serviceId);
+    document.getElementsByName("name")[0].value = found[0].name;
+    document.getElementsByName("duration")[0].value = found[0].duration;
+    document.getElementsByName("fee")[0].value = found[0].fee;
+    document.getElementsByName("description")[1].value = found[0].description;
+    document.getElementsByName("_id")[0].value = serviceId;
+}
+
+async function editService(event){
+    let name = document.getElementsByName("name")[0].value;
+    let duration = document.getElementsByName("duration")[0].value;
+    let fee = document.getElementsByName("fee")[0].value;
+    let description = document.getElementsByName("description")[0].value;
+    let body = {
+        name: name,
+        duration: duration,
+        fee: fee,
+        description: description
+    };
+    let serviceId = document.querySelectorAll('input')[0].value;
+    await putServices(body, serviceId);
+    await serviceInitialize();
+}
+
+async function deleteService(event) {
+    let parent = event.target.parentNode.parentNode;
+    let serviceId = parent.childNodes[0].childNodes[5].value;
+    await deleteServices(serviceId);
+    await serviceInitialize();
+}
+
+showServices = async(e)=>{
+    try {
+        e.preventDefault();
+        let headers = {
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json'
+        };
+        let id = e.target.name;
+        console.log(id);
+        let res = await fetch('/coaches/services/'+id, {method:"GET", headers:headers});
+        let services = await res.json();
+        console.log(services);
+
+        document.getElementById("grid").remove();
+        let div = document.createElement("div");
+        div.id="grid";
+
+        let parent = document.getElementById("divtitle");
+        parent.appendChild(div);
+
+        for(let i = 0 ; i<services.length;i++) {
+            dust.render("dashboard_partials/services_coachesList", {service: services[i], text:"Go to payment"}, (err,out)=>{
+                div.innerHTML+=out;
+            });
+        }
+    } catch (err) {
+        throw err;
+    }
+};

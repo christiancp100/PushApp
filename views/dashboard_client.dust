@@ -2,7 +2,7 @@
 <html lang="en">
 {>"dashboard_partials/head" css="/css/client.css"/}
 
-<body class="has-fixed-sidenav" data-gr-c-s-loaded="true">
+<body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="clientButtons()">
     {>"dashboard_partials/header" field="clients" name="John Doe" profile-picture="https://randomuser.me/api/portraits/men/61.jpg"/}
 
 
@@ -44,7 +44,10 @@
     <script src="/js/helper.js"></script>
     <script src="/js/workout.js"></script>
     <script src="/js/chronometer.js"></script>
-
+    <script src="/js/buttons.js"></script>
+    <script src="/js/service.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="js/checkout.js" defer></script>
 </body>
 
 </html>
