@@ -6,33 +6,35 @@ var stripe;
 //     serviceId: "5debb66404395829c2b33b0b"
 // };
 
-// Disable the button until we have Stripe set up on the page
-document.querySelector("button").disabled = true;
+function initStripe() {
+    // Disable the button until we have Stripe set up on the page
+    document.querySelector("button").disabled = true;
 
-fetch("/checkout/create-payment-intent", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(orderData)
-})
-    .then(function (result) {
-        return result.json();
+    fetch("/checkout/create-payment-intent", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
     })
-    .then(function (data) {
-        return setupElements(data);
-    })
-    .then(function ({stripe, card, clientSecret}) {
-        document.querySelector("button").disabled = false;
+        .then(function (result) {
+            return result.json();
+        })
+        .then(function (data) {
+            return setupElements(data);
+        })
+        .then(function ({stripe, card, clientSecret}) {
+            document.querySelector("button").disabled = false;
 
-        // Handle form submission.
-        var form = document.getElementById("payment-form");
-        form.addEventListener("submit", function (event) {
-            event.preventDefault();
-            // Initiate payment when the submit button is clicked
-            pay(stripe, card, clientSecret);
+            // Handle form submission.
+            var form = document.getElementById("payment-form");
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                // Initiate payment when the submit button is clicked
+                pay(stripe, card, clientSecret);
+            });
         });
-    });
+}
 
 // Set up Stripe.js and Elements to use in checkout form
 var setupElements = function (data) {
