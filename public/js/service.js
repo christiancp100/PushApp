@@ -22,11 +22,21 @@ async function getServices(){
 }
 
 async function renderServices(){
+    //container of the page
+    let container = document.getElementsByClassName("container")[0];
+    container.innerHTML = '';
+
+    let div =  document.createElement('div');
+    div.className ="row";
+    div.id= "divtitle";
+
+    container.appendChild(div);
     let services = await getServices();
     services.forEach((service) => {
-        dust.render("dashboard_partials/services.dust", { service: service }, function(err, out) {
-            console.log(out);
-            document.getElementById("grid").innerHTML += out;
+        console.log("Service:", service);
+        dust.render("dashboard_partials/services", { service: service }, function(err, out) {
+            console.log("OUT",out);
+            div.innerHTML += out;
         });
     })
 }

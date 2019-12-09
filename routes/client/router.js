@@ -69,7 +69,7 @@ router.post('/new', async (req, res) => {
             } else {
                 console.log(req.body.photo);
                 let pic = req.body.photo;
-                let photo = await pic.arrayBuffer();
+                let photo = "";
                 console.log("PHOTOOOOOO", photo);
                 let userAccount = new UserAccount({
                     firstName: req.body.firstName,

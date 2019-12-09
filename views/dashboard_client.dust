@@ -7,7 +7,7 @@
 
 
     <main>
-        <div class="container">
+        <div id="main-container" class="container">
             <div class="masonry row" style="position: relative; height: 2134.14px;">
                 <div class="col s12" style="position: absolute; left: 0px; top: 0px;">
                     <h2 class="text-flow">Dashboard</h2>
