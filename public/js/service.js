@@ -166,15 +166,12 @@ async function editService(event){
     await serviceInitialize();
 }
 
-async function deleteService(event){
+async function deleteService(event) {
     let parent = event.target.parentNode.parentNode;
     let serviceId = parent.childNodes[0].childNodes[5].value;
     await deleteServices(serviceId);
     await serviceInitialize();
 }
-    })
-}
-
 
 showServices = async(e)=>{
     try {
