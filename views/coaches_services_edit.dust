@@ -9,7 +9,7 @@
                     <input name="description" placeholder="Description">
                 </div>
                 <div class="card-action">
-                    <a onclick="editService(event)">Update Service</a>
+                    <a style="cursor:pointer" onclick="editService(event)">Update Service</a>
                 </div>
         </div>
     </div>
