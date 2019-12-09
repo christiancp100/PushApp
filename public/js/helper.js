@@ -22,9 +22,11 @@ function fetchCoach(e) {
 
 function getImage() {
     let image = document.getElementById("image").files[0];
+    console.log(image.path);
     let objurl = URL.createObjectURL(image);
 
     console.log(objurl);
+    document.getElementById("im").src = objurl;
     document.getElementById("putimage").value = objurl;
 }
 
@@ -56,7 +58,7 @@ function fetchRating(e, coach) {
     e.preventDefault();
     fetch('/clients/rating', {
         method: "POST",
-        body: {coach : coach}//todo send coach or its id when you have ended the session
+        body: JSON.stringify({coach : coach})//todo send coach or its id when you have ended the session
     })
         .then(res => res.text())
         .then(text => {

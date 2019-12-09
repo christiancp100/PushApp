@@ -58,7 +58,6 @@ router.post('/new', async (req, res) => {
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     description: req.body.description,
-                    photo: req.body.photo,
                     birthday: req.body.birthday,
                     sex: req.body.sex,
                     email: req.body.email,
@@ -510,7 +509,7 @@ router.post('/newrating', async (req, res) =>{
     console.log("user", req.user);
     console.log(req.body.id);
     let rate = new Rating({
-        _clientId: ObjectId("5de66a9ef671d50d31c8b936"),
+        _clientId: req.user._id,
         _coachId: ObjectId(body.id),
         score : body.score,
         comment: body.comment,

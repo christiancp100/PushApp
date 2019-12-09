@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 let ObjectId = require('mongodb').ObjectID;
 const dust = require('dustjs-helpers');//used for helper function inside dust files
 const fs = require('fs');
+const formidable = require('formidable');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
@@ -67,15 +68,12 @@ router.post('/new', async (req, res) => {
                 res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
                 res.end();
             } else {
-                console.log(req.body.photo);
-                let photo = req.body.photo;
+                console.log("pic", req.body.photo);
                 // let photo = await pic.arrayBuffer();
-                console.log("PHOTOOOOOO", photo);
                 let userAccount = new UserAccount({
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     description: req.body.description,
-                    photo: photo,
                     birthday: req.body.birthday,
                     sex: req.body.sex,
                     email: req.body.email,
@@ -91,6 +89,9 @@ router.post('/new', async (req, res) => {
                     accountType: 'client',
                     creationDate: Date.now()
                 });
+
+                userAccount.photo.data = req.body.photo;
+                userAccount.photo.contentType = 'png';
 
                 let savedUserAccount = await userAccount.save();
 
@@ -333,7 +334,7 @@ router.post('/rating', async (req, res) => {
     let thisCoachId = (req.body.coach._id).toString();
     let found = await UserAccount.findById(req.user._userAccountId);
 
-    //find all ratings have every been given (done for coach id)
+    //find all ratings have every been given by this client
     let rating = await Rating.find({_clientId: found._id});
 
     //new rating object was not created yet
@@ -417,6 +418,15 @@ function setResponse(type, code, res, msg) {
         default:
             break;
     }
+}
+
+async function getImage(request, response) {
+    let form = new formidable.IncomingForm();
+    form.parse(request,function (err, fields, files) {
+        console.log("fields", fields);
+        console.log("files", files);
+    });
+
 }
 
 function isLoggedIn(req, res, next) {
