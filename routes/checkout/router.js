@@ -3,6 +3,7 @@
 
 require('../../models/UserAccount.js');
 require('../../models/Service.js');
+require('../../models/CoachClients.js');
 require("dotenv").config({path: "../.env"});
 const express = require('express');
 const router = express.Router();
@@ -10,6 +11,7 @@ const mongoose = require('mongoose');
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Service = mongoose.model('Service');
 const Transaction = mongoose.model('Transaction');
+const CoachClients = mongoose.model('CoachClients');
 
 router.use(
     express.json({
@@ -134,10 +136,10 @@ router.post("/register-transaction", async (req, res) => {
                 });
 
                 let savedTransaction = await transaction.save();
+                let hiredCoach = await hireCoach(req.body._coachId, req.body._userId)
 
                 if (req.accepts("text/html")) {
                     res = setResponse('json', 200, res);
-                    // res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});
                 }
                 res.end();
             } else {
@@ -150,6 +152,21 @@ router.post("/register-transaction", async (req, res) => {
         }
     }
 );
+
+function hireCoach(coachId, clientId) {
+    console.log('Creating a new relation coach-client.');
+    let hire = new CoachClients({
+        _coachId: coachId,
+        _clientId: clientId,
+    });
+    hire.save()
+        .then((saved) => {
+            console.log(saved);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+}
 
 function getRequest(req) {
     let request;

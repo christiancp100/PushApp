@@ -17,10 +17,10 @@ router.get('/getuserinfo', async (req, res) => {
 
     try {
         let credentials = await Credentials.findOne(filter);
-        let user = await UserAccount.findById({_id: credentials._userAccountId});
+        let user = await UserAccount.findById(req.user._userAccountId);
         let userInfo = {
-            userAccountId: user._id,
-            username: credentials.username,
+            userAccountId: req.user._userAccountId,
+            username: req.user.username,
             accountType: user.accountType
         };
         res = setResponse('json', 200, res, userInfo);
@@ -30,6 +30,26 @@ router.get('/getuserinfo', async (req, res) => {
         res.end();
     }
 });
+
+// // Searches by username for userID and accountType
+// router.get('/getuserinfo2', async (req, res) => {
+//     const filter = getFilter(req);
+//
+//     try {
+//         let user = await UserAccount.findById(req.user._userAccountId);
+//         uswr
+//         let userInfo = {
+//             userAccountId: user._id,
+//             username: credentials.username,
+//             accountType: user.accountType
+//         };
+//         res = setResponse('json', 200, res, userInfo);
+//         res.end();
+//     } catch (err) {
+//         res.status(500);
+//         res.end();
+//     }
+// });
 
 // Creates filter for searching users on the database
 function getFilter(req) {
