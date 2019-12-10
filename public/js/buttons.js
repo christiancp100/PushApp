@@ -19,10 +19,11 @@ function buttons(){
     });
 }
 
-function clientButtons(){
+function clientButtons(e){
     let buttons = document.querySelectorAll('.no-padding ul li a');
     let buttonCoach = buttons[4];
     buttonCoach.addEventListener("click", async() => {
+        console.log(buttonCoach);
         await renderCoaches();
     });
 }
