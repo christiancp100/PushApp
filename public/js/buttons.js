@@ -28,6 +28,7 @@ function clientButtons(){
 }
 
 async function renderClients(){
+    let container = document.getElementsByClassName("container")[0];
     let hiringClients = await getHiringClients();
     let clients = [];
     for(let i = 0; i < hiringClients.length; i++){
@@ -35,5 +36,14 @@ async function renderClients(){
         let clientJson = await client.json();
         clients.push(clientJson[0]);
     }
+    resetDocument();
+    if(clients.length !== 0) {
+        for (let i = 0; i < clients.length; i++) {
+            dust.render('dashboard_partials/client_card_for_list', {client: clients[i]}, (err, out) => {
+                container.innerHTML += out;
+            })
+        }
+    }else{
 
+    }
 }
