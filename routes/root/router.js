@@ -262,7 +262,7 @@ async function renderCoachDashboard(res, activeUser) {
         items: [
             {name: "Dashboard", icon: "web"},
             {name: "Clients", icon: "list"},
-            {name: "Schedules", icon: "dashboard"},
+            // {name: "Schedules", icon: "dashboard"},
             {name: "Chat", icon: "chat"},
             {name: "MyService", icon: "dynamic_feed"}
         ],

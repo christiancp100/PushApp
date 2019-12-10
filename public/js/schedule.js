@@ -535,7 +535,7 @@ async function getClientAccount(_id){
                 'Accept': 'application/json'
             }
         });
-        return clientAccount;
+        return await clientAccount;
     }catch(e){
         console.log(e);
         return undefined;

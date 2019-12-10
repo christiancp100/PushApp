@@ -1,13 +1,19 @@
 //myService
 function buttons(){
     let buttons = document.querySelectorAll('.no-padding ul li a');
-    let buttonService = buttons[4];
+
+    let buttonClients = buttons[1];
+    buttonClients.addEventListener("click", () => {
+        renderClients();
+    });
+
+    let buttonService = buttons[3];
     buttonService.addEventListener("click", () => {
         serviceInitialize();
     });
+
     let buttonDashboard = buttons[0];
     buttonDashboard.addEventListener("click", () => {
-        console.log("hello");
         renderDashboard();
     });
 }
@@ -21,12 +27,13 @@ function clientButtons(){
     });
 }
 
+async function renderClients(){
+    let hiringClients = await getHiringClients();
+    let clients = [];
+    for(let i = 0; i < hiringClients.length; i++){
+        let client = await getClientAccount(hiringClients[i]._clientId);
+        let clientJson = await client.json();
+        clients.push(clientJson[0]);
+    }
 
-// async function renderDashboard(){
-//     //container of the page
-//     let container = document.getElementsByClassName("container")[0];
-//     container.innerHTML = '';
-//         dust.render("dashboard_partials/schedule",{}, function(err, out) {
-//             container.innerHTML += out;
-//         });
-// }
+}
