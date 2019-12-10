@@ -12,7 +12,7 @@
             <p>{client.phone}</p>
         </div>
         <div class="card-action">
-            <a name="{client._id}" class="red-text">Chat</a>
+            <a name="{client._id}" href="#" class="red-text">Chat</a>
         </div>
     </div>
 </div>
