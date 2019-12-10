@@ -25,10 +25,13 @@
 
 <div class="row">
 <div class="file-field input-field">
+<label>Upload a file:
 <div class="btn">
     <span>FILE</span>
         <input accept="image/*" type="file" name="image"/>
     </div>
+
+</label>
         <div class="file-path-wrapper">
                 <input class="file-path validate" type="text">
          </div>
@@ -134,7 +137,7 @@
 
 <div class="row">
     <div class="input-field col s12">
-        <label>Localization: {!TODO lolcalization function work!}
+        <label>Localization: {!TODO localization function work!}
             <input onload="getLocation()" name="localization"/>
         </label>
     </div>
