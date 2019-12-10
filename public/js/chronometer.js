@@ -25,8 +25,13 @@ function chrono() {
     else if (msec < 100) {
         msec = "0" + msec;
     }
-    document.getElementById("chronometer").innerHTML = hr + ":" + min + ":" + sec + ":" + msec;
-    timerID = setTimeout("chrono()", 10);
+    try{
+      document.getElementById("chronometer").innerHTML = hr + ":" + min + ":" + sec + ":" + msec;
+      timerID = setTimeout("chrono()", 10);
+    }catch (e) {
+
+    }
+
 }
 function chronoStart() {
     start = new Date();

@@ -26,21 +26,25 @@
                 <h1 onload="chronoStart()" id="chronometer" class="white-text">00:00:00</h1>
             </div>
             <div class="col l2 m3 s3">
-                <a onclick="chronoReset()" class="btn-huge right"><i class="material-icons">stop</i></a>
+                <a onclick="stopWorkout()" class="btn-huge right"><i class="material-icons">stop</i></a>
             </div>
         </div>
         <div class="row exercise-div center">
-            <h1 class="col l12 s12 "><span class="exercise-name col s12">Bench Press</span>
-                <div class="col s12 set-div"><span class="exercise-set">#1<sup>st</sup></span><span
-                        class="set-text">Set</span></div>
+            <h1 class="col l12 s12 "><span class="exercise-name col s12">{exercise.name}</span>
+                <div class="col s12 set-div"><span class="exercise-set">{exercise.sets}</span><span
+                        class="set-text">Sets</span></div>
             </h1>
-            <h1 class="col l12 s12">10 repetitions</h1>
+            <h1 class="col l6 s12">{exercise.repetitions} repetitions</h1>
+            <h1 class="col l6 s12">{exercise.pumpWeight} {exercise.weightUnit}</h1>
             <blockquote class="col l12 s12">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod cum enim dolorem saepe porro iusto harum
-                deleniti debitis, nobis corrupti?
+                {exercise.description}
             </blockquote>
-            <a class="col l5 s5 btn btn-large waves-effect waves-light black ">Give Feedback</a>
-            <a class="col l5 s5 btn btn-large waves-effect waves-light black offset-l2 offset-s2">Continue</a>
+            <a onclick="giveFeedback()" class="col l5 s5 btn btn-large waves-effect waves-light black ">Give Feedback</a>
+            {^finish}
+            <a onclick="continueWorkout()" class="col l5 s5 btn btn-large waves-effect waves-light black offset-l2 offset-s2">Continue</a>
+            {:else}
+            <a onclick="stopWorkout()" class="col l5 s5 btn btn-large waves-effect waves-light black offset-l2 offset-s2">Finish</a>
+            {/finish}
         </div>
 
 
@@ -92,6 +96,53 @@
             </tbody>
         </table>
     </div>
+
+    <div class="feedback-form" id="feedback-form"> 
+        <div class="row">
+            <form id="feedback-form-form" class="col s12">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input name="repetitions" id="repetitions" type="number" class="validate">
+                        <label for="repetitions">Repetitions</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">How many repetitions could you do?</span>
+                    </div>
+                    <div class="input-field col s12">
+                        <input name="sets" id="sets" type="number" class="validate">
+                        <label for="sets">Sets</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">How many sets could you do?</span>
+                    </div>
+                    <div class="input-field col s12">
+                        <input name="weight" id="weight" type="number" class="validate">
+                        <label for="weight">Weight</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">How much weight could you lift?</span>
+                    </div>
+                    <div class="input-field col s12">
+                        <input name="comments" id="comments" type="text" class="validate">
+                        <label for="comments">Comments</label>
+                        <span class="helper-text" data-error="wrong" data-success="right">Comments for the coach</span>
+                    </div>
+                    <div class="center">
+                        <div class="input-field col s6">
+                            <input onclick="submitFeedback(event)" type="submit" class="btn btn--large black white-text" value="Submit">
+                        </div>
+                        <div class="input-field col s6">
+                            <button onclick="closeFeedbackForm(event)" class="btn btn--large black white-text">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/chronometer.js"></script>
+    <script src="/js/fetch.js"></script>
+    <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
+    <script src="/js/session.js"></script>
+    <script src="/js/schedule.js"></script>
+    <script src="/js/views.js"></script>
+    <script src="/js/helper.js"></script>
+    <script src="/js/workout.js"></script>
+
 </body>
 
 </html>

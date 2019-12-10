@@ -483,10 +483,11 @@ router.post('/ratings', async (req, res) => {
         console.log("NOT found");
         res.render("dashboard_partials/coach_card_for_list.dust", { coach: body.coach, noRating: true });
     } else {
+        console.log("found", found);
         for (let i = 0; i < found.length; i++) {
             media += found[i].score;
         }
-        media = Math.floor(media / (found.length - 1));
+        media = Math.floor(media / (found.length));
         let stars = [];
         let j = 1;
         while (j <= media) {
