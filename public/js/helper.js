@@ -36,44 +36,15 @@ function fetchCoach(e) {
 
 function getImage() {
     let file = document.getElementById("image").files[0];
-    let img = URL.createObjectURL(file);
-    document.getElementById("im").src = img;
-    document.getElementById("putimage").value = img;
-    /*let fileReader = new FileReader();
-    fileReader.addEventListener("load", function () {
-        let image = new Image();
-        image.height = 100;
-        image.title = file.name;
-        image.src = this.result;
-        document.getElementById("im").src = image;
-        document.getElementById("putimage").value = image;
-    }, false)
-    fileReader.readAsDataURL(file);*/
+    let fileReader = new FileReader();
+    fileReader.onload = function () {
+        let data = fileReader.result;
+        console.log(data);
+        document.getElementById("im").src = data;
+        document.getElementById("putimage").value = data;
+    }
+    fileReader.readAsDataURL(file);
 }
-
-// function testing(name) {
-//     localStorage.setItem('username', name);
-// }
-
-// async function getActiveUser(name) {
-//     let res = await fetch('/auth/getuserinfo', {
-//         method: "POST",
-//         body: JSON.stringify({'username': name}),
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json'
-//         }
-//     });
-//     let activeUser = await res.json();
-//     localStorage.setItem('userAccountId', activeUser.userAccountId);
-//     localStorage.setItem('username', activeUser.username);
-// }
-
-/*(function logOut() {
-    localStorage.removeItem('userAccountId');
-    localStorage.removeItem('username');
-    window.location.replace("/login");
-}*/
 
 function fetchRating(e, coach) {
     e.preventDefault();
@@ -177,6 +148,24 @@ function changeRev(e, objId) {
     }).catch(err => new Error(err))
 }
 
+
+/*_______________00__________________
+________________0000_________________
+_______________000000________________
+____00_________000000__________00____
+_____0000______000000______00000_____
+_____000000____0000000___0000000_____
+______000000___0000000_0000000_______
+_______0000000_000000_0000000________
+_________000000_00000_000000_________
+_0000_____000000_000_0000__000000000_
+__000000000__0000_0_000_000000000____
+_____000000000__0_0_0_000000000______
+_________0000000000000000____________
+______________000_0_0000_____________
+____________00000_0__00000___________
+___________00_____0______00__________
+*/
 function changeReview(e, objId) {
     e.preventDefault();
     console.log("objId", objId);

@@ -68,8 +68,6 @@ router.post('/new', async (req, res) => {
                 res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
                 res.end();
             } else {
-                console.log("pic", req.body.photo);
-                // let photo = await pic.arrayBuffer();
                 let userAccount = new UserAccount({
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
@@ -81,6 +79,7 @@ router.post('/new', async (req, res) => {
                     address1: req.body.address1,
                     address2: req.body.address2,
                     city: req.body.city,
+                    photo: req.body.photo,
                     state: req.body.state,
                     zipCode: req.body.zipCode,
                     country: req.body.country,
@@ -89,9 +88,6 @@ router.post('/new', async (req, res) => {
                     accountType: 'client',
                     creationDate: Date.now()
                 });
-
-                userAccount.photo.data = req.body.photo;
-                userAccount.photo.contentType = 'png';
 
                 let savedUserAccount = await userAccount.save();
 
@@ -130,7 +126,6 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     let oldAccount = {
         firstName: found.firstName,
         lastName: found.lastName,
-        birthday: found.birthday,
         sex: found.sex,
         email: found.email,
         phone: found.phone,
@@ -164,7 +159,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     if (typeof foundInfo.unitSystem != "undefined") {
         oldAccount.unitSystem = foundInfo.unitSystem;
     }
-    oldAccount.thisId = found._id;
+    oldAccount.thisId = found._id.toString();
     console.log("to print", oldAccount);
     if (req.accepts("text/html")) {
         res.render('register_forms/client-settings.dust', oldAccount);
@@ -206,7 +201,7 @@ router.put('/edit/:id', async (req, res) => {
         } else {
             try {
                 console.log('Searching for user with ID: ' + req.params.id + '.');
-                let foundClient = await UserAccount.findById({_id: req.params.id});
+                let foundClient = await UserAccount.findById(ObjectId(req.params.id));
                 if (foundClient !== null) {
                     foundClient.firstName = req.body.firstName;
                     foundClient.lastName = req.body.lastName;

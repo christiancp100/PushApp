@@ -19,8 +19,6 @@ module.exports = function (passport) {
             // by default, local strategy uses username and password
             passReqToCallback: true // allows us to pass back the entire request to the callback
         }, function (req, username, password, done) {
-            console.log(username);
-            console.log(password);
             // User.findOne wont fire unless data is sent back
             process.nextTick(async function () {
                 try {
@@ -37,7 +35,6 @@ module.exports = function (passport) {
                         } else {
                             put = req.body.id;
                         }
-                        console.log(put);
                         let cred = new Credentials();
                         cred.username = username;
                         cred.password = cred.generateHash(password);
@@ -62,8 +59,6 @@ module.exports = function (passport) {
                 // if there are any errors, return the error before anything else
                 if (err)
                     return done(err);
-                console.log("user", user);
-                console.log("password", password);
                 // if no user is found, return the message
                 if (!user)
                     return done(null, false, req.flash('loginMessage', 'Wrong password or username')); // req.flash is the way to set flashdata using connect-flash
