@@ -19,7 +19,7 @@ function buttons(){
     });
 }
 
-function clientButtons(e){
+function clientButtons(){
     let buttons = document.querySelectorAll('.no-padding ul li a');
     let buttonCoach = buttons[4];
     buttonCoach.addEventListener("click", async() => {
@@ -91,9 +91,27 @@ searchClients = async()=>{
         cleanCards();
         return await renderClients();
     }
-    let found = await fetch("/clients/search?accountType=client&firstName=" + txt);
-    let foundArray = await found.json();
-    console.log(foundArray);
+
+    let hiringClients  = await getHiringClients();
+
+    let clients = [];
+
+    for(let i = 0; i < hiringClients.length; i++){
+        let client = await getClientAccount(hiringClients[i]._clientId);
+        let clientJson = await client.json();
+        clients.push(clientJson[0]);
+    }
+    let foundClients = [];
+
+    for(let i = 0; i < clients.length; i++ ){
+        if(txt === clients[i].firstName){
+            foundClients.push(clients[i]);
+        }
+    }
+
+    // let found = await fetch("/clients/search?accountType=client&firstName=" + txt);
+    // let foundArray = await found.json();
+    // console.log(foundArray);
     cleanCards();
-    await displayClients(foundArray);
+    await displayClients(foundClients);
 };
