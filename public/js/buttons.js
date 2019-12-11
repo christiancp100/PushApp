@@ -51,6 +51,8 @@ async function renderClients(){
 }
 
 displayClients = (clients) =>{
+
+    cleanCards();
     let grid = document.getElementById("grid");
     for (let i = 0; i < clients.length; i++) {
         dust.render('dashboard_partials/client_card_for_list', {client: clients[i]}, (err, out) => {
@@ -86,7 +88,8 @@ searchClients = async()=>{
     let txt = toCamelCase(nonformatted_txt);
     if (txt === '' || txt === " ") {
         cleanCards();
-        return await renderClients();
+        await renderClients();
+        return;
     }
 
     let hiringClients  = await getHiringClients();
@@ -105,10 +108,6 @@ searchClients = async()=>{
             foundClients.push(clients[i]);
         }
     }
-
-    // let found = await fetch("/clients/search?accountType=client&firstName=" + txt);
-    // let foundArray = await found.json();
-    // console.log(foundArray);
     cleanCards();
     await displayClients(foundClients);
 };

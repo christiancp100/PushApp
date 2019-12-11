@@ -3,6 +3,7 @@ getUserId = async () => {
     obj = await obj.json();
     return obj.userAccountId;
 };
+
 toCamelCase = (text) => {
     let ret = '';
     for (let i = 0; i < text.length; i++) {
