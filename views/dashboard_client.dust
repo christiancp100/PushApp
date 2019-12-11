@@ -5,7 +5,6 @@
 <body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="clientButtons()">
     {>"dashboard_partials/header" field="clients" name="John Doe" profile-picture="https://randomuser.me/api/portraits/men/61.jpg"/}
 
-
     <main>
         <div id="main-container" class="container">
             <div class="masonry row" style="position: relative; height: 2134.14px;">
@@ -36,6 +35,9 @@
 
     </main>
     {>"dashboard_partials/footer"/}
+
+</body>
+    <script src="/js/buttons.js"></script>
     <script src="/js/fetch.js"></script>
     <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
     <script src="/js/session.js"></script>
@@ -44,10 +46,8 @@
     <script src="/js/helper.js"></script>
     <script src="/js/workout.js"></script>
     <script src="/js/chronometer.js"></script>
-    <script src="/js/buttons.js"></script>
     <script src="/js/service.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script src="js/checkout.js" defer></script>
-</body>
 
 </html>

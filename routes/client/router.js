@@ -169,58 +169,33 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     if (req.accepts("text/html")) {
         res.render('register_forms/client-settings.dust', oldAccount);
     }
-})
-// Search for and users
+});
+
+//search for clients
 router.get('/search', function (req, res) {
-    const filter = getFilter(req);
-    UserAccount.find({})
+    let filter = getFilter(req);
+    UserAccount.find(filter)
         .then((clients) => {
-            let result = clients.filter((o) => {
-                if (filter._id) {
-                    return (filter._id.toLowerCase() === o._id.toLowerCase());
-                }
-                if (filter.firstName) {
-                    return (filter.firstName.toLowerCase() === o.firstName.toLowerCase());
-                }
-                if (filter.lastName) {
-                    return (filter.lastName.toLowerCase() === o.lastName.toLowerCase());
-                }
-                if (filter.sex) {
-                    return (filter.sex.toLowerCase() === o.sex.toLowerCase());
-                }
-                if (filter.country) {
-                    return (filter.country.toLowerCase() === o.country.toLowerCase());
-                }
-                if (filter.isDeleted) {
-                    return (filter.isDeleted === o.isDeleted);
-                }
-            });
-
-            if (result.length > 0) {
-                if (req.accepts("html")) {
+            if (clients.length > 0) {
+                let length = clients.length;
+                console.log(length + " clients has been found!");
+                if (req.accepts('html')) {
+                    res = setResponse('json', 200, res, clients);
                     res.status(200);
-                    let myFav = [];
-                    // let usersModel = {
-                    //   favorites: users,
-                    //   title: "My Canvas"
-                    // };
-                    // res.render("users", usersModel);
-
-                    // myFav.push(result[0]);
-                    // res.render("favorites", {favorites: myFav});
-                } else if (req.accepts("json")) {
-                    res = setResponse('json', 200, res, result);
+                    //render
+                } else if (req.accepts('json')) {
+                    res = setResponse('json', 200, res, clients);
                 }
                 res.end();
             } else {
-                res = setResponse('error', 404, res, result);
+                res = setResponse('error', 404, res, clients);
                 res.end();
             }
         })
         .catch((err) => {
-            res.status(500);
-            res.end();
-        });
+            console.log("0 clients has been found!");
+            res.status(500).end()
+        })
 });
 
 // Edit an user

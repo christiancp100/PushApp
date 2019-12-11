@@ -154,7 +154,7 @@ async function editService(event){
     let name = document.getElementsByName("name")[0].value;
     let duration = document.getElementsByName("duration")[0].value;
     let fee = document.getElementsByName("fee")[0].value;
-    let description = document.getElementsByName("description")[0].value;
+    let description = document.getElementsByName("description")[1].value;
     let body = {
         name: name,
         duration: duration,

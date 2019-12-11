@@ -44,12 +44,12 @@ async function renderCoaches() {
     let container = document.getElementsByClassName("container")[0];
     container.innerHTML = '';
 
-    let div =  document.createElement('div');
-    div.className ="row";
-    div.id= "divtitle";
+    let div = document.createElement('div');
+    div.className = "row";
+    div.id = "divtitle";
 
     container.appendChild(div);
-    dust.render("dashboard_partials/coaches", {}, function(err, out) {
+    dust.render("dashboard_partials/coaches", {}, function (err, out) {
         div.innerHTML += out;
         getCoaches();
     });
@@ -108,95 +108,6 @@ displayCoachesIndex = async (coachesArray) => {
     })
 };
 
-
-/*displayCoaches = async (coachesArray) => {
-//todo delete this
-  coachesArray.forEach(coach => {
-    coach.description = coach.description.slice(0, 50) + "...";
-    dust.render("dashboard_partials/coach_card_for_list", { coach: coach }, function (err, out) {
-      document.getElementById("grid").innerHTML += out;
-    });
-  });
-};
-
-displayCoaches = async (coachesArray) => {
-//todo delete this
-  console.log(coachesArray);
-  for (let i = 0; i < coachesArray.length; i++) {
-    let res = await fetch('/coaches/ratings', {
-      method: "POST",
-      body: JSON.stringify({
-        id: coachesArray[i]._id
-      })
-    });
-    let rating = await res.json();
-    console.log(rating);
-    coachesArray[i].description = coachesArray[i].description.slice(0, 50) + "...";
-    console.log("coach", coachesArray[i]);
-    let coach = coachesArray[i];
-    dust.render("dashboard_partials/coach_card_for_list", { coach: coach, media: rating }, function (err, out) {
-      console.log("out", out);
-      console.log(err);
-      document.getElementById("grid").innerHTML += out;
-    });
-  }
-};*/
-
-displayCoaches_2 = async (coachesArray) => {
-    cleanCards();
-    for (let i = 0; i < coachesArray.length; i++) {
-        let div = document.getElementById("grid");
-
-        let card = document.createElement("div");
-        card.className = " card-image-bg col-lg-4 col-xs-12";
-        div.appendChild(card);
-
-        let img = document.createElement("img");
-        img.src = coachesArray[i].photo;
-        card.appendChild(img);
-        let h2 = document.createElement("h2");
-        h2.innerHTML = coachesArray[i].firstName + " " + coachesArray[i].lastName;
-        img.insertAdjacentElement("afterend", h2);
-
-        let p_description = document.createElement("p");
-        p_description.innerHTML = coachesArray[i].description + "<br>" + prettyPrinterDate(coachesArray[i].birthday) + "<br>" + coachesArray[i].state + " " + coachesArray[i].city;
-
-        h2.insertAdjacentElement("afterend", p_description);
-
-        let row_div = document.createElement("div");
-        if (await checkIfHiredAlready(coachesArray[i]._id) === 0) {
-            row_div.className = "row";
-            p_description.insertAdjacentElement("afterend", row_div);
-
-            let a = document.createElement("a");
-            a.className = 'col-xs-12 col-lg-12 mb-center btn btn--gradient mt-1';
-            a.addEventListener("click", async () => {
-
-                //FETCH NEW HIRING
-                // let coachId = coachesArray[i]._id;
-                // let userId = await getUserId();
-                // let body = {
-                //     _coachId: coachId,
-                //     _clientId: userId
-                // // };
-                // // let hiring = await fetch("/coaches/hire/new",
-                // //     {
-                // //         method: "POST",
-                // //         body: body,
-                // //         headers: {},
-                // //     });
-            });
-            row_div.appendChild(a);
-            a.innerHTML = "HIRE ME!";
-        } else {
-            let a = document.createElement('h1');
-            a.innerHTML = "Already Hired";
-            h2.appendChild(a);
-        }
-    }
-};
-
-
 // Used in client dashboard
 async function getExercises() {
     try {
@@ -222,8 +133,8 @@ async function getExercises() {
                     method: 'GET',
                     headers: headers
                 });
-                exercise = await exercise.json();
-                exercises.push(exercise);
+                let foundExercise = await exercise.json();
+                exercises.push(foundExercise);
             }
         } else {
             exercises = ['-', '-', '-', '-', '-', '-'];

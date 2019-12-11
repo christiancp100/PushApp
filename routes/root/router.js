@@ -169,7 +169,6 @@ function encode (input) {
 }
 
 async function renderClientDashboard(res, activeUser) {
-    console.log("PHOTO", activeUser.photo.data.buffer);
     if (activeUser.photo === null || activeUser.photo === ' ') {
         activeUser.photo = '/img/icons/user-pic.png';
     }
@@ -268,7 +267,7 @@ async function renderCoachDashboard(res, activeUser) {
         items: [
             {name: "Dashboard", icon: "web"},
             {name: "Clients", icon: "list"},
-            {name: "Schedules", icon: "dashboard"},
+            // {name: "Schedules", icon: "dashboard"},
             {name: "Chat", icon: "chat"},
             {name: "MyService", icon: "dynamic_feed"}
         ],
