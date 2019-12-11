@@ -43,7 +43,7 @@ router.get('/', function (req, res, next) {
             res.render('index', {title: 'PushApp', log: 'Y'});
         } else {
             console.log("NOT ENTER");
-            res.render('index', {title: 'PushApp', log: 'N'});
+            res.render('index', {title: 'PushApp'});
         }
     } else {
         res.status(500);
@@ -314,14 +314,6 @@ function setResponse(type, code, res, msg) {
 }
 
 //// USER ACCOUNT CREATION AND USER AUTHENTICATION
-// router.get('/register-coach', (req, res, next) => {
-//     res.render('register_forms/coach-register');
-// });
-
-// router.get('/register-client', (req, res, next) => {
-//     res.render('register_forms/client-register');
-// });
-
 // router.get('/coach/dashboard', (req, res) => {
 //     let menu = {
 //         items: [
