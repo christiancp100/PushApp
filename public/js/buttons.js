@@ -1,4 +1,11 @@
-//myService
+function clientButtons(){
+    let buttons = document.querySelectorAll('.no-padding ul li a');
+    let buttonCoach = buttons[4];
+    buttonCoach.addEventListener("click", () => {
+        renderCoaches();
+    });
+}
+
 function buttons(){
     let buttons = document.querySelectorAll('.no-padding ul li a');
 
@@ -18,16 +25,6 @@ function buttons(){
         renderDashboard();
     });
 }
-
-function clientButtons(){
-    let buttons = document.querySelectorAll('.no-padding ul li a');
-    let buttonCoach = buttons[4];
-    buttonCoach.addEventListener("click", async() => {
-        console.log(buttonCoach);
-        await renderCoaches();
-    });
-}
-
 
 renderStyle = async() =>{
     resetDocument();
