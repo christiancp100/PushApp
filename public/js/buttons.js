@@ -1,4 +1,11 @@
-//myService
+function clientButtons(){
+    let buttons = document.querySelectorAll('.no-padding ul li a');
+    let buttonCoach = buttons[4];
+    buttonCoach.addEventListener("click", () => {
+        renderCoaches();
+    });
+}
+
 function buttons(){
     let buttons = document.querySelectorAll('.no-padding ul li a');
 
@@ -18,16 +25,6 @@ function buttons(){
         renderDashboard();
     });
 }
-
-function clientButtons(e){
-    let buttons = document.querySelectorAll('.no-padding ul li a');
-    let buttonCoach = buttons[4];
-    buttonCoach.addEventListener("click", async() => {
-        console.log(buttonCoach);
-        await renderCoaches();
-    });
-}
-
 
 renderStyle = async() =>{
     resetDocument();
@@ -54,6 +51,8 @@ async function renderClients(){
 }
 
 displayClients = (clients) =>{
+
+    cleanCards();
     let grid = document.getElementById("grid");
     for (let i = 0; i < clients.length; i++) {
         dust.render('dashboard_partials/client_card_for_list', {client: clients[i]}, (err, out) => {
@@ -89,11 +88,26 @@ searchClients = async()=>{
     let txt = toCamelCase(nonformatted_txt);
     if (txt === '' || txt === " ") {
         cleanCards();
-        return await renderClients();
+        await renderClients();
+        return;
     }
-    let found = await fetch("/clients/search?accountType=client&firstName=" + txt);
-    let foundArray = await found.json();
-    console.log(foundArray);
+
+    let hiringClients  = await getHiringClients();
+
+    let clients = [];
+
+    for(let i = 0; i < hiringClients.length; i++){
+        let client = await getClientAccount(hiringClients[i]._clientId);
+        let clientJson = await client.json();
+        clients.push(clientJson[0]);
+    }
+    let foundClients = [];
+
+    for(let i = 0; i < clients.length; i++ ){
+        if(txt === clients[i].firstName){
+            foundClients.push(clients[i]);
+        }
+    }
     cleanCards();
-    await displayClients(foundArray);
+    await displayClients(foundClients);
 };
