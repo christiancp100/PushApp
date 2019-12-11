@@ -703,9 +703,6 @@ typings/
 .env
 .env.test
 
-# Dust views.js
-public/js/views.js
-
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
@@ -736,3 +733,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Dust views.js
+public/js/views.js
