@@ -43,7 +43,7 @@ router.get('/', function (req, res, next) {
             res.render('index', {title: 'PushApp', log: 'Y'});
         } else {
             console.log("NOT ENTER");
-            res.render('index', {title: 'PushApp', log: 'N'});
+            res.render('index', {title: 'PushApp'});
         }
     } else {
         res.status(500);
@@ -141,46 +141,17 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
     }
 });
 
-function encode (input) {
-    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-    var output = "";
-    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-    var i = 0;
-
-    while (i < input.length) {
-        chr1 = input[i++];
-        chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index
-        chr3 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
-
-        enc1 = chr1 >> 2;
-        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-        enc4 = chr3 & 63;
-
-        if (isNaN(chr2)) {
-            enc3 = enc4 = 64;
-        } else if (isNaN(chr3)) {
-            enc4 = 64;
-        }
-        output += keyStr.charAt(enc1) + keyStr.charAt(enc2) +
-            keyStr.charAt(enc3) + keyStr.charAt(enc4);
-    }
-    return output;
-}
 
 async function renderClientDashboard(res, activeUser) {
     if (activeUser.photo === null || activeUser.photo === ' ') {
         activeUser.photo = '/img/icons/user-pic.png';
     }
-    let arrayBuffer = activeUser.photo.data;
-    let bytes = new Uint8Array(arrayBuffer);
-    let image = encode(bytes);
-    console.log("image", image);
+
     let menu = {
         user:
         {
             firstName: activeUser.firstName,
-            photo: image
+            photo: activeUser.photo
         }
         ,
         items: [
@@ -343,14 +314,6 @@ function setResponse(type, code, res, msg) {
 }
 
 //// USER ACCOUNT CREATION AND USER AUTHENTICATION
-// router.get('/register-coach', (req, res, next) => {
-//     res.render('register_forms/coach-register');
-// });
-
-// router.get('/register-client', (req, res, next) => {
-//     res.render('register_forms/client-register');
-// });
-
 // router.get('/coach/dashboard', (req, res) => {
 //     let menu = {
 //         items: [
@@ -479,34 +442,6 @@ router.get('/client/coaches', (req, res) => {
 // router.get('/auth', function (req, res) {
 //     res.render('login.dust')
 // });
-
-/*router.post('/login', async (req, res) => {
-    if ((req.get('Content-Type') === "application/json" && req.accepts("application/json")) || req.get('Content-Type') === "application/x-www-form-urlencoded" && req.body !== undefined) {
-
-        let client = await Credentials.findOne({username: req.body.username});
-        console.log(client);
-        if (client === null) {
-            return res.status(400).send('Incorrect username or password!');
-        } else {
-            const validPassword = await bcrypt.compare(req.body.password, client.password);
-
-
-            if (!validPassword) {
-                return res.status(400).send('Incorrect username or password.');
-            }
-            //const token = jwt.sign({ _id: client._id }, 'PrivateKey');//send what is needed??
-            //return res.header('x-auth-token', token).res.send(client); //todo store on the client side
-            let account = await UserAccount.findById(client._userAccountId);
-            res.redirect('/' + client.username);
-            // if (account.accountType === 'coach') {
-            //     res.redirect('/coach/dashboard');
-            // } else {
-            //     res.redirect('/client/dashboard');
-            // }
-        }
-    }
-});*/
-
 
 /** router for /root */
 module.exports = router;
