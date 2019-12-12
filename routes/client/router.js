@@ -14,6 +14,7 @@ require('../../models/Credential.js');
 require('../../models/ClientInfo.js');
 require('../../models/CoachClients.js');
 require('../../models/Rating.js');
+require('../../models/MoneyAccount');
 
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
@@ -100,8 +101,16 @@ router.post('/new', async (req, res) => {
 
                 let savedClientInfo = await clientInfo.save();
 
+                // Creates MoneyAccount for client
+                let newMoneyAccount = new MoneyAccount({
+                    _userAccountId: savedUserAccount._id,
+                    currency: savedUserAccount.currency
+                });
+                await newMoneyAccount.save();
+                console.log('Money account created for this client');
+
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});
+                    res.render('register_forms/register-credentials.dust', {accID: (savedUserAccount._id).toString()});
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
                     res = setResponse('json', 201, res, {
@@ -147,7 +156,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     if (typeof found.address2 != "undefined") {
         oldAccount.address2 = found.address2;
     }
-    let foundInfo = await ClientInfo.findOne({_clientId : found._id});
+    let foundInfo = await ClientInfo.findOne({_clientId: found._id});
     console.log("INFO", foundInfo);
 
     if (foundInfo.height !== undefined) {
@@ -310,9 +319,9 @@ router.post('/rating', async (req, res) => {
     //new rating object was not created yet
     //ask if user want to rate the coach again
     for (let i = 0; i < rating.length; i++) {
-        if (thisCoachId === (rating[i]._coachId).toString()){
+        if (thisCoachId === (rating[i]._coachId).toString()) {
             res.render('rating-again.dust', {
-                score : rating[i].score,
+                score: rating[i].score,
                 comment: rating[i].score,
                 title: rating[i].title,
                 objId: (rating[i]._id).toString()
@@ -392,7 +401,7 @@ function setResponse(type, code, res, msg) {
 
 async function getImage(request, response) {
     let form = new formidable.IncomingForm();
-    form.parse(request,function (err, fields, files) {
+    form.parse(request, function (err, fields, files) {
         console.log("fields", fields);
         console.log("files", files);
     });
@@ -400,7 +409,7 @@ async function getImage(request, response) {
 }
 
 function isLoggedIn(req, res, next) {
-    if (!req.user){
+    if (!req.user) {
         res.redirect('/login');
     }
     // if user is authenticated in the session, carry on
@@ -410,6 +419,7 @@ function isLoggedIn(req, res, next) {
     // if they aren't render login page
     res.redirect('/login');
 }
+
 //todo delete this root /login post
 
 module.exports = router;

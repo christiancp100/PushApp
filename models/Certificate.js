@@ -6,6 +6,6 @@ const CertificateSchema = exports.CertificateSchema = new Schema({
     provider: {type: String, required: true},
     date: {type: Date, required: true},
     file: {type: Buffer, required: true},
-})
+});
 
 mongoose.model('Certificate', CertificateSchema);

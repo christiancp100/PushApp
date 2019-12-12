@@ -16,11 +16,13 @@ require('../../models/Session');
 require('../../models/Schedule');
 require('../../models/Service');
 require('../../models/Transaction');
+require('../../models/MoneyAccount');
 
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
 let CoachClients = mongoose.model('CoachClients');
+let MoneyAccount = mongoose.model('MoneyAccount');
 
 router.get('/test', function (req, res) {
     res.render('rating/rating-first.dust', {name: 'Moreno', id: '5de5094ec516ae82b90c9c44'});
@@ -61,6 +63,10 @@ function isLoggedIn(req, res, next) {
     } else if (req.isAuthenticated() && ("/payments") === req.path) {
         return next();
     } else if (req.isAuthenticated() && ("/workouts") === req.path) {
+        return next();
+        // Uncomment to render as single-page app
+        // } else if (req.isAuthenticated() && ("/money") === req.path) {
+    } else if ("/money" === req.path) {
         return next();
     } else {
         // if they aren't render login page
@@ -118,8 +124,8 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
                     let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
 
                     if (activeUser.accountType === 'client') {
-                        if(req.path === "/workouts"){
-                          await renderWorkout(res, activeUser);
+                        if (req.path === "/workouts") {
+                            await renderWorkout(res, activeUser);
                         }
                         await renderClientDashboard(res, activeUser);
                     }
@@ -149,10 +155,10 @@ async function renderClientDashboard(res, activeUser) {
 
     let menu = {
         user:
-        {
-            firstName: activeUser.firstName,
-            photo: activeUser.photo
-        }
+            {
+                firstName: activeUser.firstName,
+                photo: activeUser.photo
+            }
         ,
         items: [
             {name: "Dashboard", icon: "web"},
@@ -184,8 +190,8 @@ async function renderClientDashboard(res, activeUser) {
     res.render("dashboard_client", menu);
 }
 
-async function renderWorkout(res, activeUser){
-  res.redirect("/workouts");
+async function renderWorkout(res, activeUser) {
+    res.redirect("/workouts");
 }
 
 async function clientsDropdown(activeUser) {

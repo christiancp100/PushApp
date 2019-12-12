@@ -17,6 +17,7 @@ require('./models/Credential.js');
 require('./models/UserAccount.js');
 require('./models/CoachClients.js');
 require('./models/Transaction.js');
+require('./models/MoneyAccount.js');
 
 //require('dotenv').config(); //
 
@@ -63,6 +64,7 @@ app.use('/clients', routers.client);
 app.use('/coaches', routers.coach);
 app.use('/workouts', routers.workout);
 app.use('/checkout', routers.checkout);
+app.use('/money', routers.money);
 
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes
