@@ -10,7 +10,9 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Service = mongoose.model('Service');
+const Credentials = mongoose.model('Credentials');
 const Transaction = mongoose.model('Transaction');
+const MoneyAccount = mongoose.model('MoneyAccount');
 const CoachClients = mongoose.model('CoachClients');
 
 router.use(
@@ -113,65 +115,86 @@ router.post("/webhook", async (req, res) => {
     res.sendStatus(200);
 });
 
+// Remember to change percentages to data from the database
+async function registerTransaction(req, amount, action) {
+    let description, endDate;
+    let startDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    startDate.setUTCSeconds(req.body.stripeTimestamp);
+    endDate = new Date(startDate.setMonth(startDate.getMonth() + req.body.duration));
+
+    switch (action) {
+        case 'stripe':
+            description = "PushApp " + req.body.duration + "-month(s) membership";
+            break;
+        case 'commission':
+            description = 'Commission: StripeId: ' + req.body._stripeId;
+            break;
+        case 'payment':
+            description = 'Payment: StripeId: ' + req.body._stripeId;
+            break;
+        default:
+            break;
+    }
+
+    let paymentTransaction = new Transaction({
+        _stripeId: req.body._stripeId,
+        amount: amount,
+        currency: req.body.currency,
+        description: description,
+        status: req.body.status,
+        _userId: req.body._userId,
+        _coachId: req.body._coachId,
+        startDate: startDate,
+        endDate: endDate,
+        stripeTimestamp: req.body.stripeTimestamp
+    });
+
+    return await paymentTransaction.save();
+}
+
+async function creditMoneyIntoAccount(userAccountId, amount) {
+    try {
+        let foundAccount = await MoneyAccount.findOne({_userAccountId: userAccountId});
+        if (foundAccount !== null && !foundAccount.isDeleted) {
+            console.log('Money account for user ID ' + userAccountId + ' was found!');
+            let operation;
+
+            if (amount > 0) {
+                operation = 'Adding';
+            } else {
+                operation = 'Substracting';
+            }
+            foundAccount.balance += amount;
+            console.log(operation + ' ' + foundAccount.currency.toUpperCase() + ' ' + amount + ' to the account ID ' + foundAccount._userAccountId);
+            return await foundAccount.save();
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 router.post("/register-transaction", async (req, res) => {
         try {
             if (req.get('Content-Type') === "application/json" && req.accepts("application/json") === "application/json" && req.body !== undefined) {
-                console.log('Creating new users...');
-                let duration = req.body.duration;
-                let startDate = new Date();
-                let endDate = new Date(startDate.setMonth(startDate.getMonth() + duration));
+                let commissionPercentage = 0.25;
+                let coachSharePercentage = 0.75;
 
-                let stripeTransaction = new Transaction({
-                    _stripeId: req.body._stripeId,
-                    amount: req.body.amount,
-                    currency: req.body.currency,
-                    description: "PushApp " + duration + "-month(s) membership",
-                    status: req.body.status,
-                    _userId: req.body._userId,
+                // Register transactions
+                let registerStripeTransaction = await registerTransaction(req, req.body.amount, 'stripe');
+                let registeredCommissionTransaction = await registerTransaction(req, req.body.amount * commissionPercentage, 'commission');
+                let registeredPaymentTransaction = await registerTransaction(req, req.body.amount * coachSharePercentage, 'payment');
+
+                // Credit money into accounts
+                let admin = await Credentials.findOne({username: 'admin'});
+                let platformCommissionCredit = await creditMoneyIntoAccount(admin._userAccountId, req.body.amount * commissionPercentage);
+                let coachPaymentCredit = await creditMoneyIntoAccount(req.body._coachId, req.body.amount * coachSharePercentage);
+
+                let preHiredCoach = await CoachClients.findOne({
                     _coachId: req.body._coachId,
-                    duration: duration,
-                    startDate: new Date(),
-                    endDate: endDate,
-                    stripeTimestamp: req.body.stripeTimestamp
+                    _userId: req.body._userId
                 });
 
-                let savedStripeTransaction = await stripeTransaction.save();
-
-                // Register payment to coach's account
-                let payToCoachTransaction = new Transaction({
-                    _stripeId: savedStripeTransaction._stripeId,
-                    amount: req.body.amount * 0.75,
-                    currency: savedStripeTransaction.currency,
-                    description: 'Payment: transactionID: ' + savedStripeTransaction._id + ' | StripeId: ' + savedStripeTransaction._stripeId,
-                    status: savedStripeTransaction.status,
-                    _userId: savedStripeTransaction._userId,
-                    _coachId: savedStripeTransaction._coachId,
-                    duration: savedStripeTransaction.duration,
-                    startDate: savedStripeTransaction.startDate,
-                    endDate: savedStripeTransaction.endDate,
-                    stripeTimestamp: savedStripeTransaction.stripeTimestamp
-                });
-
-                let payedToCoachTransaction = await payToCoachTransaction.save();
-
-                // Register payment to coach's account
-                let payToAdminTransaction = new Transaction({
-                    _stripeId: savedStripeTransaction._stripeId,
-                    amount: req.body.amount * 0.25,
-                    currency: savedStripeTransaction.currency,
-                    description: 'Commission: transactionID: ' + savedStripeTransaction._id + ' | StripeId: ' + savedStripeTransaction._stripeId,
-                    status: savedStripeTransaction.status,
-                    _userId: savedStripeTransaction._userId,
-                    _coachId: savedStripeTransaction._coachId,
-                    duration: savedStripeTransaction.duration,
-                    startDate: savedStripeTransaction.startDate,
-                    endDate: savedStripeTransaction.endDate,
-                    stripeTimestamp: savedStripeTransaction.stripeTimestamp
-                });
-
-                let payedToAdminTransaction = await payToAdminTransaction.save();
-
-                let preHiredCoach = await CoachClients.findOne({_coachId: req.body._coachId, _userId: req.body._userId});
+                // If no hire relationship between coach and client is found, it creates it.
                 if (!preHiredCoach) {
                     let hiredCoach = await hireCoach(req.body._coachId, req.body._userId);
                 }
@@ -184,7 +207,8 @@ router.post("/register-transaction", async (req, res) => {
                 res = setResponse('json', 400, res, {Error: "Only application/json 'Accept' and 'Content-Type' is allowed."});
                 res.end();
             }
-        } catch (err) {
+        } catch
+            (err) {
             console.log(err);
             res.status(500).end();
         }
