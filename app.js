@@ -43,6 +43,7 @@ app.use(require('express-session')({
     saveUninitialized: true,
     maxAge: 24 * 60 * 60 * 1000/*a day long*/
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -74,5 +75,52 @@ app.use(function (req, res, next) {
     next(err);
 });
 
-console.log("The server is running on port 3000")
+const admin = initAdmin();
+console.log("The server is running on port 3000");
+
+async function initAdmin() {
+    try {
+        let Credentials = mongoose.model('Credentials');
+        let existingAdmin = await Credentials.findOne({username: 'admin'});
+        if (!existingAdmin) {
+            console.log('Admin user not found! Initializing default admin... ');
+            let UserAccount = mongoose.model('UserAccount');
+            const bcrypt = require('bcrypt');
+
+            let newAdmin = new UserAccount({
+                firstName: 'Admin',
+                lastName: 'PushApp',
+                description: 'System Admin',
+                birthday: 20 - 12 - 2019,
+                sex: 'none',
+                email: 'admin@pushapp.com',
+                phone: '+41 800 PUSHAPP',
+                address1: 'Via Buffi 13',
+                city: 'Lugano',
+                state: 'Ticino',
+                zipCode: '6900',
+                country: 'Switzerland',
+                currency: 'chf',
+                localization: 'en-US',
+                accountType: 'admin'
+            });
+
+            // Remeber to move admin's password to .ENV file
+            let savedAdmin = await newAdmin.save();
+            let saltedPass = bcrypt.hashSync('admin1234', bcrypt.genSaltSync(8), null);
+            let newCredentials = new Credentials({
+                username: 'admin',
+                password: saltedPass,
+                _userAccountId: savedAdmin._id
+            });
+            await newCredentials.save();
+            console.log('Admin user initialized successfully!')
+        } else {
+            console.log('Admin user active!')
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 module.exports = app;

@@ -118,7 +118,7 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
             } else {
                 let credentials = await Credentials.findOne(filter);
                 if (credentials === null || credentials.username !== filter.username) {
-                    // CHANGE FOR CORRECT 404 PAGE
+                    // CHANGE FOR CUSTOM 404 PAGE
                     res = setResponse('json', 401, res, {Error: 'Unauthorized access!'});
                 } else {
                     let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
@@ -133,11 +133,10 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
                         await renderCoachDashboard(res, activeUser);
                     }
                     if (activeUser.accountType === 'admin') {
-                        await renderAdminDashboard(res);
+                        await renderAdminDashboard(res, activeUser);
                     }
                 }
             }
-
         }
         res.end();
     } catch
