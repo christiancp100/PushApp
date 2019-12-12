@@ -121,7 +121,7 @@ router.post("/register-transaction", async (req, res) => {
                 let startDate = new Date();
                 let endDate = new Date(startDate.setMonth(startDate.getMonth() + duration));
 
-                let transaction = new Transaction({
+                let stripeTransaction = new Transaction({
                     _stripeId: req.body._stripeId,
                     amount: req.body.amount,
                     currency: req.body.currency,
@@ -135,8 +135,46 @@ router.post("/register-transaction", async (req, res) => {
                     stripeTimestamp: req.body.stripeTimestamp
                 });
 
-                let savedTransaction = await transaction.save();
-                let hiredCoach = await hireCoach(req.body._coachId, req.body._userId)
+                let savedStripeTransaction = await stripeTransaction.save();
+
+                // Register payment to coach's account
+                let payToCoachTransaction = new Transaction({
+                    _stripeId: savedStripeTransaction._stripeId,
+                    amount: req.body.amount * 0.75,
+                    currency: savedStripeTransaction.currency,
+                    description: 'Payment: transactionID: ' + savedStripeTransaction._id + ' | StripeId: ' + savedStripeTransaction._stripeId,
+                    status: savedStripeTransaction.status,
+                    _userId: savedStripeTransaction._userId,
+                    _coachId: savedStripeTransaction._coachId,
+                    duration: savedStripeTransaction.duration,
+                    startDate: savedStripeTransaction.startDate,
+                    endDate: savedStripeTransaction.endDate,
+                    stripeTimestamp: savedStripeTransaction.stripeTimestamp
+                });
+
+                let payedToCoachTransaction = await payToCoachTransaction.save();
+
+                // Register payment to coach's account
+                let payToAdminTransaction = new Transaction({
+                    _stripeId: savedStripeTransaction._stripeId,
+                    amount: req.body.amount * 0.25,
+                    currency: savedStripeTransaction.currency,
+                    description: 'Commission: transactionID: ' + savedStripeTransaction._id + ' | StripeId: ' + savedStripeTransaction._stripeId,
+                    status: savedStripeTransaction.status,
+                    _userId: savedStripeTransaction._userId,
+                    _coachId: savedStripeTransaction._coachId,
+                    duration: savedStripeTransaction.duration,
+                    startDate: savedStripeTransaction.startDate,
+                    endDate: savedStripeTransaction.endDate,
+                    stripeTimestamp: savedStripeTransaction.stripeTimestamp
+                });
+
+                let payedToAdminTransaction = await payToAdminTransaction.save();
+
+                let preHiredCoach = await CoachClients.findOne({_coachId: req.body._coachId, _userId: req.body._userId});
+                if (!preHiredCoach) {
+                    let hiredCoach = await hireCoach(req.body._coachId, req.body._userId);
+                }
 
                 if (req.accepts("text/html")) {
                     res = setResponse('json', 200, res);

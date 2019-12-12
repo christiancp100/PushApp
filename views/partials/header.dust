@@ -8,6 +8,7 @@
             Create workouts, hire a coach <br> and track your progress in a single app
         </span>
         <span class="learn-more-btn col-sm-12">
-            <a href="#about">Learn More &#8605;</a>
+            <a class="btn-gradient" href="/register">Enroll</a>
+            <!-- <a href="#about">Learn More &#8605;</a> -->
         </span>
     </header>

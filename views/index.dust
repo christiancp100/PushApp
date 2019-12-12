@@ -40,7 +40,8 @@
                         temporibus sapiente corrupti ullam.
                     </p>
 
-                    <a class="col-xs-12 col-lg-12 mb-center btn btn--gradient mt-1" href="/register">Enroll</a>
+                    <a class="btn btn--gradient" href="/register">Sign up now!</a>
+                    <!-- <a class="col-xs-12 col-lg-12 mb-center btn btn--gradient mt-1" href="/register">Enroll</a> -->
 
                 </div>
 
@@ -80,6 +81,7 @@
             </div>
         </div>
     </section>
+    <!--
     <section class="section-trainers">
         <h1><span class="span-main">Our Best </span><span class="span-secondary">Trainers</span></h1>
         <div class="container mt-4 mb-5">
@@ -122,7 +124,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section>-->
 {>"partials/footer"/}
 </body>
 

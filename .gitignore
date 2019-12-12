@@ -733,3 +733,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Dust views.js
+public/js/views.js
