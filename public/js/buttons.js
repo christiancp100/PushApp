@@ -13,7 +13,7 @@ function buttons(){
 
     let buttonDashboard = buttons[0];
     buttonDashboard.addEventListener("click", () => {
-        renderDashboard();
+        location.reload();
     });
 }
 
