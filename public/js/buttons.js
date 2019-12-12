@@ -1,14 +1,5 @@
-function clientButtons(){
-    let buttons = document.querySelectorAll('.no-padding ul li a');
-    let buttonCoach = buttons[4];
-    buttonCoach.addEventListener("click", () => {
-        renderCoaches();
-    });
-}
-
 function buttons(){
     let buttons = document.querySelectorAll('.no-padding ul li a');
-
     let buttonClients = buttons[1];
     buttonClients.addEventListener("click", () => {
         renderStyle();//added

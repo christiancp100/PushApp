@@ -2,7 +2,6 @@ let page;
 let exerciseDiv;
 let exercises;
 let exercisesCounter = 0;
-
 startWorkout = async () => {
   exercisesCounter = 0;
   page = document.getElementsByTagName("html")[0];
