@@ -29,8 +29,9 @@
 <div>
     <label>Sex:<br>
         <select name="sex" required>
-            <option value="male">male</option>
+            <option value disabled selected>-- Select an option --</option>
             <option value="female">female</option>
+            <option value="male">male</option>
             <option value="other">other</option>
         </select>
     </label>
@@ -82,8 +83,8 @@
 <div>
     <label>Currency:
         <select required id="currency" name="currency">
-            <option value="Euro">€</option>
             <option value="CHF">CHF</option>
+            <option value="Euro">€</option>
             <option value="USD">$</option>
             <option value="AUS">AU$</option>
             <option value="CAN">$CAN</option>
@@ -95,7 +96,7 @@
 </div>
 <div>
     <label>Localization: {!TODO lolcalization function work, or language!}
-        <input onload="getLocation()" name="localization"/>
+        <input type="text" onload="getLocation()" name="localization"/>
     </label>
 </div>
 <div>

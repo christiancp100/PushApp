@@ -14,6 +14,7 @@ require('../../models/Credential.js');
 require('../../models/ClientInfo.js');
 require('../../models/CoachClients.js');
 require('../../models/Rating.js');
+require('../../models/MoneyAccount');
 
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
@@ -68,8 +69,6 @@ router.post('/new', async (req, res) => {
                 res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
                 res.end();
             } else {
-                console.log("pic", req.body.photo);
-                // let photo = await pic.arrayBuffer();
                 let userAccount = new UserAccount({
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
@@ -81,6 +80,7 @@ router.post('/new', async (req, res) => {
                     address1: req.body.address1,
                     address2: req.body.address2,
                     city: req.body.city,
+                    photo: req.body.photo,
                     state: req.body.state,
                     zipCode: req.body.zipCode,
                     country: req.body.country,
@@ -89,9 +89,6 @@ router.post('/new', async (req, res) => {
                     accountType: 'client',
                     creationDate: Date.now()
                 });
-
-                userAccount.photo.data = req.body.photo;
-                userAccount.photo.contentType = 'png';
 
                 let savedUserAccount = await userAccount.save();
 
@@ -104,8 +101,16 @@ router.post('/new', async (req, res) => {
 
                 let savedClientInfo = await clientInfo.save();
 
+                // Creates MoneyAccount for client
+                let newMoneyAccount = new MoneyAccount({
+                    _userAccountId: savedUserAccount._id,
+                    currency: savedUserAccount.currency
+                });
+                await newMoneyAccount.save();
+                console.log('Money account created for this client');
+
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', {accID : (savedUserAccount._id).toString()});
+                    res.render('register_forms/register-credentials.dust', {accID: (savedUserAccount._id).toString()});
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
                     res = setResponse('json', 201, res, {
@@ -130,7 +135,6 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     let oldAccount = {
         firstName: found.firstName,
         lastName: found.lastName,
-        birthday: found.birthday,
         sex: found.sex,
         email: found.email,
         phone: found.phone,
@@ -152,7 +156,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     if (typeof found.address2 != "undefined") {
         oldAccount.address2 = found.address2;
     }
-    let foundInfo = await ClientInfo.findOne({_clientId : found._id});
+    let foundInfo = await ClientInfo.findOne({_clientId: found._id});
     console.log("INFO", foundInfo);
 
     if (foundInfo.height !== undefined) {
@@ -164,7 +168,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     if (typeof foundInfo.unitSystem != "undefined") {
         oldAccount.unitSystem = foundInfo.unitSystem;
     }
-    oldAccount.thisId = found._id;
+    oldAccount.thisId = found._id.toString();
     console.log("to print", oldAccount);
     if (req.accepts("text/html")) {
         res.render('register_forms/client-settings.dust', oldAccount);
@@ -206,7 +210,7 @@ router.put('/edit/:id', async (req, res) => {
         } else {
             try {
                 console.log('Searching for user with ID: ' + req.params.id + '.');
-                let foundClient = await UserAccount.findById({_id: req.params.id});
+                let foundClient = await UserAccount.findById(ObjectId(req.params.id));
                 if (foundClient !== null) {
                     foundClient.firstName = req.body.firstName;
                     foundClient.lastName = req.body.lastName;
@@ -315,9 +319,9 @@ router.post('/rating', async (req, res) => {
     //new rating object was not created yet
     //ask if user want to rate the coach again
     for (let i = 0; i < rating.length; i++) {
-        if (thisCoachId === (rating[i]._coachId).toString()){
+        if (thisCoachId === (rating[i]._coachId).toString()) {
             res.render('rating-again.dust', {
-                score : rating[i].score,
+                score: rating[i].score,
                 comment: rating[i].score,
                 title: rating[i].title,
                 objId: (rating[i]._id).toString()
@@ -397,7 +401,7 @@ function setResponse(type, code, res, msg) {
 
 async function getImage(request, response) {
     let form = new formidable.IncomingForm();
-    form.parse(request,function (err, fields, files) {
+    form.parse(request, function (err, fields, files) {
         console.log("fields", fields);
         console.log("files", files);
     });
@@ -405,7 +409,7 @@ async function getImage(request, response) {
 }
 
 function isLoggedIn(req, res, next) {
-    if (!req.user){
+    if (!req.user) {
         res.redirect('/login');
     }
     // if user is authenticated in the session, carry on
@@ -415,6 +419,7 @@ function isLoggedIn(req, res, next) {
     // if they aren't render login page
     res.redirect('/login');
 }
+
 //todo delete this root /login post
 
 module.exports = router;

@@ -28,7 +28,7 @@
 <label>Upload a file:
 <div class="btn">
     <span>FILE</span>
-        <input accept="image/*" type="file" name="image"/>
+        <input onchange="getImage()" id="image" accept="image/*" type="file"/>
     </div>
 
 </label>
@@ -36,6 +36,8 @@
                 <input class="file-path validate" type="text">
          </div>
 </div>
+    <img src="{photo}" id="im">
+    <input value="{photo}" id="putimage" type="hidden" name="photo">
 </div>
 
 <div class="row">
