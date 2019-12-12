@@ -136,7 +136,7 @@ router.post("/register-transaction", async (req, res) => {
                 });
 
                 let savedTransaction = await transaction.save();
-                let hiredCoach = await hireCoach(req.body._coachId, req.body._userId)
+                let hiredCoach = await hireCoach(req.body._coachId, req.body._userId);
 
                 if (req.accepts("text/html")) {
                     res = setResponse('json', 200, res);

@@ -29,24 +29,7 @@
                 <a onclick="stopWorkout()" class="btn-huge right"><i class="material-icons">stop</i></a>
             </div>
         </div>
-        <div class="row exercise-div center">
-            <h1 class="col l12 s12 "><span class="exercise-name col s12">{exercise.name}</span>
-                <div class="col s12 set-div"><span class="exercise-set">{exercise.sets}</span><span
-                        class="set-text">Sets</span></div>
-            </h1>
-            <h1 class="col l6 s12">{exercise.repetitions} repetitions</h1>
-            <h1 class="col l6 s12">{exercise.pumpWeight} {exercise.weightUnit}</h1>
-            <blockquote class="col l12 s12">
-                {exercise.description}
-            </blockquote>
-            <a class="col l5 s5 btn btn-large waves-effect waves-light black ">Give Feedback</a>
-            {^finish}
-            <a onclick="continueWorkout()" class="col l5 s5 btn btn-large waves-effect waves-light black offset-l2 offset-s2">Continue</a>
-            {:else}
-            <a onclick="stopWorkout()" class="col l5 s5 btn btn-large waves-effect waves-light black offset-l2 offset-s2">Finish</a>
-            {/finish}
-        </div>
-
+        {>"workout-exercise"/}
 
     </div>
 

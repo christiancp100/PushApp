@@ -1,7 +1,10 @@
 let page;
+let exerciseDiv;
 let exercises;
+let exercisesCounter = 0;
 
 startWorkout = async () => {
+  exercisesCounter = 0;
   page = document.getElementsByTagName("html")[0];
   let headers = {
     'Accept': 'application/json',
@@ -9,28 +12,31 @@ startWorkout = async () => {
   };
   let res = await fetch("/workouts/begin", {method: "GET", headers});
   res = await res.json();
-
-  dust.render("workout", {exercise: res.exercises[0].exercise}, (err, out) =>
-      page.innerHTML = out);
+  exercises = res.exercises;
+  console.log(res);
+  dust.render("workout", {exercise: exercises[exercisesCounter].exercise}, (err, out) =>
+    page.innerHTML = out);
   chronoStart();
-  exercises = res.exercises.slice(1, res.exercises.length + 1);
+
 };
 
+showFeedbackForm = () => {
+  exerciseDiv = document.getElementsByClassName("exercise-div")[0];
 
-continueWorkout = () => {
-  console.log(exercises);
-  if(exercises.length > 1){
-    dust.render("workout", {exercise: exercises[0].exercise}, (err, out) =>
-      page.innerHTML = out);
-    exercises = exercises.slice(1, exercises.length + 1);
-  }else{
-    dust.render("workout", {exercise: exercises[0].exercise, finish: true}, (err, out) =>
-      page.innerHTML = out);
+  if (exercisesCounter < exercises.length - 1) {
+    dust.render("feedback-form", {exercise: exercises[exercisesCounter]}, (err, out) => {
+      exerciseDiv.innerHTML = out;
+    });
+  } else {
+    dust.render("feedback-form", {exercise: exercises[exercisesCounter], finish: true}, (err, out) => {
+      exerciseDiv.innerHTML = out;
+    });
   }
-};
 
+};
 
 stopWorkout = async () => {
+  exercisesCounter = 0;
   let headers = {
     'Accept': 'text/html',
     'Content-Type': 'application/json'
@@ -38,4 +44,46 @@ stopWorkout = async () => {
   let res = await fetch("/workouts/finish-workout", {method: "GET", headers});
   res = await res.text();
   page.innerHTML = res;
+};
+
+submitFeedback = async (event) => {
+  event.preventDefault();
+  let repetitions = document.getElementById("repetitions").value;
+  let sets = document.getElementById("sets").value;
+  let weight = document.getElementById("weight").value;
+  let comments = document.getElementById("comments").value;
+  exerciseDiv = document.getElementsByClassName("exercise-div")[0];
+  let headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  };
+  let body = {
+    repetitions: repetitions,
+    sets: sets,
+    weight: weight,
+    comments: comments,
+  };
+  //Update values of ExerciseControl
+  let res = await fetch("/workouts/update-exercise-control/" + exercises[exercisesCounter].exercise.id, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body)
+  });
+
+  //Continue with the next exercise
+  exercisesCounter++;
+  if (exercisesCounter === exercises.length) {
+    await stopWorkout();
+    console.log("finished workout");
+    return;
+  }
+  if (exercisesCounter < exercises.length - 1) {
+    dust.render("workout-exercise", {exercise: exercises[exercisesCounter].exercise}, (err, out) =>
+      exerciseDiv.innerHTML = out);
+  } else {
+    dust.render("workout-exercise", {exercise: exercises[exercisesCounter].exercise, finish: true}, (err, out) =>
+      exerciseDiv.innerHTML = out);
+  }
+  console.log(exercisesCounter, exercises.length, exercisesCounter === exercises.length);
+
 };
