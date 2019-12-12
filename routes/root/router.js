@@ -271,6 +271,45 @@ async function renderCoachDashboard(res, activeUser) {
     res.render("dashboard_coach.dust", menu);
 }
 
+async function renderAdminDashboard(res, activeUser) {
+    if (activeUser.photo === null || activeUser.photo === ' ') {
+        activeUser.photo = '/img/icons/user-pic.png';
+    }
+    let menu = {
+        user: [
+            {firstName: "Coach " + activeUser.firstName},
+            {photo: activeUser.photo}
+        ],
+        items: [
+            {name: "Dashboard", icon: "web"},
+            {name: "Clients", icon: "list"},
+            // {name: "Schedules", icon: "dashboard"},
+            {name: "Chat", icon: "chat"},
+            {name: "MyService", icon: "dynamic_feed"}
+        ],
+        accordions: [
+            {
+                title: "Accounting",
+                icon: "chevron_left",
+                subItems: [
+                    {name: "Revenue", icon: "show_chart"},
+                    {name: "Users", icon: "equalizer"},
+                    {name: "Conversion Rate", icon: "multiline_chart"},
+                ]
+            },
+            {
+                title: "Account",
+                icon: "chevron_left",
+                subItems: [
+                    {name: "Logout", icon: "person", logout: "true"},
+                    {name: "Settings", icon: "settings", accountType: "coaches"},
+                ]
+            }
+        ],
+        // clients: await clientsDropdown(activeUser)
+    };
+    res.render("dashboard_admin.dust", menu);
+}
 
 // Creates filter for searching users on the database
 function getFilter(req) {

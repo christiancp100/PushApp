@@ -85,6 +85,7 @@ async function initAdmin() {
         if (!existingAdmin) {
             console.log('Admin user not found! Initializing default admin... ');
             let UserAccount = mongoose.model('UserAccount');
+            let MoneyAccount = mongoose.model('MoneyAccount');
             const bcrypt = require('bcrypt');
 
             let newAdmin = new UserAccount({
@@ -105,15 +106,22 @@ async function initAdmin() {
                 accountType: 'admin'
             });
 
-            // Remeber to move admin's password to .ENV file
+            // Remember to move admin's password to .ENV file
             let savedAdmin = await newAdmin.save();
-            let saltedPass = bcrypt.hashSync('admin1234', bcrypt.genSaltSync(8), null);
+            let saltedPass = bcrypt.hashSync('admin123', bcrypt.genSaltSync(8), null);
             let newCredentials = new Credentials({
                 username: 'admin',
                 password: saltedPass,
                 _userAccountId: savedAdmin._id
             });
             await newCredentials.save();
+
+            let newMoneyAccount = new MoneyAccount({
+                _userAccountId: savedAdmin._id,
+                currency: savedAdmin.currency
+            });
+            await newMoneyAccount.save();
+
             console.log('Admin user initialized successfully!')
         } else {
             console.log('Admin user active!')
