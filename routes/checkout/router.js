@@ -36,6 +36,7 @@ const getServiceData = async (request) => {
     }
 };
 
+// Change to get actual currency when the system turns multi-currency, this is for demo purposes
 function getClientCurrency() {
     return {locale: "en-CH", currency: "chf"};
 }
@@ -180,23 +181,22 @@ router.post("/register-transaction", async (req, res) => {
                 let coachSharePercentage = 0.75;
 
                 // Register transactions
-                let registerStripeTransaction = await registerTransaction(req, req.body.amount, 'stripe');
-                let registeredCommissionTransaction = await registerTransaction(req, req.body.amount * commissionPercentage, 'commission');
-                let registeredPaymentTransaction = await registerTransaction(req, req.body.amount * coachSharePercentage, 'payment');
+                await registerTransaction(req, req.body.amount, 'stripe');
+                await registerTransaction(req, req.body.amount * commissionPercentage, 'commission');
+                await registerTransaction(req, req.body.amount * coachSharePercentage, 'payment');
 
                 // Credit money into accounts
                 let admin = await Credentials.findOne({username: 'admin'});
-                let platformCommissionCredit = await creditMoneyIntoAccount(admin._userAccountId, req.body.amount * commissionPercentage);
-                let coachPaymentCredit = await creditMoneyIntoAccount(req.body._coachId, req.body.amount * coachSharePercentage);
+                await creditMoneyIntoAccount(admin._userAccountId, req.body.amount * commissionPercentage);
+                await creditMoneyIntoAccount(req.body._coachId, req.body.amount * coachSharePercentage);
 
-                let preHiredCoach = await CoachClients.findOne({
-                    _coachId: req.body._coachId,
-                    _userId: req.body._userId
-                });
+                // If client hasn't already hired a coach, will create the relationship
+                let filter = {_coachId: req.body._coachId, _clientId: req.body._userId}
+                let preHiredCoach = await CoachClients.findOne(filter);
 
                 // If no hire relationship between coach and client is found, it creates it.
                 if (!preHiredCoach) {
-                    let hiredCoach = await hireCoach(req.body._coachId, req.body._userId);
+                    await hireCoach(req.body._coachId, req.body._userId);
                 }
 
                 if (req.accepts("text/html")) {
