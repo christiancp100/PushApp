@@ -161,21 +161,19 @@ async function renderClientDashboard(res, activeUser) {
         ,
         items: [
             {name: "Dashboard", icon: "web"},
-            {name: "Next Workout", icon: "list"},
-            {name: "Schedule", icon: "dashboard"},
-            {name: "Chat", icon: "chat"},
+            // {name: "Chat", icon: "chat"},
             {name: "Coaches", icon: "group"},
         ],
         accordions: [
-            {
-                title: "Progress",
-                icon: "chevron_left",
-                subItems: [
-                    {name: "Weight", icon: "show_chart"},
-                    {name: "Exercises", icon: "equalizer"},
-                    {name: "Volume of Training", icon: "multiline_chart"},
-                ]
-            },
+            // {
+            //     title: "Progress",
+            //     icon: "chevron_left",
+            //     subItems: [
+            //         {name: "Weight", icon: "show_chart"},
+            //         {name: "Exercises", icon: "equalizer"},
+            //         {name: "Volume of Training", icon: "multiline_chart"},
+            //     ]
+            // },
             {
                 title: "Account",
                 icon: "chevron_left",
@@ -245,21 +243,10 @@ async function renderCoachDashboard(res, activeUser) {
       items: [
         {name: "Dashboard", icon: "web"},
         {name: "Clients", icon: "list"},
-        // {name: "Schedules", icon: "dashboard"},
-        {name: "Chat", icon: "chat"},
         {name: "MyService", icon: "dynamic_feed"}
       ],
       accordions:
         [
-          {
-            title: "Accounting",
-            icon: "chevron_left",
-            subItems: [
-              {name: "Revenue", icon: "show_chart"},
-              {name: "Users", icon: "equalizer"},
-              {name: "Conversion Rate", icon: "multiline_chart"},
-            ]
-          },
           {
             title: "Account",
             icon: "chevron_left",
@@ -288,7 +275,6 @@ async function renderAdminDashboard(res, activeUser) {
         items: [
             {name: "Dashboard", icon: "web"},
             {name: "Clients", icon: "list"},
-            // {name: "Schedules", icon: "dashboard"},
             {name: "Chat", icon: "chat"},
             {name: "MyService", icon: "dynamic_feed"}
         ],

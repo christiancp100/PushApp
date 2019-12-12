@@ -7,12 +7,9 @@
         <div class="card-content">
             <p>{client.description}</p>
             <p>{client.sex}</p>
-            <p>{client.birthday}</p>
+            <p>{birthday.birthday}</p>
             <p>{client.email}</p>
             <p>{client.phone}</p>
-        </div>
-        <div class="card-action">
-            <a name="{client._id}" href="#" class="red-text">Chat</a>
         </div>
     </div>
 </div>
