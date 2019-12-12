@@ -6,7 +6,6 @@
                 <li><a class="waves-effect white-text">{name}<i class="material-icons white-text">{icon}</i></a></li>
              {/nItems}
         </ul>
-
         <ul class="collapsible collapsible-accordion">
             {#nAccordions}
                         <li class="bold waves-effect"><a class="collapsible-header white-text" tabindex="0">{title}

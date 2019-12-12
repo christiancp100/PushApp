@@ -22,7 +22,7 @@ startWorkout = async () => {
 
 showFeedbackForm = () => {
   exerciseDiv = document.getElementsByClassName("exercise-div")[0];
-
+  chronoStop();
   if (exercisesCounter < exercises.length - 1) {
     dust.render("feedback-form", {exercise: exercises[exercisesCounter]}, (err, out) => {
       exerciseDiv.innerHTML = out;
@@ -47,6 +47,7 @@ stopWorkout = async () => {
 };
 
 submitFeedback = async (event) => {
+  chronoContinue();
   event.preventDefault();
   let repetitions = document.getElementById("repetitions").value;
   let sets = document.getElementById("sets").value;
@@ -69,7 +70,22 @@ submitFeedback = async (event) => {
     headers,
     body: JSON.stringify(body)
   });
+  res = await res.json();
 
+  if(comments !== ""){
+    let msg = {
+      clientId : res.clientId,
+      clientUsername : res.clientUsername,
+      coachId : res.coachId,
+      exerciseId : exercises[exercisesCounter].exercise.id,
+      repetitions : repetitions,
+      weight : weight,
+      sets : sets,
+      comments : comments,
+      exerciseName: exercises[exercisesCounter].exercise.name
+    };
+    socket.emit('coach notification', msg);
+  }
   //Continue with the next exercise
   exercisesCounter++;
   if (exercisesCounter === exercises.length) {
@@ -84,6 +100,6 @@ submitFeedback = async (event) => {
     dust.render("workout-exercise", {exercise: exercises[exercisesCounter].exercise, finish: true}, (err, out) =>
       exerciseDiv.innerHTML = out);
   }
-  console.log(exercisesCounter, exercises.length, exercisesCounter === exercises.length);
 
 };
+

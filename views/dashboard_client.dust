@@ -37,6 +37,10 @@
     {>"dashboard_partials/footer"/}
 
 </body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+    </script>
     <script src="/js/buttons.js"></script>
     <script src="/js/fetch.js"></script>
     <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>

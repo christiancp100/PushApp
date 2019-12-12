@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 {>"dashboard_partials/head" css="/css/coach.css"/}
-
 <body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="buttons()">
   {>"dashboard_partials/header" field="coaches" name="{user.firstName}" profile-picture="/img/icons/user-pic.png"/}
   <main>
@@ -13,13 +12,12 @@
         {>"dashboard_partials/graph"/}
         {>"dashboard_partials/composed_graph"/}
       </div>
-
         {>"dashboard_partials/schedule" coach="true"/}
-
     </div>
     </div>
   </main>
   {>"dashboard_partials/footer"/}
+  <input type="hidden" value="{user.id}" id="coach_id">
 </body>
 
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
@@ -28,6 +26,11 @@
 <script src="/js/helper.js"></script>
 <script src="/js/service.js"></script>
 <script src="/js/buttons.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+</script>
+<script src="/js/notification-handler.js"></script>
 </body>
 
 

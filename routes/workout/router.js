@@ -12,6 +12,8 @@ require('../../models/ExerciseControl.js');
 require('../../models/SessionControl.js');
 require('../../models/Credential.js');
 require('../../models/UserAccount.js');
+require('../../models/CoachClients.js');
+
 
 
 let Schedule = mongoose.model('Schedule');
@@ -21,10 +23,10 @@ let SessionControl = mongoose.model('SessionControl');
 let ExerciseControl = mongoose.model('ExerciseControl');
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
+let CoachClients = mongoose.model('CoachClients');
 
 
 function isLoggedIn(req, res, next) {
-  console.log(req);
   // if user is authenticated in the session, carry on
   if (req.isAuthenticated())
     return next();
@@ -60,12 +62,10 @@ router.get('/begin', isLoggedIn, async (req, res) => {
         console.log("Rest Day");
         return;
       }
-
       // Save the session control object
       let sessionControl = new SessionControl({
         _clientId: accountId,
       });
-      
       // For each exercise in the session we create an exercise control
       for(let i = 0; i < session.exercises.length; i++){
         let exercise = session.exercises[i];
@@ -113,8 +113,9 @@ router.post("/update-exercise-control/:id", isLoggedIn, async (req, res) => {
   if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")){
     let exerciseControl = await ExerciseControl.findOne({_id : req.params.id});
     let exercise = await Exercise.findOne({_id : exerciseControl.exercise});
-    console.log("EXERCISE" , exercise);
-    console.log("REQ", req.body.weight);
+    let clientId = req.user._userAccountId;
+    let clientCoachRelation = await CoachClients.findOne({_clientId: clientId});
+    let coachId = clientCoachRelation._coachId;
 
     let changes = {
       weight: req.body.weight || exercise.pumpWeight,
@@ -127,8 +128,12 @@ router.post("/update-exercise-control/:id", isLoggedIn, async (req, res) => {
     exerciseControl.sets = changes.sets;
     exerciseControl.feedback = changes.feedback;
     let saved = await exerciseControl.save();
-    console.log("Saved", saved);
-    res = setResponse('json', 201, res, {res: saved});
+    console.log("User", req.user);
+    res = setResponse('json', 201, res, {
+      clientId: req.user._userAccountId,
+      clientUsername : req.user.username,
+      coachId : coachId
+    });
     res.end();
 
   } else {

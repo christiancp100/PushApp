@@ -10,9 +10,9 @@
     </blockquote>
     {^finish}
     <a onclick="showFeedbackForm()"
-        class="col l5 s5 btn btn-large waves-effect waves-light black offset-l2 offset-s2">Continue</a>
+        class="col l6 s12 btn btn-large waves-effect waves-light black offset-l3">Continue</a>
     {:else}
     <a onclick="showFeedbackForm()"
-        class="col l5 s5 btn btn-large waves-effect waves-light black offset-l2 offset-s2">Finish</a>
+        class="col l6 s12 btn btn-large waves-effect waves-light black offset-l3">Finish</a>
     {/finish}
 </div>

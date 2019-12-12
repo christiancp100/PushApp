@@ -3,12 +3,9 @@
         <nav class="navbar black">
             <div class="nav-wrapper"><a href="#!" class="brand-logo white-text">Home</a>
                 <ul id="nav-mobile" class="right">
-                    <li class="hide-on-med-and-down"><a href="#!" data-target="dropdown1"
-                            class="dropdown-trigger waves-effect"><i
-                                class="material-icons white-text">notifications</i></a>
+                    <li class=""><a onclick="removeDotNotification(event)" data-target="dropdown1" class="dropdown-trigger waves-effect"><i class="material-icons white-text">notifications</i><span id="notification-btn" class=""></span></a>
                         <div id="dropdown1" class="dropdown-content notifications black" tabindex="0">
-                            <div class="notifications-title white-text" tabindex="0">notifications</div>
-                            {>"dashboard_partials/notification"/}
+                            <div  class="notifications-title white-text" tabindex="0">notifications</div>
                         </div>
                     </li>
                     <li><a href="/{field}/edit"><i class="material-icons white-text">settings</i></a>
