@@ -36,7 +36,7 @@
                 <input class="file-path validate" type="text">
          </div>
 </div>
-    <img src="{photo}" id="im">
+    <img src="{photo}" id="im" width="200px" height="auto">
     <input value="{photo}" id="putimage" type="hidden" name="photo">
 </div>
 

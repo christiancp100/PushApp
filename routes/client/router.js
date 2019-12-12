@@ -6,8 +6,6 @@ const router = express.Router();
 const mongoose = require('mongoose');
 let ObjectId = require('mongodb').ObjectID;
 const dust = require('dustjs-helpers');//used for helper function inside dust files
-const fs = require('fs');
-const formidable = require('formidable');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
@@ -167,7 +165,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
 });
 
 //search for clients
-router.get('/search', function (req, res) {
+router.get('/search', isLoggedIn, function (req, res) {
     let filter = getFilter(req);
     UserAccount.find(filter)
         .then((clients) => {
@@ -300,10 +298,9 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
-router.post('/rating', async (req, res) => {
+router.post('/rating', isLoggedIn, async (req, res) => {
     let thisCoachId = (req.body.coach._id).toString();
     let found = await UserAccount.findById(req.user._userAccountId);
-
     //find all ratings have every been given by this client
     let rating = await Rating.find({_clientId: found._id});
 
@@ -390,26 +387,18 @@ function setResponse(type, code, res, msg) {
     }
 }
 
-async function getImage(request, response) {
-    let form = new formidable.IncomingForm();
-    form.parse(request,function (err, fields, files) {
-        console.log("fields", fields);
-        console.log("files", files);
-    });
-
-}
-
 function isLoggedIn(req, res, next) {
-    if (!req.user){
+    if (!req.user) {
+        req.flash('loginMessage', 'Please log in');
+        res.redirect('/login');
+    } else if (req.isAuthenticated()) {
+        return next();
+    } else {
+        // if they aren't render login page
+        req.flash('loginMessage', 'Not authorized');
         res.redirect('/login');
     }
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    // if they aren't render login page
-    res.redirect('/login');
 }
-//todo delete this root /login post
+
 
 module.exports = router;

@@ -228,13 +228,15 @@ async function clientsDropdown(activeUser) {
 
 async function renderCoachDashboard(res, activeUser) {
     if (activeUser.photo === null || activeUser.photo === ' ') {
-        activeUser.photo = '/img/icons/user-pic.png';
+        activeUser.photo = '/img/icons/unknown-user.png';
     }
     let menu = {
-        user: [
-            {firstName: "Coach " + activeUser.firstName},
-            {photo: activeUser.photo}
-        ],
+        user:
+            {
+                firstName: "Coach " + activeUser.firstName,
+                photo: activeUser.photo
+            }
+        ,
         items: [
             {name: "Dashboard", icon: "web"},
             {name: "Clients", icon: "list"},
