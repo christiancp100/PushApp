@@ -71,5 +71,13 @@ function chronoPauseOrContinue() {
 
 }
 
-
 window.onload = chronoStart;
+
+function clientButtons(){
+  let buttons = document.querySelectorAll('.no-padding ul li a');
+  let buttonCoach = buttons[4];
+  buttonCoach.addEventListener("click", () => {
+    renderCoaches();
+  });
+}
+clientButtons();
