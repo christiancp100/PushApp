@@ -6,7 +6,7 @@ function buttons(){
         renderClients();
     });
 
-    let buttonService = buttons[3];
+    let buttonService = buttons[2];
     buttonService.addEventListener("click", () => {
         serviceInitialize();
     });
@@ -31,22 +31,28 @@ async function renderClients(){
 
     let hiringClients = await getHiringClients();
     let clients = [];
+    let birthdays = [];
     for(let i = 0; i < hiringClients.length; i++){
         let client = await getClientAccount(hiringClients[i]._clientId);
         let clientJson = await client.json();
+        let birthday = clientJson[0].birthday.substring(0, 10);
+        let birthdayJson = {
+            birthday: birthday,
+        };
         clients.push(clientJson[0]);
+        birthdays.push(birthdayJson);
     }
     if(clients.length !== 0) {
-            displayClients(clients);
+        displayClients(clients, birthdays);
     }
 }
 
-displayClients = (clients) =>{
+displayClients = (clients, birthdays) =>{
 
     cleanCards();
     let grid = document.getElementById("grid");
     for (let i = 0; i < clients.length; i++) {
-        dust.render('dashboard_partials/client_card_for_list', {client: clients[i]}, (err, out) => {
+        dust.render('dashboard_partials/client_card_for_list', {client: clients[i], birthday: birthdays[i]}, (err, out) => {
             grid.innerHTML += out;
         })
     }
