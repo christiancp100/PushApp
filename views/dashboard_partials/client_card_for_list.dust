@@ -1,7 +1,7 @@
 <div class="col s12 m4">
     <div class="card">
         <div class="card-image">
-            <img src="/img/trainers/trainer-img-2.png">
+            <img src="{client.photo}">
             <span name="{client._id}"class="card-title">{client.firstName} {client.lastName} </span>
         </div>
         <div class="card-content">
