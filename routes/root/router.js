@@ -135,9 +135,10 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
 
 
 async function renderClientDashboard(res, activeUser) {
-    if (activeUser.photo === null || activeUser.photo === ' ') {
-        activeUser.photo = '/img/icons/user-pic.png';
-        activeUser.form = 'port';//todo check the size of image
+    if (typeof activeUser.photo == "undefined" || activeUser.photo === ' ') {
+        activeUser.photo = '/img/icons/unknown-user.png';
+        console.log("active: ", activeUser);
+        activeUser.form = 'square';
     }
 
     let menu = {
@@ -219,9 +220,10 @@ async function clientsDropdown(activeUser) {
 }
 
 async function renderCoachDashboard(res, activeUser) {
-  if (activeUser.photo === null || activeUser.photo === ' ') {
-    activeUser.photo = '/img/icons/user-pic.png';
-      activeUser.form = 'port';//todo check the size of image
+  if (typeof activeUser.photo == "undefined" || activeUser.photo === ' ') {
+        activeUser.photo = '/img/icons/unknown-user.png';
+        console.log("active: ", activeUser);
+      activeUser.form = 'square';
   }
   console.log("Active user ", activeUser);
   let menu = {
