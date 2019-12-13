@@ -46,16 +46,16 @@ function getImage() {
     fileReader.readAsDataURL(file);
 }
 
-function fetchRating(e, coach) {
-    e.preventDefault();
-    fetch('/clients/rating', {
-        method: "POST",
-        body: JSON.stringify({coach : coach})//todo send coach or its id when you have ended the session
-    })
-        .then(res => res.text())
-        .then(text => {
-            //todo bring form of rating to page
-        })
+async function fetchRating() {
+    // e.preventDefault();
+    try {
+        let res = await fetch('/clients/rating');
+        return await res.text();
+    }
+    catch (e) {
+        console.log(e);
+    }
+
 }
 
 function starsRating(e) {
@@ -89,38 +89,24 @@ function addReview(e, id) {
     }
     let comment = document.getElementById("commentReview").value;
     let title = document.getElementById("titleReview").value;
-    fetch('/coaches/newrating', {
+    fetch('/workouts/finish-workout', {
         method: "POST",
         body: JSON.stringify({
             score: rating,
             title: title,
             comment: comment,
-            id: id
+            id: id, //id of coach,
+            new: 'Y'
         }),
         /*headers: {
             'Content-type' : 'application/json'
         }*/
     })
+        .then(res => res.text())
+        .then(text => page.innerHTML = text)
+        .catch((err) => console.log(err))
 }
 
-function starColor(score) {
-    document.getElementById("titleReview").validity.valid;
-    document.getElementById("commentReview").validity.valid;
-    let uncolorClass = "unchecked hov fa fa-star";
-    let colorClass = "hov fa fa-star checked";
-    let star = document.getElementById("firstStar");
-    while (score > 0) {
-        star.className = colorClass;
-        --score;
-        star = star.nextSibling;
-    }
-    if (star.nodeName != "BR") {
-        while (star.nodeName != "BR") {
-            star.className = uncolorClass;
-            star = star.nextSibling;
-        }
-    }
-}
 
 function changeRev(e, objId) {
     e.preventDefault();
@@ -135,17 +121,19 @@ function changeRev(e, objId) {
         }
         first = first.nextSibling;
     }
-    fetch('/coaches/rating', {
-        method: "PUT",
+    fetch('/workouts/finish-workout', {
+        method: "POST",
         body: JSON.stringify({
             score: rating,
             title: title,
             comment: comment,
-            objId: objId
+            objId: objId,
+            new : 'N'
         })
-    }).then((res) => {
-        /*todo whatever needed*/
-    }).catch(err => new Error(err))
+    })
+        .then((res) => res.text())
+        .then(text => page.innerHTML = text)
+        .catch(err => console.log(err))
 }
 
 
@@ -176,7 +164,7 @@ function changeReview(e, objId) {
     document.getElementById("rate").addEventListener("mousedown", function () {
         changeRev(e, objId)
     })
-    document.querySelectorAll("span").forEach((el) => {
+    document.querySelectorAll("SPAN").forEach((el) => {
         console.log(el);
         el.addEventListener("mousedown", starsRating)
     });

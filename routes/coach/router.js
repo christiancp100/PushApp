@@ -469,16 +469,6 @@ router.delete('/hire/delete/:id', async (req, res) => {
     }
 });
 
-router.put('/rating', isLoggedIn, async (req, res) => {
-    let body = await JSON.parse(req.body);
-    console.log(body);
-    let found = await Rating.findById(ObjectId(body.objId));
-    found.title = body.title;
-    found.comment = body.comment;
-    found.score = body.score;
-    await found.save();
-    res.end();/*todo whatever needed*/
-});
 
 router.post('/ratings', isLoggedIn, async (req, res) => {
     let media = 0;

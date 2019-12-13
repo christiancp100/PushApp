@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+let ObjectId = require('mongodb').ObjectID;
 
 require('../../models/Schedule.js');
 require('../../models/Session.js');
@@ -13,7 +14,7 @@ require('../../models/SessionControl.js');
 require('../../models/Credential.js');
 require('../../models/UserAccount.js');
 require('../../models/CoachClients.js');
-
+require('../../models/Rating.js');
 
 
 let Schedule = mongoose.model('Schedule');
@@ -24,12 +25,18 @@ let ExerciseControl = mongoose.model('ExerciseControl');
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
 let CoachClients = mongoose.model('CoachClients');
+let Rating = mongoose.model('Rating');
 
 
 function isLoggedIn(req, res, next) {
   // if user is authenticated in the session, carry on
-  if (req.isAuthenticated())
+  if (req.isAuthenticated()) {
+    res.type('application/json');
+    res.set('Accept', 'text/html');
+    console.log("res.headers: ", res.headers);
+    console.log("req.headers: ", req.headers);
     return next();
+  }
   // if they aren't render login page
   res.redirect('/login');
 }
@@ -143,8 +150,52 @@ router.post("/update-exercise-control/:id", isLoggedIn, async (req, res) => {
   }
 });
 
-router.get('/finish-workout', isLoggedIn, async (req, res) => {
-  if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "text/html")) {
+let newRating = async (req, res, next) =>{
+  let body = JSON.parse(req.body);
+  if (body.new === 'Y') {
+    console.log("body", body);
+    let rate = new Rating({
+      _clientId: req.user._userAccountId,
+      _coachId: ObjectId(body.id),
+      score: body.score,
+      comment: body.comment,
+      title: body.title
+    });
+    try {
+      let saved = await rate.save();
+      res.type('application/json');
+      res.set('Accept', 'text/html');
+      console.log("res.headers: ", res.headers);
+      console.log("req.headers: ", req.headers);
+      next();
+    } catch (e) {
+      console.log(e);
+      res.status(500).end("SOME ERROR with saving")
+    }
+  } else {next()}
+}
+
+let oldRating = async (req, res, next) => {
+  let body = await JSON.parse(req.body);
+  if (body.new === 'N') {
+    try {
+      console.log(body);
+      let found = await Rating.findById(ObjectId(body.objId));
+      found.title = body.title;
+      found.comment = body.comment;
+      found.score = body.score;
+      await found.save();
+      next();
+    } catch (e) {
+      console.log(e);
+      res.status(500).end();
+    }
+  } else {next()}
+}
+router.post('/finish-workout', isLoggedIn, newRating, oldRating, async (req, res) => {
+  console.log("req.headers: ", req.headers);
+  console.log("Inside printing");
+  if (/*(req.get('Content-Type') === "application/json" && */req.accepts("text/html")) {
     try {
       // If any workout has no finishDate, add the actual date and save it
       let found = await SessionControl.find({finishDate: null});
@@ -156,9 +207,8 @@ router.get('/finish-workout', isLoggedIn, async (req, res) => {
           })
         });
       }
-      let accountId = req.user.id;
-      let clientId = await Credentials.findOne({_id: accountId}, "_userAccountId");
-      let activeUser = await UserAccount.findById({_id: clientId._userAccountId});
+      console.log(req.user);
+      let activeUser = await UserAccount.findById(req.user._userAccountId);
       let menu = {
         user:
           {
@@ -193,14 +243,15 @@ router.get('/finish-workout', isLoggedIn, async (req, res) => {
           }
         ]
       };
+      console.log("render");
       res.render("dashboard_client", menu);
-      res.end();
     } catch (err) {
       console.log(err + "this is an error");
       res.status(500);
       res.end();
     }
   } else {
+    console.log("Skipped");
     res.status(200);
     res.json({finished: true});
     res.end();

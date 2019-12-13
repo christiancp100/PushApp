@@ -129,6 +129,7 @@ router.post('/new', async (req, res) => {
 });
 
 router.get('/edit', isLoggedIn, async (req, res) => {
+    console.log(req.user);
     let found = await UserAccount.findById(req.user._userAccountId);
     let oldAccount = {
         firstName: found.firstName,
@@ -307,27 +308,32 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
-router.post('/rating', isLoggedIn, async (req, res) => {
-    let thisCoachId = (req.body.coach._id).toString();
-    let found = await UserAccount.findById(req.user._userAccountId);
-    //find all ratings have every been given by this client
-    let rating = await Rating.find({_clientId: found._id});
+router.get('/rating', isLoggedIn, async (req, res) => {
+    try {
+        //user have only one relation
+        let clientCoachRelation = await CoachClients.findOne({_clientId: req.user._userAccountId});
+        let thisCoachId = clientCoachRelation._coachId.toString();
+        //find all ratings have every been given by this client
+        let rating = await Rating.find({_clientId: req.user._userAccountId});
 
-    //new rating object was not created yet
-    //ask if user want to rate the coach again
-    for (let i = 0; i < rating.length; i++) {
-        if (thisCoachId === (rating[i]._coachId).toString()) {
-            res.render('rating-again.dust', {
-                score: rating[i].score,
-                comment: rating[i].score,
-                title: rating[i].title,
-                objId: (rating[i]._id).toString()
-            })
+        //new rating object was not created yet
+        //ask if user want to rate the coach again
+        for (let i = 0; i < rating.length; i++) {
+            if (thisCoachId === (rating[i]._coachId).toString()) {
+                res.render('rating/rating-again.dust', {
+                    score: rating[i].score,
+                    comment: rating[i].comment,
+                    title: rating[i].title,
+                    objId: (rating[i]._id).toString()
+                })
+            }
         }
+        //render the rating page
+        res.render('rating/rating-first.dust', {id: thisCoachId})
+    } catch (e) {
+        console.log(e);
+        res.status(500).end();
     }
-    //render the rating page
-    res.render('rating-first.dust', {id: thisCoachId})
-
 })
 
 // Creates filter for searching users on the database
