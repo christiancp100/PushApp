@@ -119,21 +119,24 @@ async function getExercises() {
             method: 'GET',
             headers: headers,
         });
-
+        console.log(session)
         let exercises = [];
         if (session !== undefined) {
-            session = await session.json();
+            let foundSession = await session.json();
+            let foundExercises = foundSession.exercises;
 
-            for (let i = 0; i < session.exercises.length; i++) {
-                let exercise = await fetch("/workouts/exercises/search?id=" + session.exercises[i], {
+            for (let i = 0; i < foundExercises.length; i++) {
+                let exercise = await fetch('/workouts/exercises/findById/' + foundExercises[i], {
                     method: 'GET',
                     headers: headers
                 });
-                let foundExercise = await exercise.json();
-                exercises.push(foundExercise);
+
+                exercise = await exercise.json();
+                console.log(exercise)
+                await exercises.push(exercise);
             }
         } else {
-            exercises = ['-', '-', '-', '-', '-', '-'];
+            exercises = ['-', '-', '-', '-', '-', '-', '-'];
         }
         console.log(exercises);
 
@@ -146,7 +149,7 @@ async function getExercises() {
 }
 
 function getWeekDay() {
-    const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return weekdays[new Date().getDay()];
 }
 

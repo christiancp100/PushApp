@@ -80,20 +80,7 @@
         <input required value="{country}" type="text" name="country"/>
     </label>
 </div>
-<div>
-    <label>Currency:
-        <select required id="currency" name="currency">
-            <option value="CHF">CHF</option>
-            <option value="Euro">€</option>
-            <option value="USD">$</option>
-            <option value="AUS">AU$</option>
-            <option value="CAN">$CAN</option>
-            <option value="Yen">¥</option>
-            <option value="GBP">£</option>
-            <option value="SWE">kr</option>
-        </select>
-    </label>
-</div>
+
 <div>
     <label>Localization: {!TODO lolcalization function work, or language!}
         <input type="text" onload="getLocation()" name="localization"/>

@@ -1,18 +1,15 @@
 <div class="col s12 m4">
     <div class="card">
         <div class="card-image">
-            <img src="/img/trainers/trainer-img-2.png">
+            <img src="{client.photo}">
             <span name="{client._id}"class="card-title">{client.firstName} {client.lastName} </span>
         </div>
         <div class="card-content">
             <p>{client.description}</p>
             <p>{client.sex}</p>
-            <p>{client.birthday}</p>
+            <p>{birthday.birthday}</p>
             <p>{client.email}</p>
             <p>{client.phone}</p>
-        </div>
-        <div class="card-action">
-            <a name="{client._id}" href="#" class="red-text">Chat</a>
         </div>
     </div>
 </div>
