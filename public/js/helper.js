@@ -6,9 +6,9 @@ function gotoCheckout(e) {
         document.getElementById("grid").innerHTML = out;
     });
     initStripe();
-};
+}
 
-var orderData = {
+let orderData = {
     items: [{id: "PushApp membership"}],
     serviceId: ""
 };
@@ -42,7 +42,7 @@ function getImage() {
         console.log(data);
         document.getElementById("im").src = data;
         document.getElementById("putimage").value = data;
-    }
+    };
     fileReader.readAsDataURL(file);
 }
 
@@ -65,12 +65,12 @@ function starsRating(e) {
     let save = e.target.nextSibling;
     let child = e.target;
     //color the stars
-    while (child.nodeName != "H2") {
+    while (child.nodeName !== "H2") {
         child.className = colorClass;
         child = child.previousSibling;
     }
     //uncolor the stars
-    while (save.nodeName != "BR") {
+    while (save.nodeName !== "BR") {
         save.className = uncolorClass;
         save = save.nextSibling;
     }
@@ -81,8 +81,8 @@ function addReview(e, id) {
     e.preventDefault();
     let rating = 0;
     let first = document.getElementById("firstStar");
-    while (first.nodeName == "SPAN") {
-        if (first.className == "fa fa-star checked") {
+    while (first.nodeName === "SPAN") {
+        if (first.className === "fa fa-star checked") {
             ++rating;
         }
         first = first.nextSibling;
@@ -186,6 +186,7 @@ ____________00000_0__00000___________
 ___________00_____0______00__________
 YOU HAVE FOUND AN EASTER EGG
 */
+
 function changeReview(e, objId) {
     e.preventDefault();
     document.getElementById("titleReview").disabled = false;
@@ -197,4 +198,14 @@ function changeReview(e, objId) {
     document.querySelectorAll("SPAN").forEach((el) => {
         el.addEventListener("mousedown", starsRating)
     });
+}
+
+getUser = async () => {
+    let obj = await fetch('/auth/getuserinfo');
+    obj = await obj.json();
+    return obj.username;
+};
+
+async function redirectDashboard(){
+    return window.location.assign("http://127.0.0.1:3000/" + await getUser());
 }
