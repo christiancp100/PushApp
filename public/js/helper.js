@@ -36,18 +36,40 @@ function fetchCoach(e) {
 
 function getImage() {
     let file = document.getElementById("image").files[0];
+    let height;
+    let width;
+    console.log(file);
     let fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
     fileReader.onload = function () {
         let data = fileReader.result;
-        console.log(data);
-        document.getElementById("im").src = data;
-        document.getElementById("putimage").value = data;
+        let image = new Image();
+        image.src = data;
+        image.onload = function () {
+            height = this.height;
+            width = this.width;
+            let pic = document.getElementById("im");
+            let form;
+            if (height === width){
+                pic.className = 'profile-square-image';
+                form = 'square';
+            } else if (width > height){
+                pic.className = 'profile-rec-image';
+                form = 'rec';
+            } else {
+                pic.className = 'profile-port-image';
+                form = 'port';
+            }
+            console.log("width ",  width);
+            console.log("height: ", height);
+            document.getElementById("form").value = form;
+            pic.src = data;
+            document.getElementById("putimage").value = data;
+        }
     };
-    fileReader.readAsDataURL(file);
 }
 
 async function fetchRating() {
-    // e.preventDefault();
     try {
         let res = await fetch('/clients/rating');
         return await res.text();

@@ -1,11 +1,6 @@
 // A reference to Stripe.js
 var stripe;
 
-// var orderData = {
-//     items: [{id: "PushApp membership"}],
-//     serviceId: "5debb66404395829c2b33b0b"
-// };
-
 function initStripe() {
     // Disable the button until we have Stripe set up on the page
     document.querySelector("button").disabled = true;
@@ -74,7 +69,7 @@ var setupElements = function (data) {
 
 /*
  * Calls stripe.confirmCardPayment which creates a pop-up modal to
- * prompt the user to enter extra authentication details without leaving your page
+ * prompt the user to enter extra authentication details without leaving the payment page
  */
 var pay = function (stripe, card, clientSecret) {
     changeLoadingState(true);

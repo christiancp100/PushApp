@@ -24,6 +24,7 @@
     "adaro": "^1.0.4",
     "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
+    "chart.js": "^2.9.3",
     "config": "^3.2.4",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.4",
