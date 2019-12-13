@@ -186,8 +186,8 @@ router.get('/finish-workout', isLoggedIn, async (req, res) => {
                         title: "Account",
                         icon: "chevron_left",
                         subItems: [
-                            {name: "Logout", icon: "person", logout: true},
                             {name: "Settings", icon: "settings", accountType: "clients"},
+                            {name: "Logout", icon: "person", logout: true},
                         ]
                     }
                 ]

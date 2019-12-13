@@ -121,7 +121,7 @@ async function getExercises() {
         });
         console.log(session)
         let exercises = [];
-        if (session !== undefined) {
+        if (session.status === 200) {
             let foundSession = await session.json();
             let foundExercises = foundSession.exercises;
 
@@ -136,7 +136,17 @@ async function getExercises() {
                 await exercises.push(exercise);
             }
         } else {
-            exercises = ['-', '-', '-', '-', '-', '-', '-'];
+            exercises = [{
+                name: "-",
+                description: "-",
+                weightUnit: "-",
+                pumpWeight: "-",
+                weight: "-",
+                bodyPart: "-",
+                set: "-",
+                repetitions: "-",
+                comments: "-"
+            }];
         }
         console.log(exercises);
 
