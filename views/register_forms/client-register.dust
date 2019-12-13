@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Client register</title>
+    <link rel="stylesheet" href="/css/image.css">
 </head>
 <body>
 <h2>Register new Client</h2>

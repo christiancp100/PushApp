@@ -36,8 +36,13 @@
                 <input class="file-path validate" type="text">
          </div>
 </div>
-    <img src="{photo}" id="im" width="200px" height="auto">
+    <div class="cut-image">
+        {?photo}
+            <img src="{photo}" class="profile-{form}-image" id="im" alt="profile image">
+        {/photo}
+    </div>
     <input value="{photo}" id="putimage" type="hidden" name="photo">
+    <input value="{form}" id="form" type="hidden" name="form">
 </div>
 
 <div class="row">
