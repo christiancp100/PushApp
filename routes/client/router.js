@@ -315,7 +315,7 @@ router.get('/rating', isLoggedIn, async (req, res) => {
         let thisCoachId = clientCoachRelation._coachId.toString();
         //find all ratings have every been given by this client
         let rating = await Rating.find({_clientId: req.user._userAccountId});
-
+        if (rating.length !== 0){
         //new rating object was not created yet
         //ask if user want to rate the coach again
         for (let i = 0; i < rating.length; i++) {
@@ -328,8 +328,10 @@ router.get('/rating', isLoggedIn, async (req, res) => {
                 })
             }
         }
-        //render the rating page
-        res.render('rating/rating-first.dust', {id: thisCoachId})
+        }else {
+            //render the rating page
+            res.render('rating/rating-first.dust', {id: thisCoachId})
+        }
     } catch (e) {
         console.log(e);
         res.status(500).end();
@@ -401,18 +403,11 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
-
-async function getImage(request, response) {
-    let form = new formidable.IncomingForm();
-    form.parse(request, function (err, fields, files) {
-        console.log("fields", fields);
-        console.log("files", files);
-    });
-
-}
+//todo delete function getImage here
 
 function isLoggedIn(req, res, next) {
     if (!req.user) {
+        req.flash('loginMessage', 'please login');
         res.redirect('/login');
     } else if (req.isAuthenticated()) {
         return next();

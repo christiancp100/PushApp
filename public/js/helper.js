@@ -87,53 +87,70 @@ function addReview(e, id) {
         }
         first = first.nextSibling;
     }
-    let comment = document.getElementById("commentReview").value;
-    let title = document.getElementById("titleReview").value;
-    fetch('/workouts/finish-workout', {
-        method: "POST",
-        body: JSON.stringify({
-            score: rating,
-            title: title,
-            comment: comment,
-            id: id, //id of coach,
-            new: 'Y'
-        }),
-        /*headers: {
-            'Content-type' : 'application/json'
-        }*/
-    })
-        .then(res => res.text())
-        .then(text => page.innerHTML = text)
-        .catch((err) => console.log(err))
+    let comment = document.getElementById("commentReview");
+    let title = document.getElementById("titleReview");
+    if (!title.checkValidity() || !comment.checkValidity()){
+        document.getElementById("alert").innerText = "Please fill all fields";
+    } else {
+        comment = comment.value;
+        title = title.value;
+        document.getElementById("alert").innerText = "";
+        fetch('/workouts/finish-workout', {
+            method: "POST",
+            body: JSON.stringify({
+                score: rating,
+                title: title,
+                comment: comment,
+                id: id, //id of coach,
+                new: 'Y'
+            }),
+            headers : {
+                'content-type' : 'application/json',
+                'accept' : 'text/html'
+            },
+        })
+            .then(res => res.text())
+            .then(text => page.innerHTML = text)
+            .catch((err) => console.log(err))
+    }
 }
 
 
-function changeRev(e, objId) {
-    e.preventDefault();
-    let comment = document.getElementById("commentReview").value;
-    let title = document.getElementById("titleReview").value;
-    let rating = 0;
-    let first = document.getElementById("firstStar");
-    while (first.nodeName == "SPAN") {
-        /*TODO make the class work without touching again stars*/
-        if (first.className == "fa fa-star checked") {
-            ++rating;
+function changeRev(objId) {
+    let comment = document.getElementById("commentReview");
+    let title = document.getElementById("titleReview");
+    if (!title.checkValidity() || !comment.checkValidity()){
+        document.getElementById("alert").innerText = "Please fill all fields";
+    } else {
+        comment = comment.value;
+        title = title.value;
+        document.getElementById("alert").innerText = "";
+        let rating = 0;
+        let first = document.getElementById("firstStar");
+        while (first.nodeName == "SPAN") {
+            if (first.className == "fa fa-star checked") {
+                ++rating;
+            }
+            first = first.nextSibling;
         }
-        first = first.nextSibling;
-    }
-    fetch('/workouts/finish-workout', {
-        method: "POST",
-        body: JSON.stringify({
-            score: rating,
-            title: title,
-            comment: comment,
-            objId: objId,
-            new : 'N'
+        fetch('/workouts/finish-workout', {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json',
+                'accept': 'text/html'
+            },
+            body: JSON.stringify({
+                score: rating,
+                title: title,
+                comment: comment,
+                objId: objId,
+                new: 'N'
+            })
         })
-    })
-        .then((res) => res.text())
-        .then(text => page.innerHTML = text)
-        .catch(err => console.log(err))
+            .then((res) => res.text())
+            .then(text => page.innerHTML = text)
+            .catch(err => console.log(err))
+    }
 }
 
 
@@ -157,15 +174,13 @@ YOU HAVE FOUND AN EASTER EGG
 */
 function changeReview(e, objId) {
     e.preventDefault();
-    console.log("objId", objId);
     document.getElementById("titleReview").disabled = false;
     document.getElementById("commentReview").disabled = false;
     document.getElementById("buttons").innerHTML = '<button id="rate" type="button">Rate</button>';
     document.getElementById("rate").addEventListener("mousedown", function () {
-        changeRev(e, objId)
+        changeRev(objId)
     })
     document.querySelectorAll("SPAN").forEach((el) => {
-        console.log(el);
         el.addEventListener("mousedown", starsRating)
     });
 }

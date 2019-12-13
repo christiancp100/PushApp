@@ -28,11 +28,16 @@ let Rating = mongoose.model('Rating');
 
 
 function isLoggedIn(req, res, next) {
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
+    if (!req.user) {
+        req.flash('loginMessage', 'please login');
+        res.redirect('/login');
+    } else if (req.isAuthenticated()) {
         return next();
-    // if they aren't render login page
-    res.redirect('/login');
+    } else {
+        // if they aren't render login page
+        req.flash('loginMessage', 'Not authorized');
+        res.redirect('/login');
+    }
 }
 
 /* GETS */
@@ -145,33 +150,32 @@ router.post("/update-exercise-control/:id", isLoggedIn, async (req, res) => {
 });
 
 let newRating = async (req, res, next) =>{
-  let body = JSON.parse(req.body);
-  if (body.new === 'Y') {
-    console.log("body", body);
-    let rate = new Rating({
-      _clientId: req.user._userAccountId,
-      _coachId: ObjectId(body.id),
-      score: body.score,
-      comment: body.comment,
-      title: body.title
-    });
-    try {
-      let saved = await rate.save();
-      res.type('application/json');
-      res.set('Accept', 'text/html');
-      console.log("res.headers: ", res.headers);
-      console.log("req.headers: ", req.headers);
-      next();
-    } catch (e) {
-      console.log(e);
-      res.status(500).end("SOME ERROR with saving")
-    }
-  } else {next()}
+    //no need to parse json, because the headers are set correctly to application/json
+    let body = req.body;
+      if (body.new === 'Y') {
+          try {
+              let rate = new Rating({
+                  _clientId: req.user._userAccountId,
+                  _coachId: ObjectId(body.id),
+                  score: body.score,
+                  comment: body.comment,
+                  title: body.title
+              });
+
+              await rate.save();
+              next();
+          }
+          catch (e) {
+              console.log(e);
+              res.status(500).end("SOME ERROR with saving")
+          }
+      } else {next()}
 }
 
 let oldRating = async (req, res, next) => {
-  let body = await JSON.parse(req.body);
-  if (body.new === 'N') {
+    //no need to parse json, because the headers are set correctly to application/json
+    let body = req.body;
+  if (req.body.new === 'N') {
     try {
       console.log(body);
       let found = await Rating.findById(ObjectId(body.objId));
@@ -187,9 +191,7 @@ let oldRating = async (req, res, next) => {
   } else {next()}
 }
 router.post('/finish-workout', isLoggedIn, newRating, oldRating, async (req, res) => {
-  console.log("req.headers: ", req.headers);
-  console.log("Inside printing");
-  if (/*(req.get('Content-Type') === "application/json" && */req.accepts("text/html")) {
+  if (req.get('Content-Type') === "application/json" && req.accepts("text/html")) {
     try {
       // If any workout has no finishDate, add the actual date and save it
       let found = await SessionControl.find({finishDate: null});
