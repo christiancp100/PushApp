@@ -22,7 +22,7 @@ let Service = mongoose.model('Service');
 let MoneyAccount = mongoose.model('MoneyAccount');
 
 // GET all coach
-router.get('/', async (req, res) => {
+router.get('/', isLoggedIn, async (req, res) => {
     try {
         let coaches = await UserAccount.find({});
         let result = await coaches.filter((o) => {
@@ -174,7 +174,7 @@ function getFilter(req) {
 }
 
 // Search for coach
-router.get('/search', function (req, res) {
+router.get('/search', isLoggedIn, function (req, res) {
     let filter = getFilter(req);
     UserAccount.find(filter)
         .then((coaches) => {
@@ -200,13 +200,8 @@ router.get('/search', function (req, res) {
         })
 });
 
-router.get('/setting', function (req, res) {
-    //todo render setting with info from database
-    //todo check headers
-});
-
 // Edit a coach
-// It works only with all the required information provided
+// It works with all the required information provided
 router.put('/edit/:id', async (req, res) => {
     if (req.accepts("json")) {
         if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -364,7 +359,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
 });
 
 // POST a new coach-client relation
-router.post('/hire/new', (req, res) => {
+router.post('/hire/new', isLoggedIn, (req, res) => {
     if (req.accepts("json")) {
         if (req.params.id !== undefined && !mongoose.Types.ObjectId.isValid(req.params.id)) {
             res.status(400).end();
@@ -474,18 +469,8 @@ router.delete('/hire/delete/:id', async (req, res) => {
     }
 });
 
-router.put('/rating', async (req, res) => {
-    let body = await JSON.parse(req.body);
-    console.log(body);
-    let found = await Rating.findById(ObjectId(body.objId));
-    found.title = body.title;
-    found.comment = body.comment;
-    found.score = body.score;
-    await found.save();
-    res.end();/*todo whatever needed*/
-});
 
-router.post('/ratings', async (req, res) => {
+router.post('/ratings', isLoggedIn, async (req, res) => {
     let media = 0;
     console.log(req.body);
     let body = await JSON.parse(req.body);
@@ -515,7 +500,7 @@ router.post('/ratings', async (req, res) => {
     }
 })
 
-router.post('/newrating', async (req, res) => {
+router.post('/newrating', isLoggedIn, async (req, res) => {
     let body = req.body;
     console.log("body", body);
     console.log("user", req.user);
@@ -566,7 +551,7 @@ router.get('/services/:id', async (req, res) => {
 });
 
 //GET all the services
-router.get('/services', async (req, res) => {
+router.get('/services', isLoggedIn, async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         console.log("Looking for all the services");
         try {
@@ -713,16 +698,16 @@ function setResponse(type, code, res, msg) {
 function isLoggedIn(req, res, next) {
     // redirect if coach isn't not authenticated
     if (!req.user) {
+        req.flash('loginMessage', 'Please log in');
+        res.redirect('/login');
+    } else if (req.isAuthenticated()) {
+        return next();
+    } else {
+        // if they aren't render login page
+        req.flash('loginMessage', 'Not authorized');
         res.redirect('/login');
     }
-    // go on if coach is authenticated
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    // if they aren't render login page
-    res.redirect('/login');
-}
 
-//todo delete this root /username
+}
 
 module.exports = router;

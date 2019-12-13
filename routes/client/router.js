@@ -6,8 +6,6 @@ const router = express.Router();
 const mongoose = require('mongoose');
 let ObjectId = require('mongodb').ObjectID;
 const dust = require('dustjs-helpers');//used for helper function inside dust files
-const fs = require('fs');
-const formidable = require('formidable');
 
 require('../../models/UserAccount.js');
 require('../../models/Credential.js');
@@ -131,6 +129,7 @@ router.post('/new', async (req, res) => {
 });
 
 router.get('/edit', isLoggedIn, async (req, res) => {
+    console.log(req.user);
     let found = await UserAccount.findById(req.user._userAccountId);
     let oldAccount = {
         firstName: found.firstName,
@@ -176,7 +175,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
 });
 
 //search for clients
-router.get('/search', function (req, res) {
+router.get('/search', isLoggedIn, function (req, res) {
     let filter = getFilter(req);
     UserAccount.find(filter)
         .then((clients) => {
@@ -309,28 +308,34 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
-router.post('/rating', async (req, res) => {
-    let thisCoachId = (req.body.coach._id).toString();
-    let found = await UserAccount.findById(req.user._userAccountId);
-
-    //find all ratings have every been given by this client
-    let rating = await Rating.find({_clientId: found._id});
-
-    //new rating object was not created yet
-    //ask if user want to rate the coach again
-    for (let i = 0; i < rating.length; i++) {
-        if (thisCoachId === (rating[i]._coachId).toString()) {
-            res.render('rating-again.dust', {
-                score: rating[i].score,
-                comment: rating[i].score,
-                title: rating[i].title,
-                objId: (rating[i]._id).toString()
-            })
+router.get('/rating', isLoggedIn, async (req, res) => {
+    try {
+        //user have only one relation
+        let clientCoachRelation = await CoachClients.findOne({_clientId: req.user._userAccountId});
+        let thisCoachId = clientCoachRelation._coachId.toString();
+        //find all ratings have every been given by this client
+        let rating = await Rating.find({_clientId: req.user._userAccountId});
+        if (rating.length !== 0){
+        //new rating object was not created yet
+        //ask if user want to rate the coach again
+        for (let i = 0; i < rating.length; i++) {
+            if (thisCoachId === (rating[i]._coachId).toString()) {
+                res.render('rating/rating-again.dust', {
+                    score: rating[i].score,
+                    comment: rating[i].comment,
+                    title: rating[i].title,
+                    objId: (rating[i]._id).toString()
+                })
+            }
         }
+        }else {
+            //render the rating page
+            res.render('rating/rating-first.dust', {id: thisCoachId})
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(500).end();
     }
-    //render the rating page
-    res.render('rating-first.dust', {id: thisCoachId})
-
 })
 
 // Creates filter for searching users on the database
@@ -398,28 +403,20 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
-
-async function getImage(request, response) {
-    let form = new formidable.IncomingForm();
-    form.parse(request, function (err, fields, files) {
-        console.log("fields", fields);
-        console.log("files", files);
-    });
-
-}
+//todo delete function getImage here
 
 function isLoggedIn(req, res, next) {
     if (!req.user) {
+        req.flash('loginMessage', 'please login');
+        res.redirect('/login');
+    } else if (req.isAuthenticated()) {
+        return next();
+    } else {
+        // if they aren't render login page
+        req.flash('loginMessage', 'Not authorized');
         res.redirect('/login');
     }
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    // if they aren't render login page
-    res.redirect('/login');
 }
 
-//todo delete this root /login post
 
 module.exports = router;

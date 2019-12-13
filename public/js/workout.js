@@ -40,9 +40,7 @@ stopWorkout = async () => {
     'Accept': 'text/html',
     'Content-Type': 'application/json'
   };
-  let res = await fetch("/workouts/finish-workout", {method: "GET", headers});
-  res = await res.text();
-  page.innerHTML = res;
+  page.innerHTML = await fetchRating();
 };
 
 submitFeedback = async (event) => {

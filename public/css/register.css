@@ -10,7 +10,9 @@
     margin-left: 50%;
     transform: translateX(-50%);
 }
-
+#im {
+    border-radius: 50%;
+}
 #reg input{
     border: none;
     background-color: transparent;

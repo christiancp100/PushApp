@@ -23,23 +23,30 @@ toCamelCase = (text) => {
 searchCoaches = async () => {
     let nonformatted_txt = document.getElementById("last_name").value;
     let txt = toCamelCase(nonformatted_txt);
+    let everyone = await getCoaches();
     if (txt === '' || txt === " ") {
-        await getCoaches();
+        cleanCards();
+        return await displayCoaches(everyone);
     }
-    let found = await fetch("/coaches/search?accountType=coach&firstName=" + txt);
-    let foundArray = await found.json();
+    let displayCoachesArray = [];
+    for(let i =0; i<everyone.length; i++) {
+        everyone[i].firstName = toCamelCase(everyone[i].firstName);
+        if(everyone[i].firstName.includes(txt) || everyone[i].lastName.includes(txt)){
+            displayCoachesArray.push(everyone[i]);
+            console.log("FOUND THIS GUY: ", everyone[i].firstName, everyone[i].lastName);
+        }
+    }
     cleanCards();
-    await displayCoaches(foundArray);
+    return await displayCoaches(displayCoachesArray);
 };
 
 cleanCards = () => {
     let children = document.getElementById("grid").childNodes;
-    console.log(children);
+    // console.log(children);
     for (let i = 0; i < children.length; i++) {
         children[i].remove();
     }
 };
-
 
 async function renderCoaches() {
     //container of the page
@@ -51,36 +58,38 @@ async function renderCoaches() {
     div.id = "divtitle";
 
     container.appendChild(div);
-    dust.render("dashboard_partials/coaches", {}, function (err, out) {
+    dust.render("dashboard_partials/coaches", {}, async function (err, out) {
         div.innerHTML += out;
-        getCoaches();
+        let all = await getCoaches();
+        await displayCoaches(all);
     });
 }
 
-checkIfHiredAlready = async (id) => {
-    let getting = await fetch("/coaches/hire/coach/" + id, {
-        method: "GET",
-        headers: {'Content-Type': 'application/json'}
-    });
-    let clientsArray = await getting.json();
-    for (let i = 0; i < clientsArray.length; i++) {
-        if (clientsArray[i]._clientId.localeCompare("5de65d6c34b8d99f3f2aaf71") === 0) {
-
-            return 1;
-        }
-    }
-    return 0;
-};
+// checkIfHiredAlready = async (id) => {
+//     let getting = await fetch("/coaches/hire/coach/" + id, {
+//         method: "GET",
+//         headers: {'Content-Type': 'application/json'}
+//     });
+//     let clientsArray = await getting.json();
+//     for (let i = 0; i < clientsArray.length; i++) {
+//         if (clientsArray[i]._clientId.localeCompare("5de65d6c34b8d99f3f2aaf71") === 0) {
+//
+//             return 1;
+//         }
+//     }
+//     return 0;
+// };
 
 async function getCoaches() {
     let everyone = await fetch("/coaches/search?accountType=coach");
-    let coachesArray = await everyone.json();
-    await displayCoaches(coachesArray);
+    return await everyone.json();
 }
 
 displayCoaches = async (coachesArray) => {
     //leave this one
     cleanCards();
+    console.log("ARRAY OF COACHES", coachesArray);
+
     for (let i = 0; i < coachesArray.length; i++) {
         let response = await fetch('/coaches/ratings', {
             method: "POST",
@@ -93,15 +102,15 @@ displayCoaches = async (coachesArray) => {
     }
 };
 
-displayCoachesIndex = async (coachesArray) => {
-    // cleanCards();
-    coachesArray.forEach(coach => {
-        coach.description = coach.description.slice(0, 50) + "...";
-        dust.render("partials/coach_card", {coach: coach}, function (err, out) {
-            document.getElementById("grid").innerHTML += out;
-        });
-    })
-};
+// displayCoachesIndex = async (coachesArray) => {
+//     cleanCards();
+//     coachesArray.forEach(coach => {
+//         coach.description = coach.description.slice(0, 50) + "...";
+//         dust.render("partials/coach_card", {coach: coach}, function (err, out) {
+//             document.getElementById("grid").innerHTML += out;
+//         });
+//     })
+// };
 
 
 // Used in client dashboard

@@ -36,7 +36,7 @@
                 <input class="file-path validate" type="text">
          </div>
 </div>
-    <img src="{photo}" id="im">
+    <img src="{photo}" id="im" width="200px" height="auto">
     <input value="{photo}" id="putimage" type="hidden" name="photo">
 </div>
 
@@ -116,14 +116,6 @@
     <div class="input-field col s12">
         <label>Country:
             <input required value="{country}" type="text" name="country"/>
-        </label>
-    </div>
-</div>
-
-<div class="row">
-    <div class="input-field col s12">
-        <label>Localization: {!TODO localization function work!}
-            <input onload="getLocation()" name="localization"/>
         </label>
     </div>
 </div>
