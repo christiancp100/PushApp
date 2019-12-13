@@ -153,7 +153,21 @@ function changeRev(objId) {
     }
 }
 
-
+function noReviewChange() {
+    fetch('/workouts/finish-workout', {
+        method: "POST",
+        headers: {
+            'content-type': 'application/json',
+            'accept': 'text/html'
+        },
+        body: JSON.stringify({
+            new: 'X'
+        })
+    })
+        .then((res) => res.text())
+        .then(text => page.innerHTML = text)
+        .catch(err => console.log(err))
+}
 /*_______________00__________________
 ________________0000_________________
 _______________000000________________

@@ -36,7 +36,7 @@
 <textarea minlength="2" required disabled id="commentReview" rows="5" cols="58" placeholder="Add your comment...">{comment}</textarea>
 <div id="buttons">
 <button onclick="changeReview(event, '{objId}')" type="button">Yes</button>
-<button type="button">No</button> {!TODO go on!}
+<button onclick="noReviewChange()" type="button">No</button>
 </div>
 <script src="/js/helper.js"></script>
 </body>
