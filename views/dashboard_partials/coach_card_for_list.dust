@@ -1,7 +1,9 @@
 <div class="col s12 m4">
     <div class="card">
         <div class="card-image">
-            <img src="{coach.photo}">
+            <div class="big-cut-image">
+            <img src="{coach.photo}" class="profile-{coach.form}-image">
+            </div>
             <span name="{coach._id}"class="card-title">{coach.firstName} {coach.lastName} </span>
 
             {?noRating}

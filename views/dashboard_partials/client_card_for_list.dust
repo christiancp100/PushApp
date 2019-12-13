@@ -1,7 +1,9 @@
 <div class="col s12 m4">
     <div class="card">
         <div class="card-image">
-            <img src="{client.photo}">
+            <div class="big-cut-image">
+                <img src="{client.photo}" class="profile-{client.form}-image">
+            </div>
             <span name="{client._id}"class="card-title">{client.firstName} {client.lastName} </span>
         </div>
         <div class="card-content">
