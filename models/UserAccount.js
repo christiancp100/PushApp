@@ -18,7 +18,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     state: {type: String, required: true},
     zipCode: {type: String, required: true},
     country: {type: String, required: true},
-    currency: {type: String, required: true},
+    currency: {type: String, default: "CHF"},
     localization: {type: String, default: 'en-US'},
     accountType: {type: String, required: true},
     creationDate: {type: Date, default: Date.now()},
