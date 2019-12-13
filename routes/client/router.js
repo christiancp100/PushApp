@@ -12,12 +12,13 @@ require('../../models/Credential.js');
 require('../../models/ClientInfo.js');
 require('../../models/CoachClients.js');
 require('../../models/Rating.js');
-require('../../models/MoneyAccount');
+require('../../models/MoneyAccount.js');
 
 let UserAccount = mongoose.model('UserAccount');
 let ClientInfo = mongoose.model('ClientInfo');
 let Credentials = mongoose.model('Credentials');
 let CoachClients = mongoose.model('CoachClients');
+let MoneyAccount = mongoose.model('MoneyAccount');
 let Rating = mongoose.model('Rating');
 
 // GET all
@@ -318,20 +319,20 @@ router.get('/rating', isLoggedIn, async (req, res) => {
         let thisCoachId = clientCoachRelation._coachId.toString();
         //find all ratings have every been given by this client
         let rating = await Rating.find({_clientId: req.user._userAccountId});
-        if (rating.length !== 0){
-        //new rating object was not created yet
-        //ask if user want to rate the coach again
-        for (let i = 0; i < rating.length; i++) {
-            if (thisCoachId === (rating[i]._coachId).toString()) {
-                res.render('rating/rating-again.dust', {
-                    score: rating[i].score,
-                    comment: rating[i].comment,
-                    title: rating[i].title,
-                    objId: (rating[i]._id).toString()
-                })
+        if (rating.length !== 0) {
+            //new rating object was not created yet
+            //ask if user want to rate the coach again
+            for (let i = 0; i < rating.length; i++) {
+                if (thisCoachId === (rating[i]._coachId).toString()) {
+                    res.render('rating/rating-again.dust', {
+                        score: rating[i].score,
+                        comment: rating[i].comment,
+                        title: rating[i].title,
+                        objId: (rating[i]._id).toString()
+                    })
+                }
             }
-        }
-        }else {
+        } else {
             //render the rating page
             res.render('rating/rating-first.dust', {id: thisCoachId})
         }
@@ -406,6 +407,7 @@ function setResponse(type, code, res, msg) {
             break;
     }
 }
+
 //todo delete function getImage here
 
 function isLoggedIn(req, res, next) {
