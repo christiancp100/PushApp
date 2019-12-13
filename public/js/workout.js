@@ -71,19 +71,40 @@ submitFeedback = async (event) => {
   });
   res = await res.json();
 
-  if(comments !== ""){
+  if (comments !== "") {
     let msg = {
-      clientId : res.clientId,
-      clientUsername : res.clientUsername,
-      coachId : res.coachId,
-      exerciseId : exercises[exercisesCounter].exercise.id,
-      repetitions : repetitions,
-      weight : weight,
-      sets : sets,
-      comments : comments,
+      from: res.clientId,
+      userName: res.clientUsername,
+      for: res.coachId,
+      exerciseId: exercises[exercisesCounter].exercise.id,
+      repetitions: repetitions,
+      weight: weight,
+      sets: sets,
+      comments: comments,
       exerciseName: exercises[exercisesCounter].exercise.name
     };
-    socket.emit('coach notification', msg);
+    //Create the notification in the database
+    console.log(res);
+    body = {
+      from: msg.from,
+      for: msg.for,
+      exerciseName: msg.exerciseName,
+      repetitions: repetitions,
+      sets: sets,
+      weight: weight,
+      comments: comments,
+      userName : res.clientUsername,
+      typeofMessage : "update", //or text if it's just a text message
+    };
+    let notification = await fetch("/workouts/notification", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body)
+    });
+    notification = await notification.json();
+    //Emit the notification
+    msg.notificationId = notification.notification._id;
+    socket.emit('notification', msg);
   }
   //Continue with the next exercise
   exercisesCounter++;

@@ -51,9 +51,6 @@ function chronoStopReset() {
     document.chronoForm.startstop.onclick = chronoStart;
 }
 function chronoStop() {
-    //document.chronoForm.startstop.value = "start!";
-    //document.chronoForm.startstop.onclick = chronoContinue;
-    //document.chronoForm.reset.onclick = chronoStopReset;
     clearTimeout(timerID);
 }
 

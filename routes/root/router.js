@@ -156,7 +156,8 @@ async function renderClientDashboard(res, activeUser) {
         user:
             {
                 firstName: activeUser.firstName,
-                photo: activeUser.photo
+                photo: activeUser.photo,
+                id: activeUser._id,
             }
         ,
         items: [
