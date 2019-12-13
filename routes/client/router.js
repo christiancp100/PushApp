@@ -79,8 +79,6 @@ router.post('/new', async (req, res) => {
                     address1: req.body.address1,
                     address2: req.body.address2,
                     city: req.body.city,
-                    photo: req.body.photo,
-                    form: req.body.form,
                     state: req.body.state,
                     zipCode: req.body.zipCode,
                     country: req.body.country,
@@ -89,6 +87,10 @@ router.post('/new', async (req, res) => {
                     accountType: 'client',
                     creationDate: Date.now()
                 });
+                if (typeof req.body.photo == "undefined"){
+                    userAccount.photo = '/img/icons/unknown-user.png';
+                    userAccount.form = 'square';
+                }
 
                 let savedUserAccount = await userAccount.save();
 

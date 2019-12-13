@@ -64,8 +64,6 @@ router.post('/new', async (req, res) => {
                     sex: req.body.sex,
                     email: req.body.email,
                     phone: req.body.phone,
-                    photo: req.body.photo,
-                    form: req.body.form,
                     address1: req.body.address1,
                     address2: req.body.address2,
                     city: req.body.city,
@@ -78,6 +76,10 @@ router.post('/new', async (req, res) => {
                     creationDate: Date.now(),
                     isDeleted: false
                 });
+                if (typeof req.body.photo == "undefined"){
+                    user.photo = '/img/icons/unknown-user.png';
+                    user.form = 'square';
+                }
                 if (user.description === undefined) {
                     user.description = '';
                 }
