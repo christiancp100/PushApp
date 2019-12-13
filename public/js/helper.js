@@ -6,9 +6,9 @@ function gotoCheckout(e) {
         document.getElementById("grid").innerHTML = out;
     });
     initStripe();
-};
+}
 
-var orderData = {
+let orderData = {
     items: [{id: "PushApp membership"}],
     serviceId: ""
 };
@@ -42,7 +42,7 @@ function getImage() {
         console.log(data);
         document.getElementById("im").src = data;
         document.getElementById("putimage").value = data;
-    }
+    };
     fileReader.readAsDataURL(file);
 }
 
@@ -65,12 +65,12 @@ function starsRating(e) {
     let save = e.target.nextSibling;
     let child = e.target;
     //color the stars
-    while (child.nodeName != "H2") {
+    while (child.nodeName !== "H2") {
         child.className = colorClass;
         child = child.previousSibling;
     }
     //uncolor the stars
-    while (save.nodeName != "BR") {
+    while (save.nodeName !== "BR") {
         save.className = uncolorClass;
         save = save.nextSibling;
     }
@@ -81,8 +81,8 @@ function addReview(e, id) {
     e.preventDefault();
     let rating = 0;
     let first = document.getElementById("firstStar");
-    while (first.nodeName == "SPAN") {
-        if (first.className == "fa fa-star checked") {
+    while (first.nodeName === "SPAN") {
+        if (first.className === "fa fa-star checked") {
             ++rating;
         }
         first = first.nextSibling;
@@ -114,8 +114,8 @@ function starColor(score) {
         --score;
         star = star.nextSibling;
     }
-    if (star.nodeName != "BR") {
-        while (star.nodeName != "BR") {
+    if (star.nodeName !== "BR") {
+        while (star.nodeName !== "BR") {
             star.className = uncolorClass;
             star = star.nextSibling;
         }
@@ -128,9 +128,9 @@ function changeRev(e, objId) {
     let title = document.getElementById("titleReview").value;
     let rating = 0;
     let first = document.getElementById("firstStar");
-    while (first.nodeName == "SPAN") {
+    while (first.nodeName === "SPAN") {
         /*TODO make the class work without touching again stars*/
-        if (first.className == "fa fa-star checked") {
+        if (first.className === "fa fa-star checked") {
             ++rating;
         }
         first = first.nextSibling;
@@ -166,17 +166,27 @@ ______________000_0_0000_____________
 ____________00000_0__00000___________
 ___________00_____0______00__________
 */
+
 function changeReview(e, objId) {
     e.preventDefault();
-    console.log("objId", objId);
     document.getElementById("titleReview").disabled = false;
     document.getElementById("commentReview").disabled = false;
     document.getElementById("buttons").innerHTML = '<button id="rate" type="button">Rate</button>';
     document.getElementById("rate").addEventListener("mousedown", function () {
         changeRev(e, objId)
-    })
+    });
     document.querySelectorAll("span").forEach((el) => {
         console.log(el);
         el.addEventListener("mousedown", starsRating)
     });
+}
+
+getUser = async () => {
+    let obj = await fetch('/auth/getuserinfo');
+    obj = await obj.json();
+    return obj.username;
+};
+
+async function redirectDashboard(){
+    return window.location.assign("http://127.0.0.1:3000/" + await getUser());
 }

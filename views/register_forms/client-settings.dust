@@ -16,6 +16,8 @@
 <body>
 
 <div class="container">
+
+<a class="btn-floating grey" style="margin: 3rem;" onclick="redirectDashboard()"><i class="material-icons">arrow_back</i></a>
     <h2 class="center white-text">Change settings </h2>
     <form action="/clients/edit/{thisId}?_method=PUT"  method="POST" enctype="application/x-www-form-urlencoded">
         {>"../partials/settings"/}
