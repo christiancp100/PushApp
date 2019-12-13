@@ -15,7 +15,7 @@
             <p>{coach.description}</p>
         </div>
         <div class="card-action">
-            <a name="{coach._id}" class="red-text" onclick="showServices(event); " href="#">Show Services</a>
+            <a name="{coach._id}" class="black-text" onclick="showServices(event);" id="card_btn" href="#">Show Services</a>
         </div>
     </div>
 </div>
