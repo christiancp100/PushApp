@@ -28,3 +28,17 @@
     overflow: hidden;
     border-radius: 50%;
 }
+
+.profile-cut-image {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.show-image {
+    display: inline-flex;
+    padding-top: 10px;
+    padding-left: 5px;
+}

@@ -136,13 +136,15 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
 async function renderClientDashboard(res, activeUser) {
     if (activeUser.photo === null || activeUser.photo === ' ') {
         activeUser.photo = '/img/icons/user-pic.png';
+        activeUser.form = 'port';//todo check the size of image
     }
 
     let menu = {
         user:
             {
                 firstName: activeUser.firstName,
-                photo: activeUser.photo
+                photo: activeUser.photo,
+                form: activeUser.form
             }
         ,
         items: [
@@ -218,11 +220,13 @@ async function clientsDropdown(activeUser) {
 async function renderCoachDashboard(res, activeUser) {
   if (activeUser.photo === null || activeUser.photo === ' ') {
     activeUser.photo = '/img/icons/user-pic.png';
+      activeUser.form = 'port';//todo check the size of image
   }
   console.log("Active user ", activeUser);
   let menu = {
       user: {
         firstName: activeUser.firstName,
+          form: activeUser.form,
         id: activeUser._id,
         photo: activeUser.photo,
       },
