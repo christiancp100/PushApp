@@ -52,7 +52,7 @@ displayClients = (clients, birthdays) =>{
     cleanCards();
     let grid = document.getElementById("grid");
     for (let i = 0; i < clients.length; i++) {
-        dust.render('dashboard_partials/client_card_for_list', {client: clients[i], birthday: birthdays[i]}, (err, out) => {
+        dust.render('dashboard_partials/client_card_for_list', {client: clients[i], birthday: birthdays}, (err, out) => {
             grid.innerHTML += out;
         })
     }
