@@ -19,8 +19,11 @@
         <input onchange="getImage()" id="image" accept="image/*" type="file"/>
     </label>
 </div>
+<div class="cut-image">
+    <img src="" id="im" alt="profile image">
+</div>
 <input id="putimage" type="hidden" name="photo">
-<img src="" id="im" width="200px" height="auto">
+<input value="" id="form" type="hidden" name="form">
 <div>
     <label>Birthday:
         <input required value="{birthday}" placeholder="2019-12-31" min="1900-01-01" max="{maxDate}" type="date" name="birthday"/>

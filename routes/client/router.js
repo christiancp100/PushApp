@@ -79,6 +79,7 @@ router.post('/new', async (req, res) => {
                     address2: req.body.address2,
                     city: req.body.city,
                     photo: req.body.photo,
+                    form: req.body.form,
                     state: req.body.state,
                     zipCode: req.body.zipCode,
                     country: req.body.country,
@@ -151,6 +152,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     }
     if (typeof found.photo != "undefined") {
         oldAccount.photo = found.photo;
+        oldAccount.form = found.form; //todo this is new
     }
     if (typeof found.address2 != "undefined") {
         oldAccount.address2 = found.address2;
@@ -215,6 +217,7 @@ router.put('/edit/:id', async (req, res) => {
                     foundClient.lastName = req.body.lastName;
                     foundClient.description = req.body.description;
                     foundClient.photo = req.body.photo;
+                    foundClient.form = req.body.form;//todo this is new
                     foundClient.sex = req.body.sex;
                     foundClient.email = req.body.email;
                     foundClient.phone = req.body.phone;
