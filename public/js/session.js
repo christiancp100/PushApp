@@ -65,20 +65,20 @@ async function renderCoaches() {
     });
 }
 
-hiredAlready = async (id) => {
-    let getting = await fetch("/coaches/hire/coach/" + id, {
-        method: "GET",
-        headers: {'Content-Type': 'application/json'}
-    });
-    let clientsArray = await getting.json();
-    for (let i = 0; i < clientsArray.length; i++) {
-        if (clientsArray[i]._clientId === await getUserId()) {
-            console.log("found this guy", clientsArray[i].firstName, clientsArray[i].lastName);
-            return 1;
-        }
-    }
-    return 0;
-};
+// checkIfHiredAlready = async (id) => {
+//     let getting = await fetch("/coaches/hire/coach/" + id, {
+//         method: "GET",
+//         headers: {'Content-Type': 'application/json'}
+//     });
+//     let clientsArray = await getting.json();
+//     for (let i = 0; i < clientsArray.length; i++) {
+//         if (clientsArray[i]._clientId.localeCompare("5de65d6c34b8d99f3f2aaf71") === 0) {
+//
+//             return 1;
+//         }
+//     }
+//     return 0;
+// };
 
 async function getCoaches() {
     let everyone = await fetch("/coaches/search?accountType=coach");
@@ -170,8 +170,8 @@ async function getExercises() {
         console.log(exercises);
 
         dust.render("dashboard_partials\/schedule_table_row",
-            {exercises: exercises}, (err, out) =>
-                document.getElementById('scheduleTable').innerHTML = out);
+            { exercises: exercises }, (err, out) =>
+            document.getElementById('scheduleTable').innerHTML = out);
     } catch (err) {
         console.log(err);
     }

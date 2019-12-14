@@ -24,6 +24,19 @@ let ClientInfo = mongoose.model('ClientInfo');
 let CoachClients = mongoose.model('CoachClients');
 let MoneyAccount = mongoose.model('MoneyAccount');
 
+router.get('/test', function (req, res) {
+    res.render('rating/rating-first.dust', {name: 'Moreno', id: '5de5094ec516ae82b90c9c44'});
+});
+
+router.get('/testing', function (req, res) {
+    res.render('rating/rating-again.dust', {
+        name: 'Moreno',
+        score: 4,
+        comment: "HE was very good",
+        title: "awesome",
+        objId: '5de7f4e3d9511123b9bfd669'
+    });
+});
 
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
@@ -137,15 +150,13 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
 async function renderClientDashboard(res, activeUser) {
     if (activeUser.photo === null || activeUser.photo === ' ') {
         activeUser.photo = '/img/icons/user-pic.png';
-        activeUser.form = 'port';//todo check the size of image
     }
 
     let menu = {
         user:
             {
                 firstName: activeUser.firstName,
-                photo: activeUser.photo,
-                form: activeUser.form
+                photo: activeUser.photo
             }
         ,
         items: [
@@ -219,37 +230,36 @@ async function clientsDropdown(activeUser) {
 }
 
 async function renderCoachDashboard(res, activeUser) {
-  if (activeUser.photo === null || activeUser.photo === ' ') {
-    activeUser.photo = '/img/icons/user-pic.png';
-      activeUser.form = 'port';//todo check the size of image
-  }
-  console.log("Active user ", activeUser);
-  let menu = {
-      user: {
-        firstName: activeUser.firstName,
-          form: activeUser.form,
-        id: activeUser._id,
-        photo: activeUser.photo,
-      },
-      items: [
-        {name: "Dashboard", icon: "web"},
-        {name: "Clients", icon: "list"},
-        {name: "MyService", icon: "dynamic_feed"}
-      ],
-      accordions:
-        [
-          {
-            title: "Account",
-            icon: "chevron_left",
-            subItems: [
-              {name: "Logout", icon: "person", logout: "true"},
-              {name: "Settings", icon: "settings", accountType: "coaches"},
-            ]
-          }
-        ],
-      clients:
-        await clientsDropdown(activeUser)}
-
+    if (activeUser.photo === null || activeUser.photo === ' ') {
+        activeUser.photo = '/img/icons/user-pic.png';
+    }
+    console.log("Active user ", activeUser);
+    let menu = {
+            user: {
+                firstName: "Coach " + activeUser.firstName,
+                id: activeUser._id,
+                photo: activeUser.photo,
+            },
+            items: [
+                {name: "Dashboard", icon: "web"},
+                {name: "Clients", icon: "list"},
+                {name: "MyService", icon: "dynamic_feed"}
+            ],
+            accordions:
+                [
+                    {
+                        title: "Account",
+                        icon: "chevron_left",
+                        subItems: [
+                            {name: "Logout", icon: "person", logout: "true"},
+                            {name: "Settings", icon: "settings", accountType: "coaches"},
+                        ]
+                    }
+                ],
+            clients:
+                await clientsDropdown(activeUser)
+        }
+    ;
     res.render("dashboard_coach.dust", menu);
 }
 
