@@ -29,9 +29,9 @@ searchCoaches = async () => {
         return await displayCoaches(everyone);
     }
     let displayCoachesArray = [];
-    for(let i =0; i<everyone.length; i++) {
+    for (let i = 0; i < everyone.length; i++) {
         everyone[i].firstName = toCamelCase(everyone[i].firstName);
-        if(everyone[i].firstName.includes(txt) || everyone[i].lastName.includes(txt)){
+        if (everyone[i].firstName.includes(txt) || everyone[i].lastName.includes(txt)) {
             displayCoachesArray.push(everyone[i]);
             console.log("FOUND THIS GUY: ", everyone[i].firstName, everyone[i].lastName);
         }
@@ -99,19 +99,28 @@ displayCoaches = async (coachesArray) => {
         });
         let res = await response.text();
         document.getElementById("grid").innerHTML += res;
+
+        if (await hiredAlready(coachesArray[i]._id)) {
+
+            let buttons = document.getElementsByClassName("black-text");
+
+            for (let k = 0; k < buttons.length; i++) {
+                // if(coachesArray[i] !== undefined) {
+                console.log(coachesArray[i].firstName);
+                if (buttons[k].name === coachesArray[i]._id) {
+                    let span = document.createElement("span");
+                    span.innerHTML = "HIRED ALREADY!";
+                    span.className = "red-text";
+
+                    let append = buttons[k].parentNode;
+                    buttons[k].remove();
+                    append.appendChild(span);
+                }
+                // }
+            }
+        }
     }
 };
-
-// displayCoachesIndex = async (coachesArray) => {
-//     cleanCards();
-//     coachesArray.forEach(coach => {
-//         coach.description = coach.description.slice(0, 50) + "...";
-//         dust.render("partials/coach_card", {coach: coach}, function (err, out) {
-//             document.getElementById("grid").innerHTML += out;
-//         });
-//     })
-// };
-
 
 // Used in client dashboard
 async function getExercises() {
@@ -156,12 +165,13 @@ async function getExercises() {
                 repetitions: "-",
                 comments: "-"
             }];
+            document.getElementById("beginWorkout-btn").classList.add("disabled");
         }
         console.log(exercises);
 
         dust.render("dashboard_partials\/schedule_table_row",
-            {exercises: exercises}, (err, out) =>
-                document.getElementById('scheduleTable').innerHTML = out);
+            { exercises: exercises }, (err, out) =>
+            document.getElementById('scheduleTable').innerHTML = out);
     } catch (err) {
         console.log(err);
     }
@@ -172,4 +182,5 @@ function getWeekDay() {
     return weekdays[new Date().getDay()];
 }
 
-getExercises();
+getExercises()
+    .catch((e) => console.log(e));

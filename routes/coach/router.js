@@ -64,6 +64,7 @@ router.post('/new', async (req, res) => {
                     sex: req.body.sex,
                     email: req.body.email,
                     phone: req.body.phone,
+                    photo: req.body.photo,
                     address1: req.body.address1,
                     address2: req.body.address2,
                     city: req.body.city,
