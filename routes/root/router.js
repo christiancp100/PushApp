@@ -148,12 +148,20 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
 
 
 async function renderClientDashboard(res, activeUser) {
+    let firstName;
+    if (activeUser.firstName.length > 14) {
+        firstName = activeUser.firstName.slice(0, 14) + '.';
+    } else {
+        firstName = activeUser.firstName;
+    }
+
     let menu = {
         user:
             {
-                firstName: activeUser.firstName,
+                firstName: firstName,
                 photo: activeUser.photo,
                 id: activeUser._id,
+                form: activeUser.form,
             }
         ,
         items: [
@@ -228,9 +236,16 @@ async function clientsDropdown(activeUser) {
 
 async function renderCoachDashboard(res, activeUser) {
     console.log("Active user ", activeUser);
+    let firstName;
+    if (activeUser.firstName.length > 10) {
+        firstName = activeUser.firstName.slice(0, 10) + '.';
+    } else {
+        firstName = activeUser.firstName;
+    }
+
     let menu = {
         user: {
-            firstName: "Coach " + activeUser.firstName,
+            firstName: "Coach " + firstName,
             form: activeUser.form,
             id: activeUser._id,
             photo: activeUser.photo,
