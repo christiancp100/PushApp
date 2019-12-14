@@ -19,7 +19,13 @@ function fetchClient(e) {
         .then(res => res.text())
         .then((text) => {
             console.log(text);
-            document.getElementById("reg").innerHTML = text
+            let container = document.getElementById("container-register");
+            container.classList.add("grey");
+            container.classList.add("darken-3");
+            container.classList.add("register-card");
+            let register = document.getElementById("reg");
+            register.classList.remove("register-form");
+            register.innerHTML = text;
         });
 }
 
@@ -29,8 +35,13 @@ function fetchCoach(e) {
     fetch('/register/coach', {method: "GET"})
         .then(res => res.text())
         .then((text) => {
-            console.log(text);
-            document.getElementById("reg").innerHTML = text
+            let container = document.getElementById("container-register");
+            container.classList.add("grey");
+            container.classList.add("darken-3");
+            container.classList.add("register-card");
+            let register = document.getElementById("reg");
+            register.classList.remove("register-form");
+            register.innerHTML = text;
         });
 }
 

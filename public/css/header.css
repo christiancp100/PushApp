@@ -41,14 +41,15 @@
   position: absolute;
   bottom: 45%;
   right: 10%;
-  padding: 1.3rem 2rem;
-  border-radius: 40px;
+  padding: 1.3rem 4rem;
+  border-radius: 5px;
   background: linear-gradient(to right, #16bffd, #cb3066);
 }
 
 .learn-more-btn a{
   text-decoration: none;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
+  text-transform: uppercase;
   font-weight: 500;
   color:white;
 }

@@ -13,8 +13,11 @@ select{
 }
 
 body {
-    width: auto;
     background-image: url('../img/settings-background.jpg');
+    height: 500px;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: cover;
 }
 

@@ -102,12 +102,12 @@ router.post('/new', async (req, res) => {
                 let savedClientInfo = await clientInfo.save();
 
                 // Creates MoneyAccount for client
-                let newMoneyAccount = new MoneyAccount({
+                /*let newMoneyAccount = new MoneyAccount({
                     _userAccountId: savedUserAccount._id,
                     currency: savedUserAccount.currency
                 });
                 await newMoneyAccount.save();
-                console.log('Money account created for this client');
+                console.log('Money account created for this client');*/
 
                 if (req.accepts("text/html")) {
                     res.render('register_forms/register-credentials.dust', {accID: (savedUserAccount._id).toString()});
