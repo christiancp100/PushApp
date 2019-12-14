@@ -536,6 +536,43 @@ router.post('/newrating', isLoggedIn, async (req, res) => {
         .catch(() => res.status(500).end());
 });
 
+// Search between services of a coach from the client side
+router.get('/services/search', function (req, res) {
+    //coachId is not provided or coachId provided is invalid
+    if(!mongoose.Types.ObjectId.isValid(req.query._coachId) || !req.query._coachId){
+        res = setResponse('error', 400, res, {Error: 'Bad request'});
+    }
+    let filter = {
+        _coachId: req.query._coachId,
+    };
+    //if we are providing a name
+    if(req.query.name){
+        filter.name = req.query.name;
+    }
+    Service.find(filter)
+        .then((services) => {
+            if (services.length > 0) {
+                let length = services.length;
+                console.log(length + " services has been found!");
+                if (req.accepts('html')) {
+                    res = setResponse('json', 200, res, services);
+                    res.status(200);
+                    //render
+                } else if (req.accepts('json')) {
+                    res = setResponse('json', 200, res, services);
+                }
+                res.end();
+            } else {
+                res = setResponse('error', 404, res, services);
+                res.end();
+            }
+        })
+        .catch((err) => {
+            console.log("0 services has been found!");
+            res.status(500).end()
+        })
+});
+
 //GET all the services of a given coach
 router.get('/services/:id', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
