@@ -33,7 +33,10 @@ function fetchCoach(e) {
             document.getElementById("reg").innerHTML = text
         });
 }
-
+function deleteButton() {
+    document.getElementById('putimage').value = '';
+    document.getElementById('im').src = "";
+}
 function getImage() {
     let file = document.getElementById("image").files[0];
     let height;

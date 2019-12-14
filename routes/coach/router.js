@@ -76,15 +76,15 @@ router.post('/new', async (req, res) => {
                     creationDate: Date.now(),
                     isDeleted: false
                 });
-                if (typeof req.body.photo == "undefined"){
+                if (typeof req.body.photo == "undefined" || req.body.photo == null || req.body.photo === ""){
                     user.photo = '/img/icons/unknown-user.png';
                     user.form = 'square';
+                } else {
+                    user.photo = req.body.photo;
+                    user.form = req.body.form;
                 }
                 if (user.description === undefined) {
                     user.description = '';
-                }
-                if (user.photo === undefined) {
-                    user.photo = '';
                 }
                 if (user.address2 === undefined) {
                     user.address2 = '';
@@ -223,12 +223,14 @@ router.put('/edit/:id', async (req, res) => {
                     if (req.body.description) {
                         found.description = req.body.description;
                     }
-                    if (req.body.photo) {
+                    if (typeof req.body.photo != "undefined" && req.body.photo != null && req.body.photo !== ""){
                         found.photo = req.body.photo;
-                    }
-                    if (req.body.form) {
                         found.form = req.body.form;
+                    } else {
+                        found.photo = '/img/icons/unknown-user.png';
+                        found.form = 'square';
                     }
+
                     if (req.body.birthday) {
                         found.birthday = req.body.birthday;
                     }
@@ -351,7 +353,7 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     if (typeof found.description != "undefined") {
         accountToModify.description = found.description;
     }
-    if (typeof found.photo != "undefined") {
+    if (typeof found.photo != "undefined" && found.photo !== "" && found.photo != null) {
         accountToModify.photo = found.photo;
         accountToModify.form = found.form;
     }

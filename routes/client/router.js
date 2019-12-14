@@ -87,7 +87,7 @@ router.post('/new', async (req, res) => {
                     accountType: 'client',
                     creationDate: Date.now()
                 });
-                if (typeof req.body.photo == "undefined"){
+                if (typeof req.body.photo == "undefined" || req.body.photo == null || req.body.photo === ""){
                     userAccount.photo = '/img/icons/unknown-user.png';
                     userAccount.form = 'square';
                 }
@@ -153,9 +153,9 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     if (typeof found.description != "undefined") {
         oldAccount.description = found.description;
     }
-    if (typeof found.photo != "undefined") {
+    if (typeof found.photo != "undefined" && req.body.photo !== "") {
         oldAccount.photo = found.photo;
-        oldAccount.form = found.form; //todo this is new
+        oldAccount.form = found.form;
     }
     if (typeof found.address2 != "undefined") {
         oldAccount.address2 = found.address2;
@@ -219,8 +219,6 @@ router.put('/edit/:id', async (req, res) => {
                     foundClient.firstName = req.body.firstName;
                     foundClient.lastName = req.body.lastName;
                     foundClient.description = req.body.description;
-                    foundClient.photo = req.body.photo;
-                    foundClient.form = req.body.form;//todo this is new
                     foundClient.sex = req.body.sex;
                     foundClient.email = req.body.email;
                     foundClient.phone = req.body.phone;
@@ -232,6 +230,13 @@ router.put('/edit/:id', async (req, res) => {
                     foundClient.country = req.body.country;
                     foundClient.currency = req.body.currency;
                     foundClient.localization = req.body.localization;
+                    if (typeof req.body.photo == "undefined" || req.body.photo == null || req.body.photo === ""){
+                        foundClient.photo = '/img/icons/unknown-user.png';
+                        foundClient.form = 'square';
+                    } else {
+                        foundClient.photo = req.body.photo;
+                        foundClient.form = req.body.form;
+                    }
 
                     let savedClient = await foundClient.save();
                     let foundClientInfo = await ClientInfo.findOne({_clientId: req.params.id});

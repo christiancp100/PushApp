@@ -36,11 +36,12 @@
                 <input class="file-path validate" type="text">
          </div>
 </div>
-    <div class="cut-image">
-        {?photo}
+    {?photo}
+        <div class="cut-image">
             <img src="{photo}" class="profile-{form}-image" id="im" alt="profile image">
-        {/photo}
-    </div>
+        </div>
+    {/photo}
+    <input onclick="deleteButton()" type="button" value="Delete image">
     <input value="{photo}" id="putimage" type="hidden" name="photo">
     <input value="{form}" id="form" type="hidden" name="form">
 </div>
