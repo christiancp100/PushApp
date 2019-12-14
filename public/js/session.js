@@ -65,20 +65,20 @@ async function renderCoaches() {
     });
 }
 
-hiredAlready = async (id) => {
-    let getting = await fetch("/coaches/hire/coach/" + id, {
-        method: "GET",
-        headers: {'Content-Type': 'application/json'}
-    });
-    let clientsArray = await getting.json();
-    for (let i = 0; i < clientsArray.length; i++) {
-        if (clientsArray[i]._clientId === await getUserId()) {
-            console.log("found this guy", clientsArray[i].firstName, clientsArray[i].lastName);
-            return 1;
-        }
-    }
-    return 0;
-};
+// checkIfHiredAlready = async (id) => {
+//     let getting = await fetch("/coaches/hire/coach/" + id, {
+//         method: "GET",
+//         headers: {'Content-Type': 'application/json'}
+//     });
+//     let clientsArray = await getting.json();
+//     for (let i = 0; i < clientsArray.length; i++) {
+//         if (clientsArray[i]._clientId.localeCompare("5de65d6c34b8d99f3f2aaf71") === 0) {
+//
+//             return 1;
+//         }
+//     }
+//     return 0;
+// };
 
 async function getCoaches() {
     let everyone = await fetch("/coaches/search?accountType=coach");
@@ -99,26 +99,6 @@ displayCoaches = async (coachesArray) => {
         });
         let res = await response.text();
         document.getElementById("grid").innerHTML += res;
-
-        if (await hiredAlready(coachesArray[i]._id)) {
-
-            let buttons = document.getElementsByClassName("black-text");
-
-            for (let k = 0; k < buttons.length; i++) {
-                // if(coachesArray[i] !== undefined) {
-                    console.log(coachesArray[i].firstName);
-                    if (buttons[k].name === coachesArray[i]._id) {
-                        let span = document.createElement("span");
-                        span.innerHTML = "HIRED ALREADY!";
-                        span.className = "red-text";
-
-                        let append = buttons[k].parentNode;
-                        buttons[k].remove();
-                        append.appendChild(span);
-                    }
-                // }
-            }
-        }
     }
 };
 

@@ -65,7 +65,7 @@ router.post('/new', async (req, res) => {
                 req.body.zipCode === undefined &&
                 req.body.country === undefined &&
                 req.body.currency === undefined) {
-                res = setResponse('json', 400, res, { Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided" });
+                res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
                 res.end();
             } else {
 
@@ -88,7 +88,7 @@ router.post('/new', async (req, res) => {
                     accountType: 'client',
                     creationDate: Date.now()
                 });
-                if (typeof req.body.photo == "undefined" || req.body.photo == null || req.body.photo === ""){
+                if (typeof req.body.photo == "undefined" || req.body.photo == null || req.body.photo === "") {
                     userAccount.photo = '/img/icons/unknown-user.png';
                     userAccount.form = 'square';
                 }
@@ -119,7 +119,7 @@ router.post('/new', async (req, res) => {
                 console.log('Money account created for this client');
 
                 if (req.accepts("text/html")) {
-                    res.render('register_forms/register-credentials.dust', { accID: (savedUserAccount._id).toString() });
+                    res.render('register_forms/register-credentials.dust', {accID: (savedUserAccount._id).toString()});
                 } else if (req.accepts("application/json")) {
                     savedUserAccount._credentials = 'private';
                     res = setResponse('json', 201, res, {
@@ -130,7 +130,7 @@ router.post('/new', async (req, res) => {
                 res.end();
             }
         } else {
-            res = setResponse('json', 400, res, { Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed." });
+            res = setResponse('json', 400, res, {Error: "Only application/json and application/x-www-form-urlencoded 'Content-Type' is allowed."});
             res.end();
         }
     } catch (err) {
@@ -162,12 +162,11 @@ router.get('/edit', isLoggedIn, async (req, res) => {
     }
     if (typeof found.photo != "undefined" && req.body.photo !== "") {
         oldAccount.photo = found.photo;
-        oldAccount.form = found.form;
     }
     if (typeof found.address2 != "undefined") {
         oldAccount.address2 = found.address2;
     }
-    let foundInfo = await ClientInfo.findOne({ _clientId: found._id });
+    let foundInfo = await ClientInfo.findOne({_clientId: found._id});
     console.log("INFO", foundInfo);
 
     if (foundInfo.height !== undefined) {
@@ -226,6 +225,7 @@ router.put('/edit/:id', async (req, res) => {
                     foundClient.firstName = req.body.firstName;
                     foundClient.lastName = req.body.lastName;
                     foundClient.description = req.body.description;
+                    foundClient.photo = req.body.photo;
                     foundClient.sex = req.body.sex;
                     foundClient.email = req.body.email;
                     foundClient.phone = req.body.phone;
@@ -237,7 +237,7 @@ router.put('/edit/:id', async (req, res) => {
                     foundClient.country = req.body.country;
                     foundClient.currency = req.body.currency;
                     foundClient.localization = req.body.localization;
-                    if (typeof req.body.photo == "undefined" || req.body.photo == null || req.body.photo === ""){
+                    if (typeof req.body.photo == "undefined" || req.body.photo == null || req.body.photo === "") {
                         foundClient.photo = '/img/icons/unknown-user.png';
                         foundClient.form = 'square';
                     } else {
@@ -246,7 +246,7 @@ router.put('/edit/:id', async (req, res) => {
                     }
 
                     let savedClient = await foundClient.save();
-                    let foundClientInfo = await ClientInfo.findOne({ _clientId: req.params.id });
+                    let foundClientInfo = await ClientInfo.findOne({_clientId: req.params.id});
 
                     foundClientInfo.height = req.body.height;
                     foundClientInfo.weight = req.body.weight;
@@ -267,11 +267,11 @@ router.put('/edit/:id', async (req, res) => {
                         res.end();
                     }
                 } else {
-                    res = setResponse('error', 404, res, { Error: 'Client not found!' });
+                    res = setResponse('error', 404, res, {Error: 'Client not found!'});
                     res.end();
                 }
             } catch
-            (err) {
+                (err) {
                 console.log(err);
                 res.status(500);
                 res.end();
@@ -285,7 +285,7 @@ router.delete('/delete/:id', async (req, res) => {
     try {
         if (req.accepts("json")) {
             console.log('Searching for user with ID: ' + req.params.id + '.');
-            let foundClient = await UserAccount.findById({ _id: req.params.id });
+            let foundClient = await UserAccount.findById({_id: req.params.id});
             if (foundClient !== null && foundClient.accountType === 'client') {
                 foundClient.firstName = 'anonymous';
                 foundClient.lastName = ' ';
@@ -297,7 +297,7 @@ router.delete('/delete/:id', async (req, res) => {
                 foundClient.address2 = '';
                 foundClient.isDeleted = true;
 
-                let foundCredential = await Credentials.findOne({ _userAccountId: req.params.id });
+                let foundCredential = await Credentials.findOne({_userAccountId: req.params.id});
                 await foundClient.save();
 
                 if (foundCredential !== undefined) {
@@ -307,11 +307,11 @@ router.delete('/delete/:id', async (req, res) => {
                 if (req.accepts("text/html")) {
                     res = setResponse('html', 200, res);
                 } else if (req.accepts("application/json")) {
-                    res = setResponse('json', 200, res, { Result: `Client with ID ` + foundClient._id.toString() + ` was successfully deleted!` });
+                    res = setResponse('json', 200, res, {Result: `Client with ID ` + foundClient._id.toString() + ` was successfully deleted!`});
                     res.end();
                 }
             } else {
-                res = setResponse('error', 404, res, { Error: 'Client not found!' });
+                res = setResponse('error', 404, res, {Error: 'Client not found!'});
                 res.end();
             }
         } else {
@@ -319,7 +319,7 @@ router.delete('/delete/:id', async (req, res) => {
             res.end();
         }
     } catch
-    (err) {
+        (err) {
         console.log(err);
         res.status(500);
         res.end();
@@ -329,10 +329,10 @@ router.delete('/delete/:id', async (req, res) => {
 router.get('/rating', isLoggedIn, async (req, res) => {
     try {
         //user have only one relation
-        let clientCoachRelation = await CoachClients.findOne({ _clientId: req.user._userAccountId });
+        let clientCoachRelation = await CoachClients.findOne({_clientId: req.user._userAccountId});
         let thisCoachId = clientCoachRelation._coachId.toString();
         //find all ratings have every been given by this client
-        let rating = await Rating.find({ _clientId: req.user._userAccountId });
+        let rating = await Rating.find({_clientId: req.user._userAccountId});
         if (rating.length !== 0) {
             //new rating object was not created yet
             //ask if user want to rate the coach again
@@ -348,7 +348,7 @@ router.get('/rating', isLoggedIn, async (req, res) => {
             }
         } else {
             //render the rating page
-            res.render('rating/rating-first.dust', { id: thisCoachId })
+            res.render('rating/rating-first.dust', {id: thisCoachId})
         }
     } catch (e) {
         console.log(e);
