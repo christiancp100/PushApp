@@ -46,3 +46,8 @@ input[type="submit"]{
     -o-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
+
+#im {
+    padding: 5px;
+    border-radius: 50%;
+}
