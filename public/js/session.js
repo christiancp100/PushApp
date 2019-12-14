@@ -165,6 +165,7 @@ async function getExercises() {
                 repetitions: "-",
                 comments: "-"
             }];
+            document.getElementById("beginWorkout-btn").classList.add("disabled");
         }
         console.log(exercises);
 
@@ -181,4 +182,5 @@ function getWeekDay() {
     return weekdays[new Date().getDay()];
 }
 
-getExercises();
+getExercises()
+    .catch((e) => console.log(e));
