@@ -25,7 +25,7 @@ let CoachClients = mongoose.model('CoachClients');
 let MoneyAccount = mongoose.model('MoneyAccount');
 
 router.get('/test', function (req, res) {
-    res.render('rating/rating-first.dust', { name: 'Moreno', id: '5de5094ec516ae82b90c9c44' });
+    res.render('rating/rating-first.dust', {name: 'Moreno', id: '5de5094ec516ae82b90c9c44'});
 });
 
 router.get('/testing', function (req, res) {
@@ -42,10 +42,10 @@ router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
         if (typeof req.user !== "undefined" && req.isAuthenticated()) {
             console.log("ENTER");
-            res.render('index', { title: 'PushApp', log: 'Y' });
+            res.render('index', {title: 'PushApp', log: 'Y'});
         } else {
             console.log("NOT ENTER");
-            res.render('index', { title: 'PushApp' });
+            res.render('index', {title: 'PushApp'});
         }
     } else {
         res.status(500);
@@ -119,9 +119,9 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
                 let credentials = await Credentials.findOne(filter);
                 if (credentials === null || credentials.username !== filter.username) {
                     // CHANGE FOR CUSTOM 404 PAGE
-                    res = setResponse('json', 401, res, { Error: 'Unauthorized access!' });
+                    res = setResponse('json', 401, res, {Error: 'Unauthorized access!'});
                 } else {
-                    let activeUser = await UserAccount.findById({ _id: credentials._userAccountId });
+                    let activeUser = await UserAccount.findById({_id: credentials._userAccountId});
 
                     if (activeUser.accountType === 'client') {
                         if (req.path === "/workouts") {
@@ -140,7 +140,7 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
         }
         res.end();
     } catch
-    (err) {
+        (err) {
         res.status(500);
         res.end();
     }
@@ -150,16 +150,16 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
 async function renderClientDashboard(res, activeUser) {
     let menu = {
         user:
-        {
-            firstName: activeUser.firstName,
-            photo: activeUser.photo,
-            id: activeUser._id,
-        }
+            {
+                firstName: activeUser.firstName,
+                photo: activeUser.photo,
+                id: activeUser._id,
+            }
         ,
         items: [
-            { name: "Dashboard", icon: "web" },
+            {name: "Dashboard", icon: "web"},
             // {name: "Chat", icon: "chat"},
-            { name: "Coaches", icon: "group" },
+            {name: "Coaches", icon: "group"},
         ],
         accordions: [
             // {
@@ -175,8 +175,8 @@ async function renderClientDashboard(res, activeUser) {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Logout", icon: "person", logout: true },
-                    { name: "Settings", icon: "settings", accountType: "clients" },
+                    {name: "Logout", icon: "person", logout: true},
+                    {name: "Settings", icon: "settings", accountType: "clients"},
                 ]
             }
         ]
@@ -194,7 +194,7 @@ async function clientsDropdown(activeUser) {
         return [];
     }
     try {
-        let result = await CoachClients.find({ _coachId: activeUser.id });
+        let result = await CoachClients.find({_coachId: activeUser.id});
         if (result) {
             console.log(result);
             if (result.length > 0) {
@@ -230,15 +230,15 @@ async function renderCoachDashboard(res, activeUser) {
     console.log("Active user ", activeUser);
     let menu = {
         user: {
-            firstName: activeUser.firstName,
+            firstName: "Coach " + activeUser.firstName,
             form: activeUser.form,
             id: activeUser._id,
             photo: activeUser.photo,
         },
         items: [
-            { name: "Dashboard", icon: "web" },
-            { name: "Clients", icon: "list" },
-            { name: "MyService", icon: "dynamic_feed" }
+            {name: "Dashboard", icon: "web"},
+            {name: "Clients", icon: "list"},
+            {name: "MyService", icon: "dynamic_feed"}
         ],
         accordions:
             [
@@ -246,8 +246,8 @@ async function renderCoachDashboard(res, activeUser) {
                     title: "Account",
                     icon: "chevron_left",
                     subItems: [
-                        { name: "Logout", icon: "person", logout: "true" },
-                        { name: "Settings", icon: "settings", accountType: "coaches" },
+                        {name: "Logout", icon: "person", logout: "true"},
+                        {name: "Settings", icon: "settings", accountType: "coaches"},
                     ]
                 }
             ],
@@ -264,33 +264,33 @@ async function renderAdminDashboard(res, activeUser) {
     }
     let menu = {
         user:
-        {
-            firstName: "Coach " + activeUser.firstName,
-            photo: activeUser.photo
-        }
+            {
+                firstName: activeUser.firstName,
+                photo: activeUser.photo
+            }
         ,
         items: [
-            { name: "Dashboard", icon: "web" },
-            { name: "Clients", icon: "list" },
-            { name: "Chat", icon: "chat" },
-            { name: "MyService", icon: "dynamic_feed" }
+            {name: "Dashboard", icon: "web"},
+            {name: "Clients", icon: "list"},
+            {name: "Chat", icon: "chat"},
+            {name: "MyService", icon: "dynamic_feed"}
         ],
         accordions: [
             {
                 title: "Accounting",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Revenue", icon: "show_chart" },
-                    { name: "Users", icon: "equalizer" },
-                    { name: "Conversion Rate", icon: "multiline_chart" },
+                    {name: "Revenue", icon: "show_chart"},
+                    {name: "Users", icon: "equalizer"},
+                    {name: "Conversion Rate", icon: "multiline_chart"},
                 ]
             },
             {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Logout", icon: "person", logout: "true" },
-                    { name: "Settings", icon: "settings", accountType: "coaches" },
+                    {name: "Logout", icon: "person", logout: "true"},
+                    {name: "Settings", icon: "settings", accountType: "coaches"},
                 ]
             }
         ],
@@ -380,28 +380,28 @@ function setResponse(type, code, res, msg) {
 router.get('/coach/dashboard/clients', (req, res) => {
     let menu = {
         items: [
-            { name: "Dashboard", icon: "web" },
-            { name: "Clients", icon: "list" },
-            { name: "Schedules", icon: "dashboard" },
-            { name: "Chat", icon: "chat" },
-            { link: "/client/coaches", name: "Coaches", icon: "group", },
+            {name: "Dashboard", icon: "web"},
+            {name: "Clients", icon: "list"},
+            {name: "Schedules", icon: "dashboard"},
+            {name: "Chat", icon: "chat"},
+            {link: "/client/coaches", name: "Coaches", icon: "group",},
         ],
         accordions: [
             {
                 title: "Accounting",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Revenue", icon: "show_chart" },
-                    { name: "Users", icon: "equalizer" },
-                    { name: "Conversion Rate", icon: "multiline_chart" },
+                    {name: "Revenue", icon: "show_chart"},
+                    {name: "Users", icon: "equalizer"},
+                    {name: "Conversion Rate", icon: "multiline_chart"},
                 ]
             },
             {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Settings", icon: "settings" },
-                    { name: "Logout", icon: "person" },
+                    {name: "Settings", icon: "settings"},
+                    {name: "Logout", icon: "person"},
                 ]
             }
         ]
@@ -412,28 +412,28 @@ router.get('/coach/dashboard/clients', (req, res) => {
 router.get('/client/coaches', (req, res) => {
     let menu = {
         items: [
-            { name: "Dashboard", icon: "web" },
-            { name: "Next Workout", icon: "list" },
-            { name: "Schedule", icon: "dashboard" },
-            { name: "Chat", icon: "chat" },
-            { name: "Coaches", icon: "group" },
+            {name: "Dashboard", icon: "web"},
+            {name: "Next Workout", icon: "list"},
+            {name: "Schedule", icon: "dashboard"},
+            {name: "Chat", icon: "chat"},
+            {name: "Coaches", icon: "group"},
         ],
         accordions: [
             {
                 title: "Progress",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Weight", icon: "show_chart" },
-                    { name: "Exercises", icon: "equalizer" },
-                    { name: "Volume of Training", icon: "multiline_chart" },
+                    {name: "Weight", icon: "show_chart"},
+                    {name: "Exercises", icon: "equalizer"},
+                    {name: "Volume of Training", icon: "multiline_chart"},
                 ]
             },
             {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    { name: "Settings", icon: "settings" },
-                    { name: "Logout", icon: "person", logout: true },
+                    {name: "Settings", icon: "settings"},
+                    {name: "Logout", icon: "person", logout: true},
                 ]
             }
         ]

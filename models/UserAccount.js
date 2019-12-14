@@ -24,6 +24,7 @@ const UserAccountSchema = exports.UserAccountSchema = new Schema({
     creationDate: {type: Date, default: Date.now()},
     accessHistory: {type: [Date], default: () => []},
     isDeleted: {type: Boolean, default: false},
+    form: {type: String}
 });
 
 mongoose.model('UserAccount', UserAccountSchema);

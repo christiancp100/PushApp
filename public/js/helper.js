@@ -149,7 +149,7 @@ function addReview(e, id) {
             },
         })
             .then(res => res.text())
-            .then(text => page.innerHTML = text)
+            .then(window.location.reload())
             .catch((err) => console.log(err))
     }
 }
@@ -166,8 +166,8 @@ function changeRev(objId) {
         document.getElementById("alert").innerText = "";
         let rating = 0;
         let first = document.getElementById("firstStar");
-        while (first.nodeName == "SPAN") {
-            if (first.className == "fa fa-star checked") {
+        while (first.nodeName === "SPAN") {
+            if (first.className === "fa fa-star checked") {
                 ++rating;
             }
             first = first.nextSibling;
@@ -187,7 +187,7 @@ function changeRev(objId) {
             })
         })
             .then((res) => res.text())
-            .then(text => page.innerHTML = text)
+            .then(window.location.reload())
             .catch(err => console.log(err))
     }
 }

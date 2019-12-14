@@ -137,7 +137,7 @@ async function getExercises() {
             method: 'GET',
             headers: headers,
         });
-        console.log(session)
+
         let exercises = [];
         if (session.status === 200) {
             let foundSession = await session.json();
@@ -150,7 +150,6 @@ async function getExercises() {
                 });
 
                 exercise = await exercise.json();
-                console.log(exercise)
                 await exercises.push(exercise);
             }
         } else {
@@ -167,11 +166,9 @@ async function getExercises() {
             }];
             document.getElementById("beginWorkout-btn").classList.add("disabled");
         }
-        console.log(exercises);
-
         dust.render("dashboard_partials\/schedule_table_row",
-            { exercises: exercises }, (err, out) =>
-            document.getElementById('scheduleTable').innerHTML = out);
+            {exercises: exercises}, (err, out) =>
+                document.getElementById('scheduleTable').innerHTML = out);
     } catch (err) {
         console.log(err);
     }
