@@ -20,7 +20,7 @@
                     </div>
                     <div class="row center-align">
                         <div class="col m6 s12">
-                            <a onclick="startWorkout()" class="btn-large black">Begin Workout</a>
+                            <a onclick="startWorkout()" id="beginWorkout-btn" class="btn-large black">Begin Workout</a>
                         </div>
                         <div class="col m6 s12">
                             <a class="btn-large black disabled">Contact Coach</a>
