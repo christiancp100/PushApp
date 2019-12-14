@@ -33,6 +33,7 @@ function fetchCoach(e) {
             document.getElementById("reg").innerHTML = text
         });
 }
+/*sets image to default (in part)*/
 function deleteButton() {
     document.getElementById('putimage').value = '';
     document.getElementById('im').src = "";
