@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 {>"dashboard_partials/head" css="/css/coach.css"/}
-
 <body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="buttons()">
-  {>"dashboard_partials/header" field="coaches" name="Admin" profile-picture="/img/icons/logoPushAppWhite.svg"/}
+  {>"dashboard_partials/header" field="coaches" name="{user.firstName}" profile-picture="/img/icons/user-pic.png"/}
   <main>
     <div id="main-container" class="container">
       <div class="masonry row" style="position: relative; height: 2134.14px;">
@@ -13,20 +12,17 @@
         {>"dashboard_partials/graph"/}
         {>"dashboard_partials/composed_graph"/}
       </div>
-
         {>"dashboard_partials/schedule" coach="true"/}
-
     </div>
     </div>
   </main>
   {>"dashboard_partials/footer"/}
+  <input type="hidden" value="{user.id}" id="user_id">
 </body>
 
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
-<script src="/js/schedule.js"></script>
 <script src="/js/views.js"></script>
 <script src="/js/helper.js"></script>
-<script src="/js/service.js"></script>
 <script src="/js/buttons.js"></script>
 </body>
 
