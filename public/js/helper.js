@@ -33,21 +33,46 @@ function fetchCoach(e) {
             document.getElementById("reg").innerHTML = text
         });
 }
+
 /*sets image to default (in part)*/
 function deleteButton() {
     document.getElementById('putimage').value = '';
     document.getElementById('im').src = "";
 }
+
 function getImage() {
     let file = document.getElementById("image").files[0];
+    let height;
+    let width;
+    console.log(file);
     let fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
     fileReader.onload = function () {
         let data = fileReader.result;
-        console.log(data);
-        document.getElementById("im").src = data;
-        document.getElementById("putimage").value = data;
+        let image = new Image();
+        image.src = data;
+        image.onload = function () {
+            height = this.height;
+            width = this.width;
+            let pic = document.getElementById("im");
+            let form;
+            if (height === width) {
+                pic.className = 'profile-square-image';
+                form = 'square';
+            } else if (width > height) {
+                pic.className = 'profile-rec-image';
+                form = 'rec';
+            } else {
+                pic.className = 'profile-port-image';
+                form = 'port';
+            }
+            console.log("width ", width);
+            console.log("height: ", height);
+            document.getElementById("form").value = form;
+            pic.src = data;
+            document.getElementById("putimage").value = data;
+        }
     };
-    fileReader.readAsDataURL(file);
 }
 
 async function fetchRating() {
@@ -55,8 +80,7 @@ async function fetchRating() {
     try {
         let res = await fetch('/clients/rating');
         return await res.text();
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e);
     }
 
@@ -93,7 +117,7 @@ function addReview(e, id) {
     }
     let comment = document.getElementById("commentReview");
     let title = document.getElementById("titleReview");
-    if (!title.checkValidity() || !comment.checkValidity()){
+    if (!title.checkValidity() || !comment.checkValidity()) {
         document.getElementById("alert").innerText = "Please fill all fields";
     } else {
         comment = comment.value;
@@ -108,9 +132,9 @@ function addReview(e, id) {
                 id: id, //id of coach,
                 new: 'Y'
             }),
-            headers : {
-                'content-type' : 'application/json',
-                'accept' : 'text/html'
+            headers: {
+                'content-type': 'application/json',
+                'accept': 'text/html'
             },
         })
             .then(res => res.text())
@@ -123,7 +147,7 @@ function addReview(e, id) {
 function changeRev(objId) {
     let comment = document.getElementById("commentReview");
     let title = document.getElementById("titleReview");
-    if (!title.checkValidity() || !comment.checkValidity()){
+    if (!title.checkValidity() || !comment.checkValidity()) {
         document.getElementById("alert").innerText = "Please fill all fields";
     } else {
         comment = comment.value;
@@ -172,6 +196,7 @@ function noReviewChange() {
         .then(text => page.innerHTML = text)
         .catch(err => console.log(err))
 }
+
 /*_______________00__________________
 ________________0000_________________
 _______________000000________________
@@ -210,6 +235,6 @@ getUser = async () => {
     return obj.username;
 };
 
-async function redirectDashboard(){
-    return window.location.assign("http://127.0.0.1:3000/" + await getUser());
+async function redirectDashboard() {
+    return window.location.assign("/" + await getUser());
 }

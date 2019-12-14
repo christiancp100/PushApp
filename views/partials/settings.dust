@@ -43,6 +43,7 @@
     {/photo}
     <input style="color: black" onclick="deleteButton()" type="button" value="Remove image">
     <input value="{photo}" id="putimage" type="hidden" name="photo">
+    <input value="{form}" id="form" type="hidden" name="form">
 </div>
 
 <div class="row">
