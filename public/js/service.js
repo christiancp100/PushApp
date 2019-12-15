@@ -173,32 +173,82 @@ async function deleteService(event) {
     await serviceInitialize();
 }
 
-showServices = async(e)=>{
+async function showServices(e){
+    e.preventDefault();
+    let id = e.target.name;
+    let services;
     try {
-        e.preventDefault();
         let headers = {
             'Content-Type' : 'application/json',
             'Accept' : 'application/json'
         };
-        let id = e.target.name;
-        console.log(id);
-        let res = await fetch('/coaches/services/'+id, {method:"GET", headers:headers});
-        let services = await res.json();
-        console.log(services);
-
-        document.getElementById("grid").remove();
-        let div = document.createElement("div");
-        div.id="grid";
-
-        let parent = document.getElementById("divtitle");
-        parent.appendChild(div);
-
-        for(let i = 0 ; i<services.length;i++) {
-            dust.render("dashboard_partials/services_coachesList", {service: services[i], text:"Go to payment"}, (err,out)=>{
-                div.innerHTML+=out;
+        let res = await fetch('/coaches/services/' + id,
+            {
+                method: "GET",
+                headers: headers
             });
-        }
-    } catch (err) {
-        throw err;
+        services = await res.json();
+    }catch(e){
+        throw e;
     }
-};
+    document.getElementById("grid").remove();
+    let div = document.createElement("div");
+    div.id = "grid";
+    let parent = document.getElementById("divtitle");
+    parent.appendChild(div);
+
+    for(let i = 0 ; i < services.length;i++) {
+        dust.render("dashboard_partials/services_coachesList", {service: services[i], text:"Go to payment"}, (err,out)=>{
+            div.innerHTML+=out;
+        });
+    }
+    let searchBox = document.getElementById("searchBox");
+    searchBox.children[0].remove();
+    let toAdd = document.createElement("input");
+    toAdd.id = 'ss';
+    toAdd.type = 'text';
+    toAdd.class = 'validate';
+    searchBox.appendChild(toAdd);
+    document.getElementById("ss").addEventListener('keyup', () => {
+        searchService(id)
+    });
+}
+
+async function searchService(_coachId){
+    let text = document.getElementById('ss').value;
+    let services;
+    try{
+        let headers = {
+            'Content-Type' : 'application/json',
+            'Accept' : 'application/json'
+        };
+        let foundService = await fetch('/coaches/services/search?_coachId=' + _coachId + '&name=' + text,
+            {
+                method: "GET",
+                headers: headers
+            });
+        services = await foundService.json();
+        let servicesLenght = services.length;
+        if(servicesLenght > 0){
+            displayService(services);
+        }
+    }catch(e){
+        throw e;
+    }
+}
+
+function displayService(services){
+    let servicesLength = services.length;
+    let grid = document.getElementById('grid');
+    let gridChildren = grid.children;
+    for(let i = gridChildren.length - 1; i >= 0; i--){
+        gridChildren[i].remove();
+    }
+    for(let i = 0; i < servicesLength; i++){
+        dust.render("dashboard_partials/services_coachesList", {service: services[i], text:"Go to payment"}, (err,out)=>{
+            console.log("OOO",out);
+            console.log("GGG",grid);
+            grid.innerHTML += out;
+        });
+    }
+}
