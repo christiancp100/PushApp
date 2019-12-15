@@ -62,10 +62,12 @@ const routers = require('./routes/routers');
 app.use('/', routers.root);
 app.use('/auth', routers.auth);
 app.use('/clients', routers.client);
+app.use('/admin', routers.admin);
 app.use('/coaches', routers.coach);
 app.use('/workouts', routers.workout);
 app.use('/checkout', routers.checkout);
 app.use('/money', routers.money);
+app.use('/statistics', routers.statistics);
 
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes
@@ -104,7 +106,8 @@ async function initAdmin() {
                 currency: 'chf',
                 localization: 'en-US',
                 accountType: 'admin',
-                photo: '/img/logoPushAppWhite.svg'
+                photo: '/img/logoPushAppWhite.svg',
+                form: 'square'
             });
 
             // Remember to move admin's password to .ENV file

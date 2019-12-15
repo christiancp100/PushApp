@@ -4,66 +4,69 @@ var ctx = canvas.getContext('2d');
 let chart;
 
 function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
 updateChart = async () => {
-  let dropdown = document.getElementById("day-picker-progress");
-  let day =  dropdown.options[dropdown.selectedIndex].value;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let body = {day : day};
-  let headers = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  };
-  let res = await fetch("/workouts/statistics/", {method : "POST", body: JSON.stringify(body), headers});
-  res = await res.json();
-  let exercises = res.exercises;
-  if(exercises == null) {
-    return;
-  }
-  let names = res.exerciseNames;
-  console.log(exercises);
-  let datesArray = [];
-  exercises[0].forEach(ex => {
-    datesArray.push(ex.date.slice(0, 10));
-  });
+    try {
+        let dropdown = document.getElementById("day-picker-progress");
+        let day = dropdown.options[dropdown.selectedIndex].value;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let body = {day: day};
+        let headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+        let res = await fetch("/workouts/statistics/", {method: "POST", body: JSON.stringify(body), headers});
+        res = await res.json();
+        let exercises = res.exercises;
+        if (exercises == null) {
+            return;
+        }
+        let names = res.exerciseNames;
+        console.log(exercises);
+        let datesArray = [];
+        exercises[0].forEach(ex => {
+            datesArray.push(ex.date.slice(0, 10));
+        });
 
-  let dataSets = [];
-  exercises.forEach((exercise,index) => {
-    let weightsArray = [];
-    exercise.forEach(ex => {
-      weightsArray.push(ex.weight);
-    });
-    let data =   {
-      data: weightsArray,
-      label: names[index],
-      borderColor: getRandomColor(),
-      fill: false
-    };
-    dataSets.push(data);
-  });
+        let dataSets = [];
+        exercises.forEach((exercise, index) => {
+            let weightsArray = [];
+            exercise.forEach(ex => {
+                weightsArray.push(ex.weight);
+            });
+            let data = {
+                data: weightsArray,
+                label: names[index],
+                borderColor: getRandomColor(),
+                fill: false
+            };
+            dataSets.push(data);
+        });
 
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: datesArray,
-      datasets: dataSets
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Congratulations! This is your progress!'
-      }
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: datesArray,
+                datasets: dataSets
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Congratulations! This is your progress!'
+                }
+            }
+        });
+    } catch (e) {
+        console.log(e);
     }
-  });
 };
-
 
 
 loadSessionPicker();
