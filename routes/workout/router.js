@@ -131,7 +131,6 @@ router.post('/notification', isLoggedIn, async (req, res) => {
 
 /* GETS */
 // Get ALL at /workouts root, not serving data
-// fix xx
 router.get('/begin', isLoggedIn, async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
@@ -177,16 +176,11 @@ router.get('/begin', isLoggedIn, async (req, res) => {
                     set: ex.set,
                     repetitions: ex.repetitions,
                 };
-                exerciseControl.weight = changes.weight;
-                exerciseControl.repetitions = changes.repetitions;
-                exerciseControl.sets = changes.sets;
-                exerciseControl.feedback = changes.feedback;
-                let saved = await exerciseControl.save();
-                console.log("User", req.user);
-                res = setResponse('json', 201, res, {
-                    clientId: req.user._userAccountId,
-                    clientUsername: req.user.username,
-                    coachId: coachId
+                exerciseControl = new ExerciseControl({
+                    exercise: exercise,
+                    weight: auxExercise.pumpWeight,
+                    repetitions: auxExercise.repetitions,
+                    sets: auxExercise.set,
                 });
                 let savedExerciseControl = await exerciseControl.save();
                 sessionControl.exercises.push(savedExerciseControl._id);
@@ -197,13 +191,18 @@ router.get('/begin', isLoggedIn, async (req, res) => {
             if (savedSessionControl) {
                 res = setResponse('json', 200, res, { exercises: sessionExercises });
                 res.end();
-
-            } else {
-                console.log("Error, bad request");
-                res.status(400);
-                res.end();
             }
-        });
+
+        } catch (err) {
+            console.log(err + "this is an error");
+            res.status(500);
+            res.end();
+        }
+    } else {
+        res.status(500);
+        res.end();
+    }
+});
 
 router.post("/update-exercise-control/:id", isLoggedIn, async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
