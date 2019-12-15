@@ -16,10 +16,7 @@
         }
     </style>
 </head>
-<body onload="function f() {
-    document.getElementById('titleReview').validity.valid;
-    document.getElementById('commentReview').validity.valid;
-}">
+<body>
 <p id="alert"></p>
 <h2>Rate your coach {name}</h2>{!name of coach!}
 <span id="firstStar" onclick="starsRating(event)" class="fa fa-star checked"></span>
