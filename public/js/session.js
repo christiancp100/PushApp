@@ -84,6 +84,17 @@ async function getCoaches() {
     return await everyone.json();
 }
 
+async function getCoachesIndex() {
+    let everyone = await fetch("/coaches/search?accountType=coach");
+    let everyoneArray = await everyone.json();
+    let grid = document.getElementById("grid");
+    for(let i =0; i< everyoneArray.length; i++){
+        console.log(everyoneArray[i]);
+        dust.render("dashboard_partials/coach_card_for_list", {coach: everyoneArray[i]}, ((err,out)=>{
+            grid.innerHTML += out;
+    }));
+    }
+}
 displayCoaches = async (coachesArray) => {
     //leave this one
     cleanCards();
