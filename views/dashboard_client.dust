@@ -3,7 +3,7 @@
 {>"dashboard_partials/head" css="/css/client.css"/}
 
 <body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="clientButtons()">
-    {>"dashboard_partials/header" field="clients" name="John Doe" profile-picture="https://randomuser.me/api/portraits/men/61.jpg"/}
+    {>"dashboard_partials/header" field="clients" name="{user.firstName}" profile-picture="https://randomuser.me/api/portraits/men/61.jpg"/}
 
     <main>
         <div id="main-container" class="container">
@@ -20,7 +20,7 @@
                     </div>
                     <div class="row center-align">
                         <div class="col m6 s12">
-                            <a onclick="startWorkout()" class="btn-large black">Begin Workout</a>
+                            <a onclick="startWorkout()" id="beginWorkout-btn" class="btn-large black">Begin Workout</a>
                         </div>
                         <div class="col m6 s12">
                             <a class="btn-large black disabled">Contact Coach</a>

@@ -16,6 +16,22 @@
     transform: translateX(-50%);
 }
 
+#im {
+    border-radius: 50%;
+}
+
+#reg input{
+    border: none;
+    background-color: transparent;
+    font-size: 3rem;
+    display: block;
+    text-align: center;
+    text-transform: uppercase;
+    align-self: center;
+    padding-bottom: 2rem;
+    color: white;
+}
+
 .register-form input{
     border: none;
     background-color: transparent;

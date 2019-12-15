@@ -1,5 +1,5 @@
 <ul id="sidenav-left" class="sidenav sidenav-fixed black style=" transform: translateX(-105%);">
-    <li><a href="#" class="logo-container white-text">{name}<i class=""><img class="cirlce profile-pic" src="{user.photo}" alt=""></i></a></li>
+    <li><a href="#" class="logo-container white-text">{name}<i class=""><img class="circle profile-pic" src="{user.photo}" alt=""></i></a></li>
     <li class="no-padding">
         <ul>
             {#nItems}{!put links inside the array, or use AJAX!}

@@ -6,9 +6,9 @@ function gotoCheckout(e) {
         document.getElementById("grid").innerHTML = out;
     });
     initStripe();
-};
+}
 
-var orderData = {
+let orderData = {
     items: [{id: "PushApp membership"}],
     serviceId: ""
 };
@@ -45,28 +45,56 @@ function fetchCoach(e) {
         });
 }
 
-function getImage() {
-    let file = document.getElementById("image").files[0];
-    let fileReader = new FileReader();
-    fileReader.onload = function () {
-        let data = fileReader.result;
-        console.log(data);
-        document.getElementById("im").src = data;
-        document.getElementById("putimage").value = data;
-    }
-    fileReader.readAsDataURL(file);
+/*sets image to default (in part)*/
+function deleteButton() {
+    document.getElementById('putimage').value = '';
+    document.getElementById('im').src = "";
 }
 
-function fetchRating(e, coach) {
-    e.preventDefault();
-    fetch('/clients/rating', {
-        method: "POST",
-        body: JSON.stringify({coach : coach})//todo send coach or its id when you have ended the session
-    })
-        .then(res => res.text())
-        .then(text => {
-            //todo bring form of rating to page
-        })
+function getImage() {
+    let file = document.getElementById("image").files[0];
+    let height;
+    let width;
+    console.log(file);
+    let fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+    fileReader.onload = function () {
+        let data = fileReader.result;
+        let image = new Image();
+        image.src = data;
+        image.onload = function () {
+            height = this.height;
+            width = this.width;
+            let pic = document.getElementById("im");
+            let form;
+            if (height === width) {
+                pic.className = 'profile-square-image';
+                form = 'square';
+            } else if (width > height) {
+                pic.className = 'profile-rec-image';
+                form = 'rec';
+            } else {
+                pic.className = 'profile-port-image';
+                form = 'port';
+            }
+            console.log("width ", width);
+            console.log("height: ", height);
+            document.getElementById("form").value = form;
+            pic.src = data;
+            document.getElementById("putimage").value = data;
+        }
+    };
+}
+
+async function fetchRating() {
+    // e.preventDefault();
+    try {
+        let res = await fetch('/clients/rating');
+        return await res.text();
+    } catch (e) {
+        console.log(e);
+    }
+
 }
 
 function starsRating(e) {
@@ -76,12 +104,12 @@ function starsRating(e) {
     let save = e.target.nextSibling;
     let child = e.target;
     //color the stars
-    while (child.nodeName != "H2") {
+    while (child.nodeName !== "H2") {
         child.className = colorClass;
         child = child.previousSibling;
     }
     //uncolor the stars
-    while (save.nodeName != "BR") {
+    while (save.nodeName !== "BR") {
         save.className = uncolorClass;
         save = save.nextSibling;
     }
@@ -92,73 +120,93 @@ function addReview(e, id) {
     e.preventDefault();
     let rating = 0;
     let first = document.getElementById("firstStar");
-    while (first.nodeName == "SPAN") {
-        if (first.className == "fa fa-star checked") {
+    while (first.nodeName === "SPAN") {
+        if (first.className === "fa fa-star checked") {
             ++rating;
         }
         first = first.nextSibling;
     }
-    let comment = document.getElementById("commentReview").value;
-    let title = document.getElementById("titleReview").value;
-    fetch('/coaches/newrating', {
-        method: "POST",
-        body: JSON.stringify({
-            score: rating,
-            title: title,
-            comment: comment,
-            id: id
-        }),
-        /*headers: {
-            'Content-type' : 'application/json'
-        }*/
-    })
-}
-
-function starColor(score) {
-    document.getElementById("titleReview").validity.valid;
-    document.getElementById("commentReview").validity.valid;
-    let uncolorClass = "unchecked hov fa fa-star";
-    let colorClass = "hov fa fa-star checked";
-    let star = document.getElementById("firstStar");
-    while (score > 0) {
-        star.className = colorClass;
-        --score;
-        star = star.nextSibling;
-    }
-    if (star.nodeName != "BR") {
-        while (star.nodeName != "BR") {
-            star.className = uncolorClass;
-            star = star.nextSibling;
-        }
-    }
-}
-
-function changeRev(e, objId) {
-    e.preventDefault();
-    let comment = document.getElementById("commentReview").value;
-    let title = document.getElementById("titleReview").value;
-    let rating = 0;
-    let first = document.getElementById("firstStar");
-    while (first.nodeName == "SPAN") {
-        /*TODO make the class work without touching again stars*/
-        if (first.className == "fa fa-star checked") {
-            ++rating;
-        }
-        first = first.nextSibling;
-    }
-    fetch('/coaches/rating', {
-        method: "PUT",
-        body: JSON.stringify({
-            score: rating,
-            title: title,
-            comment: comment,
-            objId: objId
+    let comment = document.getElementById("commentReview");
+    let title = document.getElementById("titleReview");
+    if (!title.checkValidity() || !comment.checkValidity()) {
+        document.getElementById("alert").innerText = "Please fill all fields";
+    } else {
+        comment = comment.value;
+        title = title.value;
+        document.getElementById("alert").innerText = "";
+        fetch('/workouts/finish-workout', {
+            method: "POST",
+            body: JSON.stringify({
+                score: rating,
+                title: title,
+                comment: comment,
+                id: id, //id of coach,
+                new: 'Y'
+            }),
+            headers: {
+                'content-type': 'application/json',
+                'accept': 'text/html'
+            },
         })
-    }).then((res) => {
-        /*todo whatever needed*/
-    }).catch(err => new Error(err))
+            .then(res => res.text())
+            .then(text => page.innerHTML = text)
+            .catch((err) => console.log(err))
+    }
 }
 
+
+function changeRev(objId) {
+    let comment = document.getElementById("commentReview");
+    let title = document.getElementById("titleReview");
+    if (!title.checkValidity() || !comment.checkValidity()) {
+        document.getElementById("alert").innerText = "Please fill all fields";
+    } else {
+        comment = comment.value;
+        title = title.value;
+        document.getElementById("alert").innerText = "";
+        let rating = 0;
+        let first = document.getElementById("firstStar");
+        while (first.nodeName == "SPAN") {
+            if (first.className == "fa fa-star checked") {
+                ++rating;
+            }
+            first = first.nextSibling;
+        }
+        fetch('/workouts/finish-workout', {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json',
+                'accept': 'text/html'
+            },
+            body: JSON.stringify({
+                score: rating,
+                title: title,
+                comment: comment,
+                objId: objId,
+                new: 'N'
+            })
+        })
+            .then((res) => res.text())
+            .then(text => page.innerHTML = text)
+            .catch(err => console.log(err))
+    }
+}
+
+function noReviewChange() {
+    fetch('/workouts/finish-workout', {
+        method: "POST",
+        headers: {
+            'content-type': 'application/json',
+            'accept': 'text/html'
+        },
+        body: JSON.stringify({
+            new: 'X'
+        })
+    })
+        .then((res) => res.text())
+        .then(text => page.innerHTML = text)
+        .catch(err => console.log(err))
+}
 
 /*_______________00__________________
 ________________0000_________________
@@ -176,18 +224,28 @@ _________0000000000000000____________
 ______________000_0_0000_____________
 ____________00000_0__00000___________
 ___________00_____0______00__________
+YOU HAVE FOUND AN EASTER EGG
 */
+
 function changeReview(e, objId) {
     e.preventDefault();
-    console.log("objId", objId);
     document.getElementById("titleReview").disabled = false;
     document.getElementById("commentReview").disabled = false;
     document.getElementById("buttons").innerHTML = '<button id="rate" type="button">Rate</button>';
     document.getElementById("rate").addEventListener("mousedown", function () {
-        changeRev(e, objId)
+        changeRev(objId)
     })
-    document.querySelectorAll("span").forEach((el) => {
-        console.log(el);
+    document.querySelectorAll("SPAN").forEach((el) => {
         el.addEventListener("mousedown", starsRating)
     });
+}
+
+getUser = async () => {
+    let obj = await fetch('/auth/getuserinfo');
+    obj = await obj.json();
+    return obj.username;
+};
+
+async function redirectDashboard() {
+    return window.location.assign("/" + await getUser());
 }

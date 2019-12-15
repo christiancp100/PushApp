@@ -16,21 +16,27 @@
         }
     </style>
 </head>
-<body onload="starColor({score})">
+<body>
+<p id="alert"></p>
 <h2>You have already rated {name}, do you want to change your rating?</h2>
-<span id="firstStar" class="fa fa-star"></span>
-<span class="fa fa-star"></span>
-<span class="fa fa-star"></span>
-<span class="fa fa-star"></span>
-<span class="fa fa-star"></span><br>
+<span id="firstStar" {@gte key=score value=1}class="fa fa-star checked"
+      {:else}class="fa fa-star"{/gte}></span>
+<span {@gte key=score value=2}class="fa fa-star checked"
+{:else}class="fa fa-star"{/gte}></span>
+<span {@gte key=score value=3}class="fa fa-star checked"
+{:else}class="fa fa-star"{/gte}></span>
+<span {@gte key=score value=4}class="fa fa-star checked"
+{:else}class="fa fa-star"{/gte}></span>
+<span {@gte key=score value=5}class="fa fa-star checked"
+{:else}class="fa fa-star"{/gte}></span><br>
 <label>Title of review:
-    <input disabled id="titleReview" value="{title}" type="text" name="title" placeholder="Title">
+    <input required pattern="\w*[a-zA-Z]\w*" disabled id="titleReview" value="{title}" type="text" name="title" placeholder="Title">
 </label><br>
 <p>Add Comment:</p>
-<textarea disabled id="commentReview" rows="5" cols="58" placeholder="Add your comment...">{comment}</textarea>
+<textarea minlength="2" required disabled id="commentReview" rows="5" cols="58" placeholder="Add your comment...">{comment}</textarea>
 <div id="buttons">
 <button onclick="changeReview(event, '{objId}')" type="button">Yes</button>
-<button type="button">No</button> {!TODO go on!}
+<button onclick="noReviewChange()" type="button">No</button>
 </div>
 <script src="/js/helper.js"></script>
 </body>

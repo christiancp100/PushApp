@@ -1,7 +1,7 @@
 <div class="masonry row">
     <div class="col s12" id="divtitle">
         <h2 id="title" class="center">Create New Schedule</h2>
-        <div class="input-field col s6" id="schedName">
+        {!<div class="input-field col s6" id="schedName">
                     <input id="last_name" type="text" class="validate">
 
                     <label for="last_name">Schedule Name</label>
@@ -10,7 +10,7 @@
       <i class="material-icons" id="done_outline" >done_outline</i>
       </a>
 
-        </div>
+        </div>!}
 
     </div>
 

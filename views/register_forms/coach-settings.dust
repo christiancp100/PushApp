@@ -4,10 +4,12 @@
 <link href="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/admin-materialize.min.css?0" rel="stylesheet">
  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
  <link rel="stylesheet" href="/css/settings.css">
+ <link rel="stylesheet" href="/css/image.css">
     <title>Coach settings</title>
 </head>
 <body>
 <div class="container">
+<a class="btn-floating grey" style="margin: 3rem;" onclick="redirectDashboard()"><i class="material-icons">arrow_back</i></a>
     <h2 class="center white-text">Settings </h2>
 <form action="/coaches/edit/{thisId}?_method=PUT" method="POST" enctype="application/x-www-form-urlencoded">
     {>"../partials/settings"/}

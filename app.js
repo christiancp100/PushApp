@@ -103,7 +103,8 @@ async function initAdmin() {
                 country: 'Switzerland',
                 currency: 'chf',
                 localization: 'en-US',
-                accountType: 'admin'
+                accountType: 'admin',
+                photo: '/img/logoPushAppWhite.svg'
             });
 
             // Remember to move admin's password to .ENV file

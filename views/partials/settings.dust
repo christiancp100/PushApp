@@ -36,8 +36,14 @@
                 <input class="file-path validate" type="text">
          </div>
 </div>
-    <img src="{photo}" id="im">
+    {?photo}
+        <div class="cut-image">
+            <img src="{photo}" class="profile-{form}-image" id="im" alt="profile image">
+        </div>
+    {/photo}
+    <input style="color: black" onclick="deleteButton()" type="button" value="Remove image">
     <input value="{photo}" id="putimage" type="hidden" name="photo">
+    <input value="{form}" id="form" type="hidden" name="form">
 </div>
 
 <div class="row">
@@ -116,31 +122,6 @@
     <div class="input-field col s12">
         <label>Country:
             <input required value="{country}" type="text" name="country"/>
-        </label>
-    </div>
-</div>
-
-<div class="row">
-<div class="input-field col s12">
-    <label>Currency:
-        <select required id="currency" name="currency">
-            <option {@eq key=currency value="Euro"} selected {/eq} value="Euro">€</option>
-            <option {@eq key=currency value="CHF"} selected {/eq}value="CHF">CHF</option>
-            <option {@eq key=currency value="USD"} selected {/eq}value="USD">$</option>
-            <option {@eq key=currency value="AUS"} selected {/eq} value="AUS">AU$</option>
-            <option {@eq key=currency value="CAN"} selected {/eq} value="CAN">$CAN</option>
-            <option {@eq key=currency value="Yen"} selected {/eq} value="Yen">¥</option>
-            <option {@eq key=currency value="GBP"} selected {/eq} value="GBP">£</option>
-            <option {@eq key=currency value="SWE"} selected {/eq} value="SWE">kr</option>
-        </select>
-    </label>
-</div>
-</div>
-
-<div class="row">
-    <div class="input-field col s12">
-        <label>Localization: {!TODO localization function work!}
-            <input onload="getLocation()" name="localization"/>
         </label>
     </div>
 </div>

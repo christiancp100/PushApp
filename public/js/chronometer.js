@@ -72,9 +72,13 @@ window.onload = chronoStart;
 
 function clientButtons(){
   let buttons = document.querySelectorAll('.no-padding ul li a');
-  let buttonCoach = buttons[4];
+  let buttonCoach = buttons[1];
+  let buttonDashboard = buttons[0];
   buttonCoach.addEventListener("click", () => {
-    renderCoaches();
+      renderCoaches();
+  });
+  buttonDashboard.addEventListener("click", () => {
+      location.reload();
   });
 }
 clientButtons();
