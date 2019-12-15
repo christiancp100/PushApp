@@ -567,3 +567,4 @@ dist
 
 # Dust views.js
 public/js/views.js
+*.js

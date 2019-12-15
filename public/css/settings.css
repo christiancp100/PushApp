@@ -13,8 +13,11 @@ select{
 }
 
 body {
-    width: auto;
     background-image: url('../img/settings-background.jpg');
+    height: 500px;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: cover;
 }
 
@@ -45,4 +48,9 @@ input[type="submit"]{
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
+
+#im {
+    padding: 5px;
+    border-radius: 50%;
 }

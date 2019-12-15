@@ -24,6 +24,19 @@ let ClientInfo = mongoose.model('ClientInfo');
 let CoachClients = mongoose.model('CoachClients');
 let MoneyAccount = mongoose.model('MoneyAccount');
 
+router.get('/test', function (req, res) {
+    res.render('rating/rating-first.dust', {name: 'Moreno', id: '5de5094ec516ae82b90c9c44'});
+});
+
+router.get('/testing', function (req, res) {
+    res.render('rating/rating-again.dust', {
+        name: 'Moreno',
+        score: 4,
+        comment: "HE was very good",
+        title: "awesome",
+        objId: '5de7f4e3d9511123b9bfd669'
+    });
+});
 
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
@@ -135,12 +148,20 @@ router.get('/:username', isLoggedIn, async (req, res, next) => {
 
 
 async function renderClientDashboard(res, activeUser) {
+    let firstName;
+    if (activeUser.firstName.length > 14) {
+        firstName = activeUser.firstName.slice(0, 14) + '.';
+    } else {
+        firstName = activeUser.firstName;
+    }
+
     let menu = {
         user:
             {
-                firstName: activeUser.firstName,
+                firstName: firstName,
                 photo: activeUser.photo,
-                form: activeUser.form
+                id: activeUser._id,
+                form: activeUser.form,
             }
         ,
         items: [
@@ -214,37 +235,40 @@ async function clientsDropdown(activeUser) {
 }
 
 async function renderCoachDashboard(res, activeUser) {
-  /*if (typeof activeUser.photo == "undefined" || activeUser.photo === ' ') {
-        activeUser.photo = '/img/icons/unknown-user.png';
-        console.log("active: ", activeUser);
-      activeUser.form = 'square';
-  }*/
-  console.log("Active user ", activeUser);
-  let menu = {
-      user: {
-        firstName: activeUser.firstName,
-          form: activeUser.form,
-        id: activeUser._id,
-        photo: activeUser.photo,
-      },
-      items: [
-        {name: "Dashboard", icon: "web"},
-        {name: "Clients", icon: "list"},
-        {name: "MyService", icon: "dynamic_feed"}
-      ],
-      accordions:
-        [
-          {
-            title: "Account",
-            icon: "chevron_left",
-            subItems: [
-              {name: "Logout", icon: "person", logout: "true"},
-              {name: "Settings", icon: "settings", accountType: "coaches"},
-            ]
-          }
+    console.log("Active user ", activeUser);
+    let firstName;
+    if (activeUser.firstName.length > 10) {
+        firstName = activeUser.firstName.slice(0, 10) + '.';
+    } else {
+        firstName = activeUser.firstName;
+    }
+
+    let menu = {
+        user: {
+            firstName: "Coach " + firstName,
+            form: activeUser.form,
+            id: activeUser._id,
+            photo: activeUser.photo,
+        },
+        items: [
+            {name: "Dashboard", icon: "web"},
+            {name: "Clients", icon: "list"},
+            {name: "MyService", icon: "dynamic_feed"}
         ],
-      clients:
-        await clientsDropdown(activeUser)}
+        accordions:
+            [
+                {
+                    title: "Account",
+                    icon: "chevron_left",
+                    subItems: [
+                        {name: "Logout", icon: "person", logout: "true"},
+                        {name: "Settings", icon: "settings", accountType: "coaches"},
+                    ]
+                }
+            ],
+        clients:
+            await clientsDropdown(activeUser)
+    }
 
     res.render("dashboard_coach.dust", menu);
 }
@@ -256,7 +280,7 @@ async function renderAdminDashboard(res, activeUser) {
     let menu = {
         user:
             {
-                firstName: "Coach " + activeUser.firstName,
+                firstName: activeUser.firstName,
                 photo: activeUser.photo
             }
         ,

@@ -35,13 +35,15 @@
     overflow: hidden;
     border-radius: 50%;
 }
-.big-cut-image{
+
+.big-cut-image {
     width: 200px;
     height: 200px;
     position: relative;
     overflow: hidden;
     border-radius: 50%;
 }
+
 .show-image {
     display: inline-flex;
     padding-top: 10px;

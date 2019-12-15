@@ -14,6 +14,7 @@ require('../../models/SessionControl.js');
 require('../../models/Credential.js');
 require('../../models/UserAccount.js');
 require('../../models/CoachClients.js');
+require('../../models/Notification.js');
 require('../../models/Rating.js');
 
 let Schedule = mongoose.model('Schedule');
@@ -24,8 +25,8 @@ let ExerciseControl = mongoose.model('ExerciseControl');
 let Credentials = mongoose.model('Credentials');
 let UserAccount = mongoose.model('UserAccount');
 let CoachClients = mongoose.model('CoachClients');
+let Notification = mongoose.model('Notification');
 let Rating = mongoose.model('Rating');
-
 
 function isLoggedIn(req, res, next) {
     if (!req.user) {
@@ -39,6 +40,94 @@ function isLoggedIn(req, res, next) {
         res.redirect('/login');
     }
 }
+
+//STATISTICS
+router.post('/statistics/', isLoggedIn, async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
+        let userSessions = await Session.findOne({ _clientId: req.user._userAccountId, weekday: req.body.day });
+        if (userSessions == null) {
+            res = setResponse('json', 200, res, { exercises: null });
+            res.end();
+            return
+        }
+        let exerciseProgress = [];
+        let exerciseNames = [];
+        for (let i = 0; i < userSessions.exercises.length; i++) {
+            exerciseProgress[i] = await ExerciseControl.find({ exercise: userSessions.exercises[i] });
+            let exercise = await Exercise.findOne({ _id: userSessions.exercises[i] });
+            exerciseNames.push(exercise.name);
+            console.log(exercise.name);
+        }
+        res = setResponse('json', 200, res, { exercises: exerciseProgress, exerciseNames: exerciseNames });
+        res.end();
+    } else {
+        console.log("Error, bad request");
+        res.status(400);
+        res.end();
+    }
+});
+
+//NOTIFICATIONS
+router.get('/notification/:id?', isLoggedIn, async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
+        if (req.params.id) {
+            console.log("Given id", req.params.id);
+            let notification = await Notification.findOne({ _id: req.params.id });
+            notification.viewed = true;
+            let savedNotification = await notification.save();
+            res = setResponse('json', 200, res, { notification: notification });
+            res.end();
+        } else {
+            let notifications = await Notification.find({ viewed: false, for: req.user._userAccountId });
+            console.log(notifications);
+            for (let i = 0; i < notifications.length; i++) {
+                console.log(notifications[i]);
+                notifications[i].viewed = true;
+                let saved = await notifications[i].save();
+                if (i === notifications.length - 1) {
+                    res = setResponse('json', 200, res, { notifications: notifications });
+                    res.end();
+                }
+            }
+
+        }
+    } else {
+        console.log("Error, bad request");
+        res.status(400);
+        res.end();
+    }
+});
+
+router.post('/notification', isLoggedIn, async (req, res) => {
+    if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
+        if (req.body.from && req.body.for && req.body.comments) {
+            console.log(req.body);
+            let notification = new Notification({
+                from: req.body.from,
+                for: req.body.for,
+                exerciseName: req.body.exerciseName,
+                repetitions: req.body.repetitions,
+                weight: req.body.weight,
+                sets: req.body.sets,
+                comments: req.body.comments,
+                userName: req.body.userName,
+                typeofMessage: req.body.typeofMessage,
+            });
+            let savedNotification = await notification.save();
+            res = setResponse('json', 200, res, { notification: notification });
+            res.end();
+        } else {
+            console.log("Error, bad request");
+            res.status(400);
+            res.end();
+        }
+    } else {
+        console.log("Error, bad request");
+        res.status(400);
+        res.end();
+    }
+});
+
 
 /* GETS */
 // Get ALL at /workouts root, not serving data
@@ -164,12 +253,13 @@ let newRating = async (req, res, next) => {
 
             await rate.save();
             next();
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
             res.status(500).end("SOME ERROR with saving")
         }
-    } else { next() }
+    } else {
+        next()
+    }
 }
 
 let oldRating = async (req, res, next) => {
@@ -188,7 +278,9 @@ let oldRating = async (req, res, next) => {
             console.log(e);
             res.status(500).end();
         }
-    } else { next() }
+    } else {
+        next()
+    }
 }
 router.post('/finish-workout', isLoggedIn, newRating, oldRating, async (req, res) => {
     if (req.get('Content-Type') === "application/json" && req.accepts("text/html")) {
@@ -378,7 +470,7 @@ router.get('/exercises/search', async (req, res) => {
         res.end();
     }
 });
-//xx
+
 router.get('/exercises/findById/:id', async (req, res) => {
     if ((req.get('Content-Type') === "application/json" && req.get('Accept') === "application/json") || (req.get('Content-Type') === "application/x-www-form-urlencoded" && req.get('Accept') === "application/json")) {
         try {
@@ -761,6 +853,7 @@ function getFilter(req) {
     }
 }
 
+
 // Creates custom responses
 function setResponse(type, code, res, msg) {
     res.status(code);
@@ -802,5 +895,6 @@ function getWeekDay() {
             return "Error";
     }
 }
+
 
 module.exports = router;

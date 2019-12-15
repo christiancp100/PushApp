@@ -25,19 +25,11 @@
                 <h1 id="about" class="heading--gradient">About PushApp</h1>
                 <div class="row">
 
-                    <p class="col-lg-12 col-xs-12 paragraph-text mb-3">Lorem, ipsum dolor sit amet consectetur
-                        adipisicing elit.
-                        Soluta,
-                        molestias
-                        id
-                        ullam tempora atque,
-                        quisquam
-                        consequuntur, quis blanditiis et officia doloribus sed tenetur quod non. Expedita beatae modi id
-                        consequatur
-                        natus facere doloremque tenetur molestias quae eum quia esse laborum quos, unde adipisci enim!
-                        Ipsum
-                        magni
-                        temporibus sapiente corrupti ullam.
+                    <p class="col-lg-12 col-xs-12 paragraph-text mb-3">
+                        PushApp is a free fitness application, designed to connect the world of coaches and athletes in an instant and intuitive way.
+                        By registering as a coach, it is possible to provide paid fitness services, to which users can register, maintaining direct
+                        contact with the coach, who will follow the user throughout the subscription period.
+                        The user can keep track of his own improvements on his profile, and, if he wants, even give feedback to the coaches.
                     </p>
 
                     <a class="btn btn--gradient" href="/register">Sign up now!</a>
@@ -60,22 +52,22 @@
                 <div class="card col-lg-4 col-xs-12">
                     <img src="/img/icons/man-dumbell.svg" alt="man with dumbell icon">
                     <h2>Create routines</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio tempora temporibus praesentium
-                        mollitia
+                    <p>
+                        The coaches will create customized programs adapted to your current physical form, which will allow you to achieve the desired result.
                     </p>
                 </div>
                 <div class="card col-lg-4 col-xs-12">
                     <img src="/img/icons/coach.svg" alt="man with dumbell icon">
                     <h2>Hire coaches</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio tempora temporibus praesentium
-                        mollitia
+                    <p>
+                        By hiring a coach you will have an expert figure at your side, able to advise you on the best tactics to achieve your goals.
                     </p>
                 </div>
                 <div class="card col-lg-4 col-xs-12">
                     <img src="/img/icons/support.svg" alt="man with dumbell icon">
                     <h2>Real-Time Support</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio tempora temporibus praesentium
-                        mollitia
+                    <p>
+                        Through a chat and real-time feedback on the exercises, the coaches will follow you always and everywhere during your journey.
                     </p>
                 </div>
             </div>

@@ -29,9 +29,9 @@ searchCoaches = async () => {
         return await displayCoaches(everyone);
     }
     let displayCoachesArray = [];
-    for(let i =0; i<everyone.length; i++) {
+    for (let i = 0; i < everyone.length; i++) {
         everyone[i].firstName = toCamelCase(everyone[i].firstName);
-        if(everyone[i].firstName.includes(txt) || everyone[i].lastName.includes(txt)){
+        if (everyone[i].firstName.includes(txt) || everyone[i].lastName.includes(txt)) {
             displayCoachesArray.push(everyone[i]);
             console.log("FOUND THIS GUY: ", everyone[i].firstName, everyone[i].lastName);
         }
@@ -65,20 +65,20 @@ async function renderCoaches() {
     });
 }
 
-hiredAlready = async (id) => {
-    let getting = await fetch("/coaches/hire/coach/" + id, {
-        method: "GET",
-        headers: {'Content-Type': 'application/json'}
-    });
-    let clientsArray = await getting.json();
-    for (let i = 0; i < clientsArray.length; i++) {
-        if (clientsArray[i]._clientId === await getUserId()) {
-            console.log("found this guy", clientsArray[i].firstName, clientsArray[i].lastName);
-            return 1;
-        }
-    }
-    return 0;
-};
+// checkIfHiredAlready = async (id) => {
+//     let getting = await fetch("/coaches/hire/coach/" + id, {
+//         method: "GET",
+//         headers: {'Content-Type': 'application/json'}
+//     });
+//     let clientsArray = await getting.json();
+//     for (let i = 0; i < clientsArray.length; i++) {
+//         if (clientsArray[i]._clientId.localeCompare("5de65d6c34b8d99f3f2aaf71") === 0) {
+//
+//             return 1;
+//         }
+//     }
+//     return 0;
+// };
 
 async function getCoaches() {
     let everyone = await fetch("/coaches/search?accountType=coach");
@@ -106,32 +106,21 @@ displayCoaches = async (coachesArray) => {
 
             for (let k = 0; k < buttons.length; i++) {
                 // if(coachesArray[i] !== undefined) {
-                    console.log(coachesArray[i].firstName);
-                    if (buttons[k].name === coachesArray[i]._id) {
-                        let span = document.createElement("span");
-                        span.innerHTML = "HIRED ALREADY!";
-                        span.className = "red-text";
+                console.log(coachesArray[i].firstName);
+                if (buttons[k].name === coachesArray[i]._id) {
+                    let span = document.createElement("span");
+                    span.innerHTML = "HIRED ALREADY!";
+                    span.className = "red-text";
 
-                        let append = buttons[k].parentNode;
-                        buttons[k].remove();
-                        append.appendChild(span);
-                    }
+                    let append = buttons[k].parentNode;
+                    buttons[k].remove();
+                    append.appendChild(span);
+                }
                 // }
             }
         }
     }
 };
-
-// displayCoachesIndex = async (coachesArray) => {
-//     cleanCards();
-//     coachesArray.forEach(coach => {
-//         coach.description = coach.description.slice(0, 50) + "...";
-//         dust.render("partials/coach_card", {coach: coach}, function (err, out) {
-//             document.getElementById("grid").innerHTML += out;
-//         });
-//     })
-// };
-
 
 // Used in client dashboard
 async function getExercises() {
@@ -148,7 +137,7 @@ async function getExercises() {
             method: 'GET',
             headers: headers,
         });
-        console.log(session)
+
         let exercises = [];
         if (session.status === 200) {
             let foundSession = await session.json();
@@ -161,7 +150,6 @@ async function getExercises() {
                 });
 
                 exercise = await exercise.json();
-                console.log(exercise)
                 await exercises.push(exercise);
             }
         } else {
@@ -176,9 +164,8 @@ async function getExercises() {
                 repetitions: "-",
                 comments: "-"
             }];
+            document.getElementById("beginWorkout-btn").classList.add("disabled");
         }
-        console.log(exercises);
-
         dust.render("dashboard_partials\/schedule_table_row",
             {exercises: exercises}, (err, out) =>
                 document.getElementById('scheduleTable').innerHTML = out);
@@ -192,4 +179,5 @@ function getWeekDay() {
     return weekdays[new Date().getDay()];
 }
 
-getExercises();
+getExercises()
+    .catch((e) => console.log(e));

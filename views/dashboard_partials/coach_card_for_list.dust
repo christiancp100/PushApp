@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-image">
             <img src="{coach.photo}">
-            <span name="{coach._id}" class="card-title">{coach.firstName} {coach.lastName} </span>
+            <span name="{coach._id}"class="card-title">{coach.firstName} {coach.lastName} </span>
 
             {?noRating}
                 <span>No rating yet for {coach.firstName}</span>
@@ -15,7 +15,7 @@
             <p>{coach.description}</p>
         </div>
         <div class="card-action">
-            <a name="{coach._id}" class="black-text" onclick="showServices(event);" id="card_btn" href="#">Show Services</a>
+            <a name="{coach._id}" class="red-text" onclick="showServices(event); " href="#">Show Services</a>
         </div>
     </div>
 </div>

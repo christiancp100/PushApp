@@ -7,12 +7,11 @@
 
     <main>
         <div id="main-container" class="container">
-            <div class="masonry row" style="position: relative; height: 2134.14px;">
-                <div class="col s12" style="position: absolute; left: 0px; top: 0px;">
+            <div class="row">
+                <div class="col s12">
                     <h2 class="text-flow">Dashboard</h2>
                 </div>
-
-                <div class="col m6 s12" style="position: absolute; left: 344px; top: 107px;">
+                <div class="col s12">
                     <div class="card">
                         <div class="card-content">
                             <span class="flow-text card-title">Today's Workout</span>
@@ -21,26 +20,35 @@
                     </div>
                     <div class="row center-align">
                         <div class="col m6 s12">
-                            <a onclick="startWorkout()" class="btn-large black">Begin Workout</a>
+                            <a onclick="startWorkout()" id="beginWorkout-btn" class="btn-large black">Begin Workout</a>
                         </div>
                         <div class="col m6 s12">
                             <a class="btn-large black disabled">Contact Coach</a>
                         </div>
                     </div>
                 </div>
-                {>"dashboard_partials/progress_graph"/}
+            
 
             </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <select class="icons" id="day-picker-progress" onchange="updateChart()">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                    <label>Choose a session to see your progress</label>
+                </div>
+                <canvas class="col s12" id="myChart"></canvas>
+            </div>
         </div>
-
     </main>
     {>"dashboard_partials/footer"/}
-
-</body>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        var socket = io();
-    </script>
+    <input type="hidden" value="{user.id}" id="user_id">
     <script src="/js/buttons.js"></script>
     <script src="/js/fetch.js"></script>
     <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
@@ -53,4 +61,12 @@
     <script src="/js/service.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script src="js/checkout.js" defer></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    var socket = io();
+    </script>
+    <script src="/js/notification-handler.js"></script>
+    <script src="/js/graphs.js"></script>
+</body>
+
 </html>

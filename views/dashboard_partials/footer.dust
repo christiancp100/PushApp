@@ -29,7 +29,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
 
-<!-- External libraries -->
 
 <!-- jqvmap -->
 <script type="text/javascript" src="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/jquery.vmap.min.js?0"></script>
@@ -47,25 +46,6 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 <script src="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/imagesloaded.pkgd.min.js?0"></script>
 <script src="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/masonry.pkgd.min.js?0"></script>
-
-
 <!-- Initialization script -->
 <script src="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/dashboard.min.js?0"></script>
 
-<div class="jqvmap-label" style="display: none;"></div>
-<div class="sidenav-overlay" style="display: none; opacity: 0;"></div>
-<div class="drag-target"></div>
-<div id="chartjs-tooltip" class="bottom" style="opacity: 0; left: 724px; top: 429px; padding: 12px;">
-    <table>
-        <thead>
-        <tr>
-            <th>two</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>Number: 6</td>
-        </tr>
-        </tbody>
-    </table>
-</div>

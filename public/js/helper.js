@@ -19,7 +19,13 @@ function fetchClient(e) {
         .then(res => res.text())
         .then((text) => {
             console.log(text);
-            document.getElementById("reg").innerHTML = text
+            let container = document.getElementById("container-register");
+            container.classList.add("grey");
+            container.classList.add("darken-3");
+            container.classList.add("register-card");
+            let register = document.getElementById("reg");
+            register.classList.remove("register-form");
+            register.innerHTML = text;
         });
 }
 
@@ -29,15 +35,22 @@ function fetchCoach(e) {
     fetch('/register/coach', {method: "GET"})
         .then(res => res.text())
         .then((text) => {
-            console.log(text);
-            document.getElementById("reg").innerHTML = text
+            let container = document.getElementById("container-register");
+            container.classList.add("grey");
+            container.classList.add("darken-3");
+            container.classList.add("register-card");
+            let register = document.getElementById("reg");
+            register.classList.remove("register-form");
+            register.innerHTML = text;
         });
 }
+
 /*sets image to default (in part)*/
 function deleteButton() {
     document.getElementById('putimage').value = '';
     document.getElementById('im').src = "";
 }
+
 function getImage() {
     let file = document.getElementById("image").files[0];
     let height;
@@ -54,17 +67,17 @@ function getImage() {
             width = this.width;
             let pic = document.getElementById("im");
             let form;
-            if (height === width){
+            if (height === width) {
                 pic.className = 'profile-square-image';
                 form = 'square';
-            } else if (width > height){
+            } else if (width > height) {
                 pic.className = 'profile-rec-image';
                 form = 'rec';
             } else {
                 pic.className = 'profile-port-image';
                 form = 'port';
             }
-            console.log("width ",  width);
+            console.log("width ", width);
             console.log("height: ", height);
             document.getElementById("form").value = form;
             pic.src = data;
@@ -74,11 +87,11 @@ function getImage() {
 }
 
 async function fetchRating() {
+    // e.preventDefault();
     try {
         let res = await fetch('/clients/rating');
         return await res.text();
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e);
     }
 
@@ -115,7 +128,7 @@ function addReview(e, id) {
     }
     let comment = document.getElementById("commentReview");
     let title = document.getElementById("titleReview");
-    if (!title.checkValidity() || !comment.checkValidity()){
+    if (!title.checkValidity() || !comment.checkValidity()) {
         document.getElementById("alert").innerText = "Please fill all fields";
     } else {
         comment = comment.value;
@@ -130,13 +143,13 @@ function addReview(e, id) {
                 id: id, //id of coach,
                 new: 'Y'
             }),
-            headers : {
-                'content-type' : 'application/json',
-                'accept' : 'text/html'
+            headers: {
+                'content-type': 'application/json',
+                'accept': 'text/html'
             },
         })
             .then(res => res.text())
-            .then(text => page.innerHTML = text)
+            .then(window.location.reload())
             .catch((err) => console.log(err))
     }
 }
@@ -145,7 +158,7 @@ function addReview(e, id) {
 function changeRev(objId) {
     let comment = document.getElementById("commentReview");
     let title = document.getElementById("titleReview");
-    if (!title.checkValidity() || !comment.checkValidity()){
+    if (!title.checkValidity() || !comment.checkValidity()) {
         document.getElementById("alert").innerText = "Please fill all fields";
     } else {
         comment = comment.value;
@@ -153,8 +166,8 @@ function changeRev(objId) {
         document.getElementById("alert").innerText = "";
         let rating = 0;
         let first = document.getElementById("firstStar");
-        while (first.nodeName == "SPAN") {
-            if (first.className == "fa fa-star checked") {
+        while (first.nodeName === "SPAN") {
+            if (first.className === "fa fa-star checked") {
                 ++rating;
             }
             first = first.nextSibling;
@@ -174,7 +187,7 @@ function changeRev(objId) {
             })
         })
             .then((res) => res.text())
-            .then(text => page.innerHTML = text)
+            .then(window.location.reload())
             .catch(err => console.log(err))
     }
 }
@@ -194,6 +207,7 @@ function noReviewChange() {
         .then(text => page.innerHTML = text)
         .catch(err => console.log(err))
 }
+
 /*_______________00__________________
 ________________0000_________________
 _______________000000________________
@@ -232,6 +246,6 @@ getUser = async () => {
     return obj.username;
 };
 
-async function redirectDashboard(){
-    return window.location.assign("http://127.0.0.1:3000/" + await getUser());
+async function redirectDashboard() {
+    return window.location.assign("/" + await getUser());
 }
