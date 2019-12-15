@@ -17,7 +17,7 @@
     </div>
   </main>
   {>"dashboard_partials/footer"/}
-  <input type="hidden" value="{user.id}" id="coach_id">
+  <input type="hidden" value="{user.id}" id="user_id">
 </body>
 
 <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>

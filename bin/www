@@ -19,8 +19,8 @@ io.on('connection', function (socket) {
         console.log('Client disconnected');
     });
 
-    socket.on('coach notification', function (msg) {
-        console.log('notification for ' +  msg.coachId, msg);
-        io.emit('notification for ' + msg.coachId, msg);
+    socket.on('notification', function (msg) {
+        console.log('notification for ' +  msg.for, msg);
+        io.emit('notification for ' + msg.for, msg);
     });
 });

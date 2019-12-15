@@ -60,3 +60,7 @@ table {
     top: 35%;
     left: 50%;
 }
+
+#notification-message{
+    color: white;
+}

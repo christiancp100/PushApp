@@ -5,7 +5,6 @@
                 <ul id="nav-mobile" class="right">
                     <li class=""><a onclick="removeDotNotification(event)" data-target="dropdown1" class="dropdown-trigger waves-effect"><i class="material-icons white-text">notifications</i><span id="notification-btn" class=""></span></a>
                         <div id="dropdown1" class="dropdown-content notifications black" tabindex="0">
-                            <div  class="notifications-title white-text" tabindex="0">notifications</div>
                         </div>
                     </li>
                     <li><a href="/{field}/Edit"><i class="material-icons white-text">settings</i></a>
