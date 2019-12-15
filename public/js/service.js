@@ -246,8 +246,6 @@ function displayService(services){
     }
     for(let i = 0; i < servicesLength; i++){
         dust.render("dashboard_partials/services_coachesList", {service: services[i], text:"Go to payment"}, (err,out)=>{
-            console.log("OOO",out);
-            console.log("GGG",grid);
             grid.innerHTML += out;
         });
     }
