@@ -7,11 +7,11 @@
             <p><strong>Fee: {service.fee}</strong></p><hr>
             <p>{service.description}</p>
         </div>
-        <div class="card-action">
+        <div class="card-action" style="background-color: black">
         {?text}
-             <a href="#" name="{service._id}" onclick="gotoCheckout(event)">{text}</a>
+             <a href="#" style="color:white" name="{service._id}" onclick="gotoCheckout(event)">{text}</a>
              {:else}
-             <a href="#">Edit service</a>
+             <a style="color:white" href="#">Edit service</a>
              {/text}
         </div>
     </div>
