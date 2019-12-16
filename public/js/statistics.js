@@ -24,18 +24,19 @@ async function updateChart() {
         let res = await fetch("/statistics/" + option, {method: "GET", headers});
         res = await res.json();
         let stats = res.stats;
-        if (stats == null) {
-            return;
-        }
+        // if (stats == null) {
+        //     return;
+        // }
 
         let namesArray = Object.keys(stats);
         let dataArray = Object.keys(stats).map(function (_) {
             return stats[_];
         })
         let dataSets = [];
-        dataArray.forEach((exercise, index) => {
+        dataArray.forEach((stat, index) => {
             let data = {
                 data: dataArray,
+                // data: dataArray[index],
                 label: namesArray[index],
                 borderColor: getRandomColor(),
                 fill: false
@@ -47,7 +48,7 @@ async function updateChart() {
             type: 'line',
             data: {
                 labels: namesArray,
-                datasets: dataSets
+                datasets: [dataSets[0]]
             },
             options: {
                 title: {

@@ -114,7 +114,7 @@ router.get('/:action', isLoggedIn, async (req, res) => {
                     let transactions, users;
 
                     if (req.params.action === 'coaches' || req.params.action === 'clients') {
-                        users = await UserAccount.find(filter);
+                        users = await CoachClients.find(filter);
                         if (!users) {
                             let noData = {'No user data yet': '0'};
                             res = setResponse('json', 404, res, {stats: noData});
