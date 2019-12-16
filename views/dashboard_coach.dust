@@ -5,8 +5,8 @@
   {>"dashboard_partials/header" field="coaches" name="{user.firstName}" profile-picture="/img/icons/user-pic.png"/}
   <main>
     <div id="main-container" class="container">
-      <div class="masonry row" style="position: relative; height: 2134.14px;">
-        <div class="col s12" style="position: absolute; left: 0px; top: 0px;">
+      <div class="row" >
+        <div class="col s12">
           <h2 class="center">Dashboard</h2>
         </div>
         <div class="input-field col s12">

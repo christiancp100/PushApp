@@ -66,9 +66,11 @@ table {
 }
 
 #wrapper-stats {
+    display: block;
     z-index: 0;
 }
 
 #wrapper-schedule {
+    display: block;
     z-index: 1;
 }
