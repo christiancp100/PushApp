@@ -7,10 +7,10 @@
                     <label>Name:
                     <input name="name" placeholder="Name">
                     </label>
-                    <label>Duration:
+                    <label>Duration (Months):
                     <input name="duration" placeholder="Duration">
                     </label>
-                    <label>Fee:
+                    <label>Fee (CHF):
                     <input name="fee" placeholder="Fee">
                     </label>
                     <label>Description:

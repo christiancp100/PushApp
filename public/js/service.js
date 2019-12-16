@@ -123,6 +123,19 @@ async function newService(){
     let duration = document.getElementsByName("duration")[0].value;
     let fee = document.getElementsByName("fee")[0].value;
     let description = document.getElementsByName("description")[1].value;
+    // if(!name){
+    //     console.log("name");
+    // }
+    // let isNumber = /^\d+$/;
+    // if(!duration || isNumber.test(duration)){
+    //     console.log("PUT RIGHT duration");
+    // }
+    // if(!fee || isNumber.test(fee)){
+    //     console.log("PUT RIGHT fee");
+    // }
+    // if(!description){
+    //     console.log("description");
+    // }
     let body = {
         _coachId: await retrieveCoachId(),
         name : name,
