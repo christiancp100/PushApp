@@ -61,6 +61,14 @@ table {
     left: 50%;
 }
 
-#notification-message{
+#notification-message {
     color: white;
+}
+
+#wrapper-stats {
+    z-index: 0;
+}
+
+#wrapper-schedule {
+    z-index: 1;
 }
