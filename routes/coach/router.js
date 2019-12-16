@@ -21,6 +21,33 @@ let Rating = mongoose.model('Rating');
 let Service = mongoose.model('Service');
 let MoneyAccount = mongoose.model('MoneyAccount');
 
+// Search for coach
+router.get('/public/search', function (req, res) {
+    let filter = getFilter(req);
+    UserAccount.find(filter)
+        .then((coaches) => {
+            if (coaches.length > 0) {
+                let length = coaches.length;
+                console.log(length + " coaches has been found!");
+                if (req.accepts('html')) {
+                    res = setResponse('json', 200, res, coaches);
+                    res.status(200);
+                    //render
+                } else if (req.accepts('json')) {
+                    res = setResponse('json', 200, res, coaches);
+                }
+                res.end();
+            } else {
+                res = setResponse('error', 404, res, coaches);
+                res.end();
+            }
+        })
+        .catch((err) => {
+            console.log("0 coaches has been found!");
+            res.status(500).end()
+        })
+});
+
 // GET all coach
 router.get('/', isLoggedIn, async (req, res) => {
     try {
@@ -44,6 +71,7 @@ router.get('/', isLoggedIn, async (req, res) => {
         res.end();
     }
 });
+
 
 // Create a new coach
 router.post('/new', async (req, res) => {
