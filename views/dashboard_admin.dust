@@ -23,7 +23,7 @@
                     <label>Choose an option to see the statistics</label>
 
                 </div>
-                <canvas class="col s12" id="myChart"></canvas>
+                <canvas class="col s12" id="myChart" height="400"></canvas>
             </div>
         </div>
     </main>
