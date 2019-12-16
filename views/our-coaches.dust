@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{title} | Home</title>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/grid.css">
     <link rel="stylesheet" href="/css/layout.css">
     <link rel="stylesheet" href="/css/index_style.css">
     <link rel="stylesheet" href="/css/header.css">
     <link rel="stylesheet" href="/css/nav.css">
     <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/image.css">
+    <link rel="stylesheet" href="/css/client.css">
 </head>
 
 <body onload="getCoachesIndex()">
@@ -22,10 +22,14 @@
     <section class="section-trainers">
         <h1><span class="span-main">All </span><span class="span-secondary">Trainers</span></h1>
     </section>
-         <div class="row" id="grid">
-        </div>
+    <div class="container">
+        <div class="col l12 s12">
+             <div class="row" id="grid">
 
-    {>"partials/footer"/}
+            </div>
+        </div>
+    </div>
+
 </body>
     <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
     <script src="/js/session.js"></script>
