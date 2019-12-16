@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {>"dashboard_partials/head" css="/css/coach.css"/}
-<body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="buttons()">
+<body class="has-fixed-sidenav" data-gr-c-s-loaded="true" onload="updateChart(); buttons()">
   {>"dashboard_partials/header" field="coaches" name="{user.firstName}" profile-picture="/img/icons/user-pic.png"/}
   <main>
     <div id="main-container" class="container">
@@ -9,8 +9,18 @@
         <div class="col s12" style="position: absolute; left: 0px; top: 0px;">
           <h2 class="center">Dashboard</h2>
         </div>
-        {>"dashboard_partials/graph"/}
-        {>"dashboard_partials/composed_graph"/}
+        <div class="input-field col s12">
+            <select class="icons" id="stats-picker" onchange="updateChart()">
+                <option value="revenue">Revenue</option>
+                <option value="clients">Clients</option>
+            </select>
+
+            <div class="wrapper-stats">
+                <label>Choose an option to see the statistics</label>
+                <canvas class="col s12" id="myChart"></canvas>
+            </div>
+        </div>
+
       </div>
         {>"dashboard_partials/schedule" coach="true"/}
     </div>
@@ -26,6 +36,7 @@
 <script src="/js/helper.js"></script>
 <script src="/js/service.js"></script>
 <script src="/js/buttons.js"></script>
+<script src="/js/statistics.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
   var socket = io();

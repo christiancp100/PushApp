@@ -1,4 +1,4 @@
-<div class="masonry row">
+<div class="masonry row wrapper-schedule">
     <div class="col s12" id="divtitle">
         <h2 id="title" class="center">Create New Schedule</h2>
         {!<div class="input-field col s6" id="schedName">

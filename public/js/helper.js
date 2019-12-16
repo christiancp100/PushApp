@@ -204,7 +204,7 @@ function noReviewChange() {
         })
     })
         .then((res) => res.text())
-        .then(text => page.innerHTML = text)
+        .then(window.location.reload())
         .catch(err => console.log(err))
 }
 
