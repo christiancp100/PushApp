@@ -330,6 +330,8 @@ router.get('/rating', isLoggedIn, async (req, res) => {
         let thisCoachId = clientCoachRelation._coachId.toString();
         //find all ratings have every been given by this client
         let rating = await Rating.find({_clientId: req.user._userAccountId});
+        let name = await UserAccount.findById(clientCoachRelation._coachId);
+        name = name.firstName;
         if (rating.length !== 0) {
             //new rating object was not created yet
             //ask if user want to rate the coach again
@@ -339,13 +341,14 @@ router.get('/rating', isLoggedIn, async (req, res) => {
                         score: rating[i].score,
                         comment: rating[i].comment,
                         title: rating[i].title,
+                        name: name,
                         objId: (rating[i]._id).toString()
                     })
                 }
             }
         } else {
             //render the rating page
-            res.render('rating/rating-first.dust', {id: thisCoachId})
+            res.render('rating/rating-first.dust', {id: thisCoachId, name : name})
         }
     } catch (e) {
         console.log(e);

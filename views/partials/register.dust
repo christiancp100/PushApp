@@ -6,7 +6,7 @@
             <label for="first_name">First Name</label>
         </div>
         <div class="input-field col s6">
-            <input class="black-text" class="input-field" required pattern="[a-zA-Z][a-z]+$" type="text" value="{lastName}" name="lastName" />
+            <input class="black-text" class="input-field" required pattern="\D+" type="text" value="{lastName}" name="lastName" />
             <label for="last_name">Last Name</label>
         </div>
     </div>
