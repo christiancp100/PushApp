@@ -14,8 +14,11 @@
                 <option value="revenue">Revenue</option>
                 <option value="clients">Clients</option>
             </select>
-            <label>Choose an option to see the statistics</label>
-            <canvas class="col s12" id="myChart" height="300"></canvas>
+
+            <div class="wrapper-stats">
+                <label>Choose an option to see the statistics</label>
+                <canvas class="col s12" id="myChart"></canvas>
+            </div>
         </div>
 
       </div>
