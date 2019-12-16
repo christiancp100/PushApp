@@ -41,10 +41,10 @@ router.get('/testing', function (req, res) {
 router.get('/', function (req, res, next) {
     if (req.accepts("html")) {
         if (typeof req.user !== "undefined" && req.isAuthenticated()) {
-            console.log("ENTER");
+            // console.log("ENTER");
             res.render('index', {title: 'PushApp', log: 'Y'});
         } else {
-            console.log("NOT ENTER");
+            // console.log("NOT ENTER");
             res.render('index', {title: 'PushApp'});
         }
     } else {
@@ -64,8 +64,6 @@ function isLoggedIn(req, res, next) {
         return next();
     } else if (req.isAuthenticated() && ("/workouts") === req.path) {
         return next();
-        // Uncomment to render as single-page app
-        // } else if (req.isAuthenticated() && ("/money") === req.path) {
     } else if ("/money" === req.path) {
         return next();
     } else {
@@ -183,8 +181,8 @@ async function renderClientDashboard(res, activeUser) {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
-                    {name: "Logout", icon: "person", logout: true},
                     {name: "Settings", icon: "settings", accountType: "clients"},
+                    {name: "Logout", icon: "person", logout: true},
                 ]
             }
         ]
@@ -261,8 +259,8 @@ async function renderCoachDashboard(res, activeUser) {
                     title: "Account",
                     icon: "chevron_left",
                     subItems: [
-                        {name: "Logout", icon: "person", logout: "true"},
                         {name: "Settings", icon: "settings", accountType: "coaches"},
+                        {name: "Logout", icon: "person", logout: "true"},
                     ]
                 }
             ],
@@ -286,30 +284,17 @@ async function renderAdminDashboard(res, activeUser) {
         ,
         items: [
             {name: "Dashboard", icon: "web"},
-            {name: "Clients", icon: "list"},
-            {name: "Chat", icon: "chat"},
-            {name: "MyService", icon: "dynamic_feed"}
         ],
         accordions: [
-            {
-                title: "Accounting",
-                icon: "chevron_left",
-                subItems: [
-                    {name: "Revenue", icon: "show_chart"},
-                    {name: "Users", icon: "equalizer"},
-                    {name: "Conversion Rate", icon: "multiline_chart"},
-                ]
-            },
             {
                 title: "Account",
                 icon: "chevron_left",
                 subItems: [
+                    {name: "Settings", icon: "settings", accountType: "admin"},
                     {name: "Logout", icon: "person", logout: "true"},
-                    {name: "Settings", icon: "settings", accountType: "coaches"},
                 ]
             }
         ],
-        // clients: await clientsDropdown(activeUser)
     };
     res.render("dashboard_admin.dust", menu);
 }

@@ -118,19 +118,22 @@ router.post("/webhook", async (req, res) => {
 
 // Remember to change percentages to data from the database
 async function registerTransaction(req, amount, action) {
-    let description, endDate;
+    let description, endDate, type;
     let startDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
     startDate.setUTCSeconds(req.body.stripeTimestamp);
     endDate = new Date(startDate.setMonth(startDate.getMonth() + req.body.duration));
 
     switch (action) {
         case 'stripe':
-            description = "PushApp " + req.body.duration + "-month(s) membership";
+            type = 'stripe';
+            description = "Stripe: PushApp " + req.body.duration + "-month(s) membership";
             break;
         case 'commission':
+            type = 'commission';
             description = 'Commission: StripeId: ' + req.body._stripeId;
             break;
         case 'payment':
+            type = 'payment';
             description = 'Payment: StripeId: ' + req.body._stripeId;
             break;
         default:
@@ -145,6 +148,7 @@ async function registerTransaction(req, amount, action) {
         status: req.body.status,
         _userId: req.body._userId,
         _coachId: req.body._coachId,
+        type: type,
         startDate: startDate,
         endDate: endDate,
         stripeTimestamp: req.body.stripeTimestamp

@@ -21,17 +21,15 @@
 
     <section class="section-trainers">
         <h1><span class="span-main">All </span><span class="span-secondary">Trainers</span></h1>
-        <div class="container mt-4 mb-5">
-            <div class="row" id="grid">
-            </div>
-        </div>
     </section>
+         <div class="row" id="grid">
+        </div>
+
+    {>"partials/footer"/}
+</body>
     <script src="/js/resources/dustjs-linkedin/dust-core.min.js"></script>
     <script src="/js/session.js"></script>
     <script src="/js/schedule.js"></script>
     <script src="/js/views.js"></script>
     <script src="/js/helper.js"></script>
-    {>"partials/footer"/}
-</body>
-
 </html>

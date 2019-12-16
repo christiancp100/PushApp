@@ -1,4 +1,4 @@
-.footer{
+.footer {
     position: relative;
     height: 35rem;
     width: 100%;
@@ -11,52 +11,52 @@
 }
 
 
-.footer-nav ul{
+.footer-nav ul {
     margin-top: 10rem;
 }
 
-.footer-nav  ul > li, .footer-nav a{
+.footer-nav ul > li, .footer-nav a {
     text-decoration: none;
     color: white;
     display: block;
 }
 
-.footer-menu{
+.footer-menu {
     margin-left: 20rem;
 }
 
-.legal-disclaimer{
+.legal-disclaimer {
     list-style: none;
 }
 
-.footer .footer-nav .legal-disclaimer ul li a:hover{
+.footer .footer-nav .legal-disclaimer ul li a:hover {
     color: black;
 }
 
-.footer-logo{
-    width: 40rem;
+.footer-logo {
+    width: 35em;
     height: auto;
     /*margin-left: 50%;
     transform: translateX(-50%);*/
 }
 
-.footer-list-element{
+.footer-list-element {
     font-weight: 400;
     font-size: 1.7rem;
     transition: all .1s ease-in;
     margin: 1rem 0;
 }
 
-.footer-menu .footer-list-element:hover{
+.footer-menu .footer-list-element:hover {
     color: #cb3066;
 }
 
 
-.legal-disclaimer .footer-list-element:hover{
+.legal-disclaimer .footer-list-element:hover {
     color: #cb3066;
 }
 
-.footer span{
+.footer span {
     position: absolute;
     font-size: 1.5rem;
     color: white;
@@ -66,17 +66,17 @@
 }
 
 @media only screen and (max-width: 875px) {
-    .footer{
+    .footer {
         position: relative;
         height: 50rem;
         width: 100%;
     }
 
-    .footer-menu{
+    .footer-menu {
         margin-left: 50%;
     }
 
-    .footer-logo{
+    .footer-logo {
         width: 20rem;
         height: auto;
         margin: auto;
@@ -84,13 +84,13 @@
         display: block;
     }
 
-    .footer-nav  ul > li, .footer-nav a{
+    .footer-nav ul > li, .footer-nav a {
         text-decoration: none;
         color: white;
         display: block;
     }
 
-    .footer span{
+    .footer span {
         position: absolute;
         font-size: 1.5rem;
         color: white;
