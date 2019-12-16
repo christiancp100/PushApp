@@ -138,8 +138,7 @@ router.get('/:action', isLoggedIn, async (req, res) => {
 
                                 transactionCount[firstDate] = 0;
                                 arrayMove(transactionCount, transactionCount.length - 1, 0);
-
-//aaa
+                                
                                 console.log(transactionCount);
                                 res = setResponse('json', 200, res, {stats: transactionCount});
                             })
