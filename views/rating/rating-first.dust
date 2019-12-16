@@ -25,38 +25,37 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container"  style="background-color: #606060; border: 2px solid black;">
 
 
 <h2 class="center white-text">Rate the coach {name}</h2>{!name of coach!}
     <p id="alert"></p>
     <div class="row" style="padding-bottom: 0">
         <div class="input-field col s12">
-            <span style="background-color: white">
                 <span id="firstStar" onclick="starsRating(event)" class="fa fa-star checked"></span>
                 <span onclick="starsRating(event)" class="unchecked fa fa-star"></span>
                 <span onclick="starsRating(event)" class="unchecked fa fa-star"></span>
                 <span onclick="starsRating(event)" class="unchecked fa fa-star"></span>
                 <span onclick="starsRating(event)" class="unchecked fa fa-star"></span>
-            </span>
         </div>
     </div>
 
     <div class="row" style="padding-top: 0">
         <div class="input-field col s12">
-            <label>Title of review:
+            <label style="color: black">Title of review:
                 <input required id="titleReview" type="text" name="title" placeholder="Title">
             </label>
         </div>
     </div>
     <div class="row">
         <div class="input-field col s12">
-            <label>Add comment:
+            <label style="color: black">Add comment:
                 <textarea minlength="2" required id="commentReview" rows="5" cols="58" placeholder="Add your comment..."></textarea>
             </label>
         </div>
     </div>
     <div class="row">
+        <p id="alert"></p>
         <div id="buttons" class="input-field col s12">
             <input onclick="addReview(event, '{id}')" type="button" value="Rate">
         </div>

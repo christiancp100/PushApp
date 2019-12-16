@@ -62,3 +62,7 @@ input[type="button"]{
     padding: 5px;
     border-radius: 50%;
 }
+
+#alert {
+    color: #550000;
+}

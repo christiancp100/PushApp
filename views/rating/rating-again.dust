@@ -26,12 +26,10 @@
     </style>
 </head>
 <body>
-<div class="container">
-<h2 class="center white-text"> Do you want to change the rating for {name}?</h2>
-    <p id="alert"></p>
+<div class="container" style="background-color: #606060; border: 2px solid black;">
+<h2 class="center"> Do you want to change the rating for {name}?</h2>
     <div class="row" style="padding-bottom: 0">
         <div class="input-field col s12">
-            <span style="background-color: white">
                 <span id="firstStar" {@gte key=score value=1}class="fa fa-star checked"
                       {:else}class="fa fa-star"{/gte}></span>
                 <span {@gte key=score value=2}class="fa fa-star checked"
@@ -42,24 +40,24 @@
                             {:else}class="fa fa-star"{/gte}></span>
                 <span {@gte key=score value=5}class="fa fa-star checked"
                             {:else}class="fa fa-star"{/gte}></span>
-            </span>
         </div>
     </div>
     <div class="row" style="padding-top: 0">
         <div class="input-field col s12">
-            <label>Title of review:
+            <label style="color: black">Title of review:
                 <input required disabled id="titleReview" value="{title}" type="text" name="title" placeholder="Title">
             </label>
         </div>
     </div>
     <div class="row">
         <div class="input-field col s12">
-            <label>Add comment:
+            <label style="color: black">Add comment:
                 <textarea minlength="2" required disabled id="commentReview" rows="5" cols="58" placeholder="Add your comment...">{comment}</textarea>
             </label>
         </div>
     </div>
     <div class="row">
+        <p id="alert"></p>
         <div id="buttons" class="input-field col s12">
             <input style="margin-right: 10px" class="waves-effect white waves-light btn-large" onclick="changeReview(event, '{objId}')" type="button" value="Yes">
             <input class="waves-effect white waves-light btn-large" onclick="noReviewChange()" type="button" value="No">
