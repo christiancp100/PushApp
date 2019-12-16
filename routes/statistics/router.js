@@ -65,6 +65,9 @@ function getFilter(user, type) {
             if (user.accountType === 'admin') {
                 return {accountType: 'client'};
             }
+            if (user.accountType === 'coach') {
+                return {accountType: 'client', _coachId: user._id};
+            }
             break;
     }
 }
@@ -87,10 +90,14 @@ function sum(ary, classifier) {
     }, {})
 }
 
-function arrayMove(arr, fromIndex, toIndex) {
-    let element = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, element);
+function arraySort(arr) {
+    let sortedArr = {};
+    Object.keys(arr).sort((a, b) => {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+    }).forEach(function (key) {
+        sortedArr[key] = arr[key];
+    });
+    return sortedArr;
 }
 
 //STATISTICS
@@ -131,15 +138,14 @@ router.get('/:action', isLoggedIn, async (req, res) => {
                                 let transactionCount = sum(transactions, function (transaction) {
                                     return transaction.creationDate.toISOString().split("T")[0]
                                 });
+
+                                // Adds a zero sales day before first sale for display purposes in graph
                                 let firstDate = new Date(Object.keys(transactionCount)[0]);
-                                console.log(firstDate);
                                 firstDate.setDate(firstDate.getDate() - 1);
                                 firstDate = firstDate.toISOString().split("T")[0];
-
                                 transactionCount[firstDate] = 0;
-                                arrayMove(transactionCount, transactionCount.length - 1, 0);
-                                
-                                console.log(transactionCount);
+                                transactionCount = arraySort(transactionCount);
+
                                 res = setResponse('json', 200, res, {stats: transactionCount});
                             })
                             // res = setResponse('json', 200, res, {transactions: transactions});
