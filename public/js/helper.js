@@ -47,8 +47,12 @@ function fetchCoach(e) {
 
 /*sets image to default (in part)*/
 function deleteButton() {
+    let pic = document.getElementById("im");
+    let div = document.getElementsByClassName("cut-image")[0];
     document.getElementById('putimage').value = '';
-    document.getElementById('im').src = "";
+    pic.src = "";
+    div.className = "";
+    pic.className = "";
 }
 
 function getImage() {
@@ -104,12 +108,13 @@ function starsRating(e) {
     let save = e.target.nextSibling;
     let child = e.target;
     //color the stars
-    while (child.nodeName !== "H2") {
+    while (child != null) {
+        console.log(child);
         child.className = colorClass;
         child = child.previousSibling;
     }
     //uncolor the stars
-    while (save.nodeName !== "BR") {
+    while (save != null) {
         save.className = uncolorClass;
         save = save.nextSibling;
     }
@@ -120,7 +125,7 @@ function addReview(e, id) {
     e.preventDefault();
     let rating = 0;
     let first = document.getElementById("firstStar");
-    while (first.nodeName === "SPAN") {
+    while (first != null) {
         if (first.className === "fa fa-star checked") {
             ++rating;
         }
@@ -166,7 +171,7 @@ function changeRev(objId) {
         document.getElementById("alert").innerText = "";
         let rating = 0;
         let first = document.getElementById("firstStar");
-        while (first.nodeName === "SPAN") {
+        while (first != null) {
             if (first.className === "fa fa-star checked") {
                 ++rating;
             }
@@ -204,7 +209,7 @@ function noReviewChange() {
         })
     })
         .then((res) => res.text())
-        .then(text => page.innerHTML = text)
+        .then(window.location.reload())
         .catch(err => console.log(err))
 }
 
@@ -231,7 +236,7 @@ function changeReview(e, objId) {
     e.preventDefault();
     document.getElementById("titleReview").disabled = false;
     document.getElementById("commentReview").disabled = false;
-    document.getElementById("buttons").innerHTML = '<button id="rate" type="button">Rate</button>';
+    document.getElementById("buttons").innerHTML = '<input class="waves-effect white waves-light btn-large" id="rate" type="button" value="Rate">';
     document.getElementById("rate").addEventListener("mousedown", function () {
         changeRev(objId)
     })
