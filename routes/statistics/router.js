@@ -72,18 +72,18 @@ function getFilter(user, type) {
     }
 }
 
-function count(ary, classifier) {
+function count(arr, classifier) {
     classifier = classifier || String;
-    return ary.reduce(function (counter, item) {
+    return arr.reduce(function (counter, item) {
         var p = classifier(item);
         counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
         return counter;
     }, {})
 }
 
-function sum(ary, classifier) {
+function sum(arr, classifier) {
     classifier = classifier || String;
-    return ary.reduce(function (sum, item) {
+    return arr.reduce(function (sum, item) {
         var p = classifier(item);
         sum[p] = sum.hasOwnProperty(p) ? sum[p] + 1 : item.amount;
         return sum;
@@ -133,6 +133,7 @@ router.get('/:action', isLoggedIn, async (req, res) => {
                             let noData = {'Upon your first sale, your data will appear here': '0'};
                             res = setResponse('json', 404, res, {stats: noData});
                         } else {
+                            let transactionCount;
                             // Returns dataset date: sum
                             transactions.forEach(transaction => {
                                 let transactionCount = sum(transactions, function (transaction) {
@@ -144,11 +145,9 @@ router.get('/:action', isLoggedIn, async (req, res) => {
                                 firstDate.setDate(firstDate.getDate() - 1);
                                 firstDate = firstDate.toISOString().split("T")[0];
                                 transactionCount[firstDate] = 0;
-                                transactionCount = arraySort(transactionCount);
-
-                                res = setResponse('json', 200, res, {stats: transactionCount});
-                            })
-                            // res = setResponse('json', 200, res, {transactions: transactions});
+                                transactionCount = arraySort(transactionCount); // reorders transactions order by date incrementally
+                            });
+                            res = setResponse('json', 200, res, {stats: transactionCount});
                         }
                     }
                 }
@@ -158,8 +157,7 @@ router.get('/:action', isLoggedIn, async (req, res) => {
                 res.status(400);
                 res.end();
             }
-        } catch
-            (e) {
+        } catch (e) {
             console.log(e);
         }
     }
