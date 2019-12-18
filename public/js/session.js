@@ -93,7 +93,7 @@ async function getCoachesIndex() {
     for(let i =0; i < everyoneArray.length; i++){
         console.log(everyoneArray[i]);
 
-        dust.render("dashboard_partials/client_card_for_list", {client: everyoneArray[i]}, ((err,out)=>{
+        dust.render("partials/coach_card", {coach: everyoneArray[i]}, ((err,out)=>{
             console.log(out);
             grid.innerHTML += out;
     }));

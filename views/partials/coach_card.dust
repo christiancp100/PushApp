@@ -1,5 +1,5 @@
 <div class="card-image-bg col-lg-4 col-xs-12">
-    <img src="/img/trainers/trainer-img-3.png" alt="">
+    <img src="{coach.photo}" alt="">
     <h2><a href="">HIRE {coach.firstName} {coach.lastName}</a></h2>
     <p>
         {coach.description}

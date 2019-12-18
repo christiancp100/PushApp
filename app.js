@@ -78,7 +78,7 @@ app.use(function (req, res, next) {
 });
 
 const admin = initAdmin();
-console.log("The server is running on port 3000");
+console.log("The server is running on port " + process.env.PORT);
 
 async function initAdmin() {
     try {

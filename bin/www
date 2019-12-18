@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var debug = require('debug')('pushapp-server');
+require("dotenv").config();
 var app = require('../app');
-require("dotenv").config({path: "../.env"});
 
 app.set('port', process.env.PORT);
 
@@ -20,7 +20,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('notification', function (msg) {
-        console.log('notification for ' +  msg.for, msg);
+        console.log('notification for ' + msg.for, msg);
         io.emit('notification for ' + msg.for, msg);
     });
 });
