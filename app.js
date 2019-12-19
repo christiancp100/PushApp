@@ -22,7 +22,8 @@ require('./models/MoneyAccount.js');
 //require('dotenv').config(); //
 
 // Mongoose connection to MongoDB and Collection name declaration
-mongoose.connect('mongodb://localhost/PushApp', {useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect('mongodb://localhost/PushApp', {useNewUrlParser: true, useUnifiedTopology: true}); // LOCAL
+mongoose.connect('mongodb://pushapp.xyz:27017/PushApp', {useNewUrlParser: true, useUnifiedTopology: true}); // SERVER
 
 // Dust views rendering engine
 app.set('view engine', 'dust');
@@ -68,6 +69,7 @@ app.use('/workouts', routers.workout);
 app.use('/checkout', routers.checkout);
 app.use('/money', routers.money);
 app.use('/statistics', routers.statistics);
+app.use('/seed', routers.seed);
 
 // Catch 404 and forward to error handler
 // This should be configured after all 200 routes

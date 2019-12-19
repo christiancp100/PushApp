@@ -64,6 +64,8 @@ function isLoggedIn(req, res, next) {
         return next();
     } else if (req.isAuthenticated() && ("/workouts") === req.path) {
         return next();
+    } else if ("/seed" === req.path) {
+        return next();
     } else if ("/money" === req.path) {
         return next();
     } else {

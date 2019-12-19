@@ -48,6 +48,55 @@ router.get('/', async (req, res) => {
     }
 });
 
+async function createUser(user) {
+    let userAccount = new UserAccount({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        description: user.description,
+        birthday: user.birthday,
+        sex: user.sex,
+        email: user.email,
+        phone: user.phone,
+        address1: user.address1,
+        address2: user.address2,
+        city: user.city,
+        state: user.state,
+        zipCode: user.zipCode,
+        country: user.country,
+        currency: user.currency,
+        localization: user.localization,
+        accountType: 'client',
+        creationDate: Date.now()
+    });
+    if (typeof user.photo == "undefined" || user.photo == null || user.photo === "") {
+        userAccount.photo = getPhotoPlaceholder(user.sex);
+        userAccount.form = 'square';
+    } else {
+        userAccount.photo = user.photo;
+        userAccount.form = user.form;
+    }
+
+    let savedUserAccount = await userAccount.save();
+
+    let clientInfo = new ClientInfo({
+        _clientId: savedUserAccount._id,
+        height: user.height,
+        weight: user.weight,
+        unitSystem: user.unitSystem
+    });
+
+    let savedClientInfo = await clientInfo.save();
+
+    // Creates MoneyAccount for client
+    /*let newMoneyAccount = new MoneyAccount({
+        _userAccountId: savedUserAccount._id,
+        currency: savedUserAccount.currency
+    });
+    await newMoneyAccount.save();
+    console.log('Money account created for this client');*/
+    return {savedUserAccount, savedClientInfo};
+}
+
 // Creates a new client
 router.post('/new', async (req, res) => {
     try {
@@ -68,52 +117,8 @@ router.post('/new', async (req, res) => {
                 res = setResponse('json', 400, res, {Error: "Username, password, first name, last name, birthday, sex, email, address1, city, state, zip code, country, and currency must be provided"});
                 res.end();
             } else {
-
-                let userAccount = new UserAccount({
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    description: req.body.description,
-                    birthday: req.body.birthday,
-                    sex: req.body.sex,
-                    email: req.body.email,
-                    phone: req.body.phone,
-                    address1: req.body.address1,
-                    address2: req.body.address2,
-                    city: req.body.city,
-                    state: req.body.state,
-                    zipCode: req.body.zipCode,
-                    country: req.body.country,
-                    currency: req.body.currency,
-                    localization: req.body.localization,
-                    accountType: 'client',
-                    creationDate: Date.now()
-                });
-                if (typeof req.body.photo == "undefined" || req.body.photo == null || req.body.photo === "") {
-                    userAccount.photo = getPhotoPlaceholder(req.body.sex);
-                    userAccount.form = 'square';
-                } else {
-                    userAccount.photo = req.body.photo;
-                    userAccount.form = req.body.form;
-                }
-
-                let savedUserAccount = await userAccount.save();
-
-                let clientInfo = new ClientInfo({
-                    _clientId: savedUserAccount._id,
-                    height: req.body.height,
-                    weight: req.body.weight,
-                    unitSystem: req.body.unitSystem
-                });
-
-                let savedClientInfo = await clientInfo.save();
-
-                // Creates MoneyAccount for client
-                /*let newMoneyAccount = new MoneyAccount({
-                    _userAccountId: savedUserAccount._id,
-                    currency: savedUserAccount.currency
-                });
-                await newMoneyAccount.save();
-                console.log('Money account created for this client');*/
+                let user = req.body;
+                let {savedUserAccount, savedClientInfo} = await createUser(user);
 
                 if (req.accepts("text/html")) {
                     res.render('register_forms/register-credentials.dust', {accID: (savedUserAccount._id).toString()});
@@ -348,13 +353,13 @@ router.get('/rating', isLoggedIn, async (req, res) => {
             }
         } else {
             //render the rating page
-            res.render('rating/rating-first.dust', {id: thisCoachId, name : name})
+            res.render('rating/rating-first.dust', {id: thisCoachId, name: name})
         }
     } catch (e) {
         console.log(e);
         res.status(500).end();
     }
-})
+});
 
 // Creates filter for searching users on the database
 function getFilter(req) {
