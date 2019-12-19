@@ -89,3 +89,46 @@
   }
   
 }
+
+.round-card-div{
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.round-card{
+  position: relative;
+  margin: 2rem;
+}
+
+.round-card h2{
+  display: none;
+  color: white;
+  font-size: 1.3rem;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 1.5s ease-out;
+}
+
+
+.round-card:hover img{
+  filter: blur(1px);
+}
+
+.round-card:hover h2{
+  display: block;
+}
+
+.round-card img{
+  align-self: center;
+  width: 200px;
+  border-top-left-radius: 50% 50%;
+  border-top-right-radius: 50% 50%;
+  border-bottom-right-radius: 50% 50%;
+  border-bottom-left-radius: 50% 50%;
+}
