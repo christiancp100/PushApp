@@ -1,5 +1,5 @@
 <h2 class="col s12 white-text center" style="text-transform: uppercase;border-bottom: 3px solid; border-color:white; padding-bottom:0.5rem">Client Register form</h2>
-<form class="row" action="/clients/new"  method="POST" enctype="application/x-www-form-urlencoded">
+<form class="row" action="/"  method="get" enctype="application/x-www-form-urlencoded">
     <div class="row">
         {>"../partials/register"/}
     </div>
