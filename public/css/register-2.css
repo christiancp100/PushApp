@@ -1,5 +1,5 @@
-.choose-body{
-    background-image: url('../img/settings-background.jpg');
+.choose-body {
+    background-image: url('https://res.cloudinary.com/pushapp/image/upload/v1576688225/img/settings-background_okqiaa.jpg');
     height: 500px;
     background-attachment: fixed;
     background-position: center;
@@ -7,9 +7,9 @@
     background-size: cover;
 }
 
-.register-heading{
+.register-heading {
     text-transform: uppercase;
-    padding:1rem; 
+    padding: 1rem;
     background-color: black;
     text-align: center;
     margin: 3rem 30%;

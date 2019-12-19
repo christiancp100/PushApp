@@ -22,7 +22,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('notification', function (msg) {
-        console.log('notification for ' +  msg.for, msg);
+        console.log('notification for ' + msg.for, msg);
         io.emit('notification for ' + msg.for, msg);
     });
 });

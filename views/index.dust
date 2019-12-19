@@ -40,7 +40,7 @@
             </div>
 
             <div class="col-lg-6 col-xs-12">
-                <img class="thumbnail-square" src="/img/img-modal-1.jpg" alt="">
+                <img class="thumbnail-square" src="https://res.cloudinary.com/pushapp/image/upload/c_scale,w_1622/v1576688226/img/img-modal-1_umzh9k.jpg" alt="">
             </div>
         </div>
 
@@ -73,50 +73,34 @@
             </div>
         </div>
     </section>
-    <!--
+
     <section class="section-trainers">
-        <h1><span class="span-main">Our Best </span><span class="span-secondary">Trainers</span></h1>
-        <div class="container mt-4 mb-5">
-            <div class="row">
-                <div class=" card-image-bg col-lg-4 col-xs-12">
-                    <img src="/img/trainers/trainer-img-1.png" alt="">
-                    <h2>Sarah Connor</h2>
-                    <p>LLorem ipsum dolor sit amet consectetur adipisicing elit. Odio tempora temporibus praesentium
-                        mollitia
-                    </p>
-                    <div class="social-networks">
-                        <a href="#"><img src="/img/social-networks/instagram-logo.svg" alt=""></a>
-                        <a href="#"><img src="/img/social-networks/facebook-logo.svg" alt=""></a>
-                        <a href="#"><img src="/img/social-networks/twitter-logo.svg" alt=""></a>
-                    </div>
+        <h1><span class="span-main">Our  </span><span class="span-secondary">TEAM</span></h1>
+        <div class=" mt-4 mb-5">
+            <div class="round-card-div">
+                <div class="round-card col-lg-4 col-xs-12">
+                    <img src="/img/christian.jpg" alt="">
+                    <h2>Christian Capeáns</h2>
                 </div>
-                <div class="card-image-bg col-lg-4 col-xs-12">
-                    <img src="/img/trainers/trainer-img-2.png" alt="">
-                    <h2>Romeo Santos</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio tempora temporibus praesentium
-                        mollitia
-                    </p>
-                    <div class="social-networks">
-                        <a href="#"><img src="/img/social-networks/instagram-logo.svg" alt=""></a>
-                        <a href="#"><img src="/img/social-networks/facebook-logo.svg" alt=""></a>
-                        <a href="#"><img src="/img/social-networks/twitter-logo.svg" alt=""></a>
-                    </div>
+                <div class="round-card col-lg-4 col-xs-12">
+                    <img src="/img/jacopo.jpeg" alt="">
+                    <h2>Jacopo Caratti</h2>
                 </div>
-                <div class="card-image-bg col-lg-4 col-xs-12">
+                <div class="round-card col-lg-4 col-xs-12">
+                    <img src="/img/erick.jpg" alt="">
+                    <h2>Erick Garro</h2>
+                </div>
+                <div class="round-card col-lg-4 col-xs-12">
                     <img src="/img/trainers/trainer-img-3.png" alt="">
-                    <h2>Becky G</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio tempora temporibus praesentium
-                        mollitia
-                    </p>
-                    <div class="social-networks">
-                        <a href="#"><img src="/img/social-networks/instagram-logo.svg" alt=""></a>
-                        <a href="#"><img src="/img/social-networks/facebook-logo.svg" alt=""></a>
-                        <a href="#"><img src="/img/social-networks/twitter-logo.svg" alt=""></a>
-                    </div>
+                    <h2>Max Ryakhovskiy</h2>
+                </div>
+                <div class="round-card col-lg-4 col-xs-12">
+                    <img src="/img/trainers/trainer-img-3.png" alt="">
+                    <h2>Davide Trupia</h2>
                 </div>
             </div>
         </div>
-    </section>-->
+    </section>
 {>"partials/footer"/}
 </body>
 
