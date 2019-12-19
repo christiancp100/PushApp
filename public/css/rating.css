@@ -2,18 +2,20 @@ html,
 body {
     height: 100%;
 }
-select{
+
+select {
     display: inline;
 }
-.container{
+
+.container {
     position: sticky;
     background: black;
     width: 600px;
-    height:auto;
+    height: auto;
 }
 
 body {
-    background-image: url('../img/settings-background.jpg');
+    background-image: url('https://res.cloudinary.com/pushapp/image/upload/v1576688225/img/settings-background_okqiaa.jpg');
     height: 500px;
     background-attachment: fixed;
     background-position: center;
@@ -25,11 +27,11 @@ body {
     color: white;
 }
 
-.row{
-    padding:30px;
+.row {
+    padding: 30px;
 }
 
-#titleReview:disabled, #commentReview:disabled{
+#titleReview:disabled, #commentReview:disabled {
     color: darkgray;
 }
 
@@ -37,8 +39,8 @@ body {
     color: white;
 }
 
-input[type="button"]{
-    color:black;
+input[type="button"] {
+    color: black;
     appearance: none;
     left: 30%;
     /*top: 70%;*/
